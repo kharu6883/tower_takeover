@@ -12,9 +12,10 @@ Our programs are so finger lickin' good that you will literally CLONE this bro i
 - Vex needs to hire a competent narrator
 
 ## Installation
-You probably should install Git before doing this. If you don't have git, go away you uncultured swine. Why are you even here?
+You should install Git before doing this. If you don't have git, go away you uncultured swine. Why are you even here?
 
-### Windows & Mac & Linux(probably)
+Since this is a PROS project, you should download PROS.
+
 CD into the desired folder where you want it to be installed via command prompt, and type -
 ```
 git clone git@github.com:HoneySpiceLatte/tower_takeover.git
