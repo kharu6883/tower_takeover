@@ -12,6 +12,9 @@
 #include "movement.h"
 #include "odometry.h"
 
+#include "config.h"
+#include "movement.h"
+
 /**
  * You should add more #includes here
  */
