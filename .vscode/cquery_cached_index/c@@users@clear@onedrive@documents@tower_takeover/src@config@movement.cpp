@@ -1,8 +1,6 @@
 #include "main.h"
 
 void reset() {
-  error =
-
   LF.tare_position();
   LB.tare_position();
   RF.tare_position();
@@ -49,16 +47,17 @@ void drive(double target, int speed) {
 }
 
 void slew(int target) {
-  const double accel = .24;
+  const double accel = .1;
 
-  output = 0;
+  int output = 0;
 
   if(output < target) {
     output += accel;
-    delay(1);
   }
 
-  if(output > target) output = target;
+  if(output > target) {
+    output = target;
+  }
 
   left(output);
   right(output);
