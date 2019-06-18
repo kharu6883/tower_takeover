@@ -14,6 +14,5 @@ namespace odometry {
     public:
 
     private:
-      W
   };
 }
