@@ -64,6 +64,10 @@ void slew(int target) {
   right(output);
 }
 
+void slop() {
+  int error = 0;
+}
+
 void left(int speed) {
   LF.move(speed);
   LB.move(speed);
