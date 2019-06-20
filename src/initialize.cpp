@@ -1,7 +1,8 @@
 #include "main.h"
 
 void initialize() {
-  Task display()
+  start();
+  remoteDisplay();
 }
 
 void disabled() {

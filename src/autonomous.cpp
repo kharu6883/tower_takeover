@@ -1,5 +1,5 @@
 #include "main.h"
 
 void autonomous() {
-  drive(4, 127);
+  drive(1, 10);
 }

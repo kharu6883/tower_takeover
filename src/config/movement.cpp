@@ -1,8 +1,6 @@
 #include "main.h"
 
 void reset() {
-  error =
-
   LF.tare_position();
   LB.tare_position();
   RF.tare_position();

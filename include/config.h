@@ -1,5 +1,7 @@
 #include "main.h"
 
+#pragma once
+
 extern pros::Controller master;
 extern pros::Motor LF;
 extern pros::Motor LB;
