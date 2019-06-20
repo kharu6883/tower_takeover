@@ -15,9 +15,9 @@ void menu() {
   lv_obj_t * button = lv_btn_create(scr, NULL);*/
 
   slider = lv_slider_create(scr, NULL);
-  lv_obj_set_size(slider, lv_obj_get_width(scr) - 50, LV_DPI / 3);
+  lv_obj_set_size(slider, lv_obj_get_width(scr) - 100, LV_DPI / 3);
   lv_obj_align(slider, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
-  lv_slider_set_value(slider, 30);
+  lv_slider_set_value(slider, 100);
 }
 
 // Macros for display objects
