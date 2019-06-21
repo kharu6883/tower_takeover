@@ -11,7 +11,3 @@ extern pros::Motor LiftR;
 
 extern pros::Motor ClawL;
 extern pros::Motor ClawR;
-
-extern pros::ADIAnalogIn Arm;
-extern pros::ADIEncoder OL;
-extern pros::ADIEncoder OR;

@@ -32,7 +32,7 @@ void drive(double target, int speed, double rate) {
 
     left(output);
     right(output);
-    delay(60);
+    wait(1);
   }
 
   while(target < 0) {
@@ -54,7 +54,7 @@ void slew(int target, double rate) {
 
   if(output < target) {
     output += rate;
-    delay(1);
+    wait(1);
   }
 
   if(output > target) output = target;
@@ -75,9 +75,4 @@ void left(int speed) {
 void right(int speed) {
   RF.move(speed);
   RB.move(speed);
-}
-
-void moveClaw(double rotation, int speed) {
-  ClawL.move_absolute(rotation, speed);
-  ClawR.move_absolute(rotation, -speed);
 }
