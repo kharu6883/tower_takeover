@@ -23,6 +23,12 @@
 #define RFPORT 20
 #define RBPORT 19
 
+#define LIFTL 2
+#define LIFTR 8
+
+#define CLAWL 1
+#define CLAWR 2
+
 using namespace okapi;
 
 #ifdef __cplusplus

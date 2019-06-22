@@ -1,8 +1,17 @@
+#pragma once
 #include "pros/apix.h"
 
-void start();
-void menu();
-void remoteDisplay();
+class Display {
+  public:
+    Display();
+    ~Display();
 
-// Macros for display objects
-void setLabel(lv_obj_t * labelId, const char * text, lv_coord_t x, lv_coord_t y);
+    void main();
+    void auton();
+    void sensor();
+    void camera();
+    void setting();
+
+  private:
+    void setLabel(lv_obj_t * labelId, const char * text, lv_coord_t x, lv_coord_t y);
+};

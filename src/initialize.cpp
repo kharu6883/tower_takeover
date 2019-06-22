@@ -1,8 +1,8 @@
 #include "main.h"
 
 void initialize() {
-  start();
-  menu();
+  Display display;
+  lv_task_create(display.main(), 1, lv_task_prio_t prio, void *param)
 }
 
 void disabled() {

@@ -76,3 +76,8 @@ void right(int speed) {
   RF.move(speed);
   RB.move(speed);
 }
+
+void lift(int speed) {
+  LiftL.move(speed);
+  LiftR.move(speed);
+}

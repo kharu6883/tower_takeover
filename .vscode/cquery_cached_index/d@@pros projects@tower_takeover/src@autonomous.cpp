@@ -8,7 +8,7 @@ void autonomous() {
   execute("1", false);
   destroy("1");
 
-  generate("2", 5.7_ft, 4.5_ft, 90_deg);
+  generate("2", 5_ft, 4.5_ft, 90_deg);
   execute("2", false);
   destroy("2");
 
