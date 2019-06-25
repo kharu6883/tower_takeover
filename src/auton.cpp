@@ -1,4 +1,5 @@
 #include "main.h"
+using namespace path;
 
 void autonboi() {
   std::cout << "Hello world!" << std::endl;
