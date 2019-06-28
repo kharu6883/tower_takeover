@@ -2,8 +2,11 @@
 
 void initialize() {
   initAuton();
+  
   Display display;
-  std::cout << "Initialization Done!" << std::endl;
+  display.main();
+
+  std::cout << "Done!" << std::endl;
 }
 
 void disabled() {

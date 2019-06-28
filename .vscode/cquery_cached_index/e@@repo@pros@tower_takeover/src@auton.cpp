@@ -6,6 +6,7 @@ void autonboi() {
 }
 
 void motionTest() {
+  std::cout << "Reverse Traverse" << std::endl;
   generate("1", 5.5_ft, -1.5_ft, 0_deg);
   execute("1", false);
   destroy("1");

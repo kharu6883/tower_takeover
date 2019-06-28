@@ -1,26 +1,28 @@
 #include "main.h"
-#include <vector>
 using namespace okapi;
 using namespace path;
 using namespace std;
 
-int autonSlot = 1; // 0 = first slot;
+int autonSlot = 0; // 0 = first slot;
 
 map<int, void(*)(void)> Autonomous;
 map<int, const char *> SlotName;
+map<int, const char *>::iterator SlotIter;
 
 void autonomous() {
   Autonomous[autonSlot]();
 }
 
-void initAuton() {
-  addAuton(0, "Test Auton", autonboi);
-  addAuton(1, "Motion Test", motionTest);
+void initAuton() { // The autons will be stored in this order, starting from 0.
+  addAuton("Test Auton", autonboi);
+  addAuton("Motion Test", motionTest);
+
+  print("Auton initialized!");
 }
 
-void addAuton(int slot, const char * autonName, void(*function)()) {
-  Autonomous.insert(make_pair(slot, function));
-  SlotName.insert(make_pair(slot, autonName));
+void addAuton(const char * autonName, void(*function)()) {
+  Autonomous.insert(make_pair(Autonomous.size(), function));
+  SlotName.insert(make_pair(SlotName.size(), autonName));
 }
 
 void setAuton(int slot) {

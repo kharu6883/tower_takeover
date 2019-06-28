@@ -47,6 +47,9 @@ void opcontrol(void);
 
 #ifdef __cplusplus
 
+#include <iostream>
+#include <chrono>
+
 #include <vector>
 
 #include <stdio.h>
