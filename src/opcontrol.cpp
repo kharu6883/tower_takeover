@@ -13,6 +13,8 @@ void opcontrol() {
 		} else if(master.get_digital(DIGITAL_R2)) {
 			lift(-127);
 		}
+
+		wait(5);
 	}
 }
 

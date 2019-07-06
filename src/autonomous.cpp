@@ -16,6 +16,12 @@ void autonomous() {
 void initAuton() { // The autons will be stored in this order, starting from 0.
   addAuton("Test Auton", autonboi);
   addAuton("Motion Test", motionTest);
+  addAuton("This", autonboi);
+  addAuton("is", autonboi);
+  addAuton("very", autonboi);
+  addAuton("entertaining", autonboi);
+  addAuton("haha", autonboi);
+  addAuton("What a long auton name", autonboi);
 
   print("Auton initialized!");
 }
