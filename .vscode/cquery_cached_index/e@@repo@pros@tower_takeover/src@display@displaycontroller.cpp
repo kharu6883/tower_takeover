@@ -9,7 +9,7 @@ static lv_res_t btn_click_action(lv_obj_t * btn) {
 
   lv_obj_del(scr);
 
-  Display display;
+  BrainDisplay display;
 
   if(id == 1) display.auton();
   if(id == 2) display.sensor();
@@ -28,7 +28,7 @@ static lv_res_t auton_click_action(lv_obj_t * btn) {
   return LV_RES_OK;
 }
 
-Display::Display() {
+BrainDisplay::BrainDisplay() {
   if(!initialized) {
     lv_theme_t * th = lv_theme_alien_init(120, NULL);
     lv_theme_set_current(th);
@@ -41,7 +41,7 @@ Display::Display() {
   lv_scr_load(scr);
 }
 
-void Display::main() {
+void BrainDisplay::main() {
   lv_obj_t * btnAuton = lv_btn_create(scr, NULL);
   setButton(btnAuton, 1, SYMBOL_LIST" Autonomous", 200, 40, 250, 0, NULL);
 
@@ -55,7 +55,7 @@ void Display::main() {
   setButton(btnSetting, 4, SYMBOL_SETTINGS" Settings", 200, 40, 250, 155, NULL);
 }
 
-void Display::auton() {
+void BrainDisplay::auton() {
   int size = SlotName.size();
 
   lv_obj_t * btnBack = lv_btn_create(scr, NULL);
@@ -75,29 +75,29 @@ void Display::auton() {
   }
 }
 
-void Display::sensor() {
+void BrainDisplay::sensor() {
   lv_obj_t * btnBack = lv_btn_create(scr, NULL);
   setButton(btnBack, 420, SYMBOL_HOME" Home", 100, 40, 0, 0, lv_scr_act());
 }
 
-void Display::camera() {
+void BrainDisplay::camera() {
   lv_obj_t * btnBack = lv_btn_create(scr, NULL);
   setButton(btnBack, 420, SYMBOL_HOME" Home", 100, 40, 0, 0, lv_scr_act());
 }
 
-void Display::setting() {
+void BrainDisplay::setting() {
   lv_obj_t * btnBack = lv_btn_create(scr, NULL);
   setButton(btnBack, 420, SYMBOL_HOME" Home", 100, 40, 0, 0, lv_scr_act());
 }
 
 // Macros
 
-void Display::setLabel(lv_obj_t * labelID, const char * text, lv_coord_t x, lv_coord_t y) {
+void BrainDisplay::setLabel(lv_obj_t * labelID, const char * text, lv_coord_t x, lv_coord_t y) {
   lv_label_set_text(labelID, text);
   lv_obj_set_pos(labelID, x, y);
 }
 
-void Display::setButton(lv_obj_t * buttonID, int uniqueID, const char * name, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y, lv_obj_t * base) {
+void BrainDisplay::setButton(lv_obj_t * buttonID, int uniqueID, const char * name, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y, lv_obj_t * base) {
   lv_obj_set_pos(buttonID, x, y);
   lv_obj_set_size(buttonID, w, h);
   lv_obj_set_free_num(buttonID, uniqueID);

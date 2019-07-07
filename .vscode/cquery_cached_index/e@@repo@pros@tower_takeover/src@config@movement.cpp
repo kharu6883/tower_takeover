@@ -32,7 +32,7 @@ void drive(double target, int speed, double rate) {
 
     left(output);
     right(output);
-    wait(1);
+    wait(5);
   }
 
   while(target < 0) {

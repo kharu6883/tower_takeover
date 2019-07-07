@@ -11,6 +11,7 @@ void addAuton(const char * autonName, void(*function)());
 
 // Getters and Setters
 void setAuton(int slot);
+int getSlot();
 const char * getName(int slot);
 
 // Auton Declarations

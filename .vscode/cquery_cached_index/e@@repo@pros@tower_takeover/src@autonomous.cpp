@@ -35,6 +35,10 @@ void setAuton(int slot) {
   autonSlot = slot;
 }
 
+int getSlot() {
+  return autonSlot;
+}
+
 const char * getName(int slot) {
   return SlotName[slot];
 }

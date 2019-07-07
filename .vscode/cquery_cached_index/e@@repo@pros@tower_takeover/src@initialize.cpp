@@ -1,10 +1,16 @@
 #include "main.h"
+using namespace Display;
 
 void initialize() {
   initAuton();
-  
-  Display display;
-  display.main();
+
+  Display::BrainDisplay brain;
+  brain.main();
+
+  Display::RemoteDisplay remote;
+
+  pros::Task updateDisplay(brain.update);
+  pros::Task updateRemote(remote.update);
 
   std::cout << "Done!" << std::endl;
 }
