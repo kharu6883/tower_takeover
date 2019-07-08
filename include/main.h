@@ -19,6 +19,10 @@
 
 #include "macro.h"
 
+// Image declaration
+LV_IMG_DECLARE(title);
+LV_IMG_DECLARE(intro);
+
 // Motor ports & ADI
 #define LFPORT 10
 #define LBPORT 9

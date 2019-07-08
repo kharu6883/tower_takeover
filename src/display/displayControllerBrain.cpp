@@ -2,8 +2,11 @@
 using namespace Display;
 
 lv_obj_t * scr;
+lv_obj_t * loading;
+lv_obj_t * loader;
 
 static lv_style_t overlay;
+static lv_style_t mainScr;
 
 bool initialized = false;
 
@@ -39,6 +42,18 @@ static lv_res_t auton_click_action(lv_obj_t * btn) {
 
 BrainDisplay::BrainDisplay() {
   if(!initialized) {
+    // Loading Screen
+    loading = lv_img_create(lv_layer_sys(), NULL);
+    lv_obj_set_size(loading, 480, 240);
+    lv_obj_set_pos(loading, 0, 0);
+    lv_img_set_src(loading, &intro);
+
+    loader = lv_bar_create(lv_layer_sys(), NULL);
+    lv_obj_set_size(loader, 400, 4);
+    lv_obj_align(loader, lv_layer_sys(), LV_ALIGN_CENTER, 0, 70);
+    lv_bar_set_value_anim(loader, 100, 2000);
+    lv_bar_set_value(loader, 1);
+
     lv_theme_t * th = lv_theme_alien_init(120, NULL);
     lv_theme_set_current(th);
 
@@ -49,6 +64,13 @@ BrainDisplay::BrainDisplay() {
     overlay.body.border.width = 2;
 
     overlay.text.color = LV_COLOR_WHITE;
+
+    lv_style_copy(&mainScr, &lv_style_plain);
+    mainScr.body.main_color = LV_COLOR_MAKE(48, 48, 48);
+    mainScr.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
+    mainScr.body.padding.inner = 3;
+    mainScr.body.padding.ver = 1;
+    mainScr.body.border.width = 0;
 
     lv_obj_t * status = lv_cont_create(lv_layer_top(), NULL);
     lv_obj_set_style(status, &overlay);
@@ -61,7 +83,7 @@ BrainDisplay::BrainDisplay() {
     lv_obj_set_y(autonStat, 2);
 
     btnBack = lv_btn_create(lv_layer_top(), NULL);
-    setButton(btnBack, 420, SYMBOL_HOME" Home", 100, 40, 5, 190, lv_layer_top());
+    setButton(btnBack, 420, SYMBOL_HOME" Home", 100, 40, 5, 190);
 
     print("Display initialized!");
     initialized = true;
@@ -71,20 +93,36 @@ BrainDisplay::BrainDisplay() {
   lv_scr_load(scr);
 }
 
+void BrainDisplay::cleanup() {
+  lv_obj_del(loading);
+  lv_obj_del(loader);
+}
+
 void BrainDisplay::main() {
   nowScr = 0;
 
-  lv_obj_t * btnAuton = lv_btn_create(scr, NULL);
-  setButton(btnAuton, 1, SYMBOL_LIST" Autonomous", 200, 40, 250, 0, NULL);
+  lv_obj_t * mainImg = lv_img_create(scr, NULL);
+  lv_obj_set_size(mainImg, 240, 240);
+  lv_obj_set_pos(mainImg, 0, -5);
+  lv_img_set_src(mainImg, &title);
 
-  lv_obj_t * btnSensor = lv_btn_create(scr, NULL);
-  setButton(btnSensor, 2, SYMBOL_GPS" Sensors", 200, 40, 250, 65, NULL);
+  lv_obj_t * container_main = lv_cont_create(scr, NULL);
+  lv_obj_set_style(container_main, &mainScr);
+  lv_cont_set_layout(container_main, LV_LAYOUT_CENTER);
+  lv_obj_set_pos(container_main, 250, 55);
+  lv_obj_set_size(container_main, 200, 170);
 
-  lv_obj_t * btnCamera = lv_btn_create(scr, NULL);
-  setButton(btnCamera, 3, SYMBOL_IMAGE" Camera", 200, 40, 250, 110, NULL);
+  lv_obj_t * btnAuton = lv_btn_create(container_main, NULL);
+  setButton(btnAuton, 1, SYMBOL_LIST" Autonomous", 200, 40, 250, 0);
 
-  lv_obj_t * btnSetting = lv_btn_create(scr, NULL);
-  setButton(btnSetting, 4, SYMBOL_SETTINGS" Settings", 200, 40, 250, 155, NULL);
+  lv_obj_t * btnSensor = lv_btn_create(container_main, NULL);
+  setButton(btnSensor, 2, SYMBOL_GPS" Sensors", 200, 40, 250, 65);
+
+  lv_obj_t * btnCamera = lv_btn_create(container_main, NULL);
+  setButton(btnCamera, 3, SYMBOL_IMAGE" Camera", 200, 40, 250, 110);
+
+  lv_obj_t * btnSetting = lv_btn_create(container_main, NULL);
+  setButton(btnSetting, 4, SYMBOL_SETTINGS" Settings", 200, 40, 250, 155);
 }
 
 void BrainDisplay::auton() {
@@ -96,11 +134,11 @@ void BrainDisplay::auton() {
   for(int i = 0; i < size; i++) {
     if(i == 0) {
       btnAutonm[i] = lv_btn_create(scr, NULL);
-      setButton(btnAutonm[i], i, getName(i), 250, 40, 200, 40, NULL);
+      setButton(btnAutonm[i], i, getName(i), 250, 40, 200, 40);
       lv_btn_set_action(btnAutonm[i], LV_BTN_ACTION_CLICK, auton_click_action);
     } else {
       btnAutonm[i] = lv_btn_create(scr, NULL);
-      setButton(btnAutonm[i], i, getName(i), 250, 40, 200, i * 45 + 20, NULL);
+      setButton(btnAutonm[i], i, getName(i), 250, 40, 200, i * 45 + 20);
       lv_btn_set_action(btnAutonm[i], LV_BTN_ACTION_CLICK, auton_click_action);
     }
   }
@@ -149,7 +187,7 @@ void BrainDisplay::setLabel(lv_obj_t * labelID, const char * text, lv_coord_t x,
   lv_obj_set_pos(labelID, x, y);
 }
 
-void BrainDisplay::setButton(lv_obj_t * buttonID, int uniqueID, const char * name, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y, lv_obj_t * base) {
+void BrainDisplay::setButton(lv_obj_t * buttonID, int uniqueID, const char * name, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y) {
   lv_obj_set_pos(buttonID, x, y);
   lv_obj_set_size(buttonID, w, h);
   lv_obj_set_free_num(buttonID, uniqueID);

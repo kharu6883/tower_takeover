@@ -12,6 +12,8 @@ void initialize() {
   pros::Task updateDisplay(brain.update);
   pros::Task updateRemote(remote.update);
 
+  wait(2000);
+  brain.cleanup();
   std::cout << "Done!" << std::endl;
 }
 
