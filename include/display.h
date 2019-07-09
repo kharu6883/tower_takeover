@@ -6,7 +6,7 @@ namespace Display {
     public:
       BrainDisplay();
       //~Display();
-      
+
       void cleanup();
 
       void main();
@@ -14,7 +14,6 @@ namespace Display {
       void sensor();
       void camera();
       void setting();
-
 
       static void update(void* ignore);
 

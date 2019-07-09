@@ -53,6 +53,7 @@ void opcontrol(void);
 
 #include <iostream>
 #include <chrono>
+#include <cstdlib>
 
 #include <vector>
 

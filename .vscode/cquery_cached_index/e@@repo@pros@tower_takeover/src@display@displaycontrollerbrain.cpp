@@ -4,6 +4,7 @@ using namespace Display;
 lv_obj_t * scr;
 lv_obj_t * loading;
 lv_obj_t * loader;
+lv_obj_t * loadText;
 
 static lv_style_t overlay;
 static lv_style_t mainScr;
@@ -13,6 +14,7 @@ bool initialized = false;
 lv_obj_t * autonStat;
 lv_obj_t * btnBack;
 
+int r;
 int nowScr;
 
 static lv_res_t btn_click_action(lv_obj_t * btn) {
@@ -42,18 +44,7 @@ static lv_res_t auton_click_action(lv_obj_t * btn) {
 
 BrainDisplay::BrainDisplay() {
   if(!initialized) {
-    // Loading Screen
-    loading = lv_img_create(lv_layer_sys(), NULL);
-    lv_obj_set_size(loading, 480, 240);
-    lv_obj_set_pos(loading, 0, 0);
-    lv_img_set_src(loading, &intro);
-
-    loader = lv_bar_create(lv_layer_sys(), NULL);
-    lv_obj_set_size(loader, 400, 4);
-    lv_obj_align(loader, lv_layer_sys(), LV_ALIGN_CENTER, 0, 70);
-    lv_bar_set_value_anim(loader, 100, 2000);
-    lv_bar_set_value(loader, 1);
-
+    // Theme & Style init
     lv_theme_t * th = lv_theme_alien_init(120, NULL);
     lv_theme_set_current(th);
 
@@ -72,6 +63,25 @@ BrainDisplay::BrainDisplay() {
     mainScr.body.padding.ver = 1;
     mainScr.body.border.width = 0;
 
+    // Loading Screen
+    loading = lv_img_create(lv_layer_sys(), NULL);
+    lv_obj_set_size(loading, 480, 240);
+    lv_obj_set_pos(loading, 0, 0);
+    lv_img_set_src(loading, &intro);
+
+    loader = lv_bar_create(lv_layer_sys(), NULL);
+    lv_obj_set_size(loader, 400, 4);
+    lv_obj_align(loader, lv_layer_sys(), LV_ALIGN_CENTER, 0, 70);
+    lv_bar_set_value_anim(loader, 100, 1500);
+    lv_bar_set_value(loader, 1);
+
+    loadText = lv_label_create(lv_layer_sys(), NULL);
+    lv_obj_set_style(loadText, &overlay);
+    lv_obj_set_size(loadText, 80, 40);
+    lv_obj_align(loadText, lv_layer_sys(), LV_ALIGN_CENTER, -25, 100);
+    lv_label_set_text(loadText, "Now Loading");
+
+    // Overlay & Screen setup
     lv_obj_t * status = lv_cont_create(lv_layer_top(), NULL);
     lv_obj_set_style(status, &overlay);
     lv_obj_set_pos(status, 2, 2);
@@ -96,6 +106,7 @@ BrainDisplay::BrainDisplay() {
 void BrainDisplay::cleanup() {
   lv_obj_del(loading);
   lv_obj_del(loader);
+  lv_obj_del(loadText);
 }
 
 void BrainDisplay::main() {
@@ -157,12 +168,15 @@ void BrainDisplay::setting() {
 }
 
 void BrainDisplay::update(void* ignore) {
+  r = (rand() % 20000) + 10000;
+
   std::string name, now, last;
   const char * c;
 
   name = "Auton Selected: ";
 
   while(true) {
+    // Hides the home button whenever at home
     if(nowScr != 0) lv_obj_set_pos(btnBack, 5, 190);
       else lv_obj_set_pos(btnBack, -100, -100);
 
