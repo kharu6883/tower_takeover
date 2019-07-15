@@ -10,12 +10,10 @@ static lv_style_t overlay;
 static lv_style_t mainScr;
 
 bool initialized = false;
+bool isMain = true;
 
 lv_obj_t * autonStat;
 lv_obj_t * btnBack;
-
-int r;
-int nowScr;
 
 static lv_res_t btn_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
@@ -110,7 +108,7 @@ void BrainDisplay::cleanup() {
 }
 
 void BrainDisplay::main() {
-  nowScr = 0;
+  isMain = true;
 
   lv_obj_t * mainImg = lv_img_create(scr, NULL);
   lv_obj_set_size(mainImg, 240, 240);
@@ -137,10 +135,13 @@ void BrainDisplay::main() {
 }
 
 void BrainDisplay::auton() {
-  nowScr = 1;
+  isMain = false;
 
+  // This needs to happen because it does not return a proper integer
+  // It is a way to force change the variable type which works
   int size = SlotName.size();
 
+  // Making buttons on autonomouses on a selected order from 0 to ~lOL
   lv_obj_t * btnAutonm[] = {};
   for(int i = 0; i < size; i++) {
     if(i == 0) {
@@ -156,20 +157,27 @@ void BrainDisplay::auton() {
 }
 
 void BrainDisplay::sensor() {
-  nowScr = 2;
+  isMain = false;
+
+  lv_obj_t * placeholder = lv_label_create(scr, NULL);
+  lv_label_set_text(placeholder, "Hello, World!");
 }
 
 void BrainDisplay::camera() {
-  nowScr = 3;
+  isMain = false;
+
+  lv_obj_t * placeholder = lv_label_create(scr, NULL);
+  lv_label_set_text(placeholder, "Hello, World!");
 }
 
 void BrainDisplay::setting() {
-  nowScr = 4;
+  isMain = false;
+
+  lv_obj_t * placeholder = lv_label_create(scr, NULL);
+  lv_label_set_text(placeholder, "Hello, World!");
 }
 
 void BrainDisplay::update(void* ignore) {
-  r = (rand() % 20000) + 10000;
-
   std::string name, now, last;
   const char * c;
 
@@ -177,8 +185,8 @@ void BrainDisplay::update(void* ignore) {
 
   while(true) {
     // Hides the home button whenever at home
-    if(nowScr != 0) lv_obj_set_pos(btnBack, 5, 190);
-      else lv_obj_set_pos(btnBack, -100, -100);
+    if(isMain) lv_obj_set_pos(btnBack, -100, 190);
+      else lv_obj_set_pos(btnBack, 5, 190);
 
     // Auton name display
     now = getName(getSlot());

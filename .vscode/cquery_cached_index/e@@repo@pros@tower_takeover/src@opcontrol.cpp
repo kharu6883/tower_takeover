@@ -17,16 +17,3 @@ void opcontrol() {
 		wait(5);
 	}
 }
-
-// void manual() {
-// 	if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && clawMode == 0) {
-// 		ClawL.move_absolute(0.1, 30);
-// 		ClawR.move_absolute(0.1, 30);
-// 	} else if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && clawMode == 1) {
-//
-// 	}
-// }
-//
-// void automatic() {
-//
-// }
