@@ -11,7 +11,7 @@ Our programs are so finger lickin' good that you will literally CLONE this bro i
 - This year's challenge is going to be epic
 - Vex needs to hire a competent narrator
 
-## Installation
+## Cloning
 You should install Git before doing this. If you don't have git, go away you uncultured swine. Why are you even here?
 
 Since this is a PROS project, you should download PROS.
