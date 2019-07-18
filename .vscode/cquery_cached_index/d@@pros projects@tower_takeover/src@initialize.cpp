@@ -1,8 +1,20 @@
 #include "main.h"
+using namespace Display;
 
 void initialize() {
-  Display display;
-  lv_task_create(display.main(), uint32_t period, lv_task_prio_t prio, void *param)
+  initAuton();
+
+  Display::BrainDisplay brain;
+  brain.main();
+
+  Display::RemoteDisplay remote;
+
+  pros::Task updateDisplay(brain.update);
+  pros::Task updateRemote(remote.update);
+
+  wait(2000);
+  brain.cleanup();
+  std::cout << "Done!" << std::endl;
 }
 
 void disabled() {

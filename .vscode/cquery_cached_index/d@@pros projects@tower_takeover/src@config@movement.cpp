@@ -32,7 +32,7 @@ void drive(double target, int speed, double rate) {
 
     left(output);
     right(output);
-    wait(1);
+    wait(5);
   }
 
   while(target < 0) {
@@ -78,6 +78,10 @@ void right(int speed) {
 }
 
 void lift(int speed) {
-  LiftL.move(speed);
-  LiftR.move(speed);
+  Lift.move(speed);
+}
+
+void flap(int speed) {
+  FlapL.move(speed);
+  FlapR.move(-speed);
 }

@@ -78,6 +78,10 @@ void right(int speed) {
 }
 
 void lift(int speed) {
-  LiftL.move(speed);
-  LiftR.move(speed);
+  Lift.move(speed);
+}
+
+void flap(int speed) {
+  FlapL.move(speed);
+  FlapR.move(-speed);
 }

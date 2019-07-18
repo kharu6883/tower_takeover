@@ -3,40 +3,42 @@ using namespace okapi;
 using namespace path;
 using namespace std;
 
+int autonSlot = 0; // 0 = first slot;
+
+map<int, void(*)(void)> Autonomous;
+map<int, const char *> SlotName;
+map<int, const char *>::iterator SlotIter;
+
 void autonomous() {
-  generate("1", 5.5_ft, -1.5_ft, 0_deg);
-  execute("1", false);
-  destroy("1");
+  Autonomous[autonSlot]();
+}
 
-  generate("2", 5_ft, 4.5_ft, 90_deg);
-  execute("2", false);
-  destroy("2");
+void initAuton() { // The autons will be stored in this order, starting from 0.
+  addAuton("Test Auton", autonboi);
+  addAuton("Motion Test", motionTest);
+  addAuton("This", autonboi);
+  addAuton("is", autonboi);
+  addAuton("very", autonboi);
+  addAuton("entertaining", autonboi);
+  addAuton("haha", autonboi);
+  addAuton("What a long auton name", autonboi);
 
-  generate("3", 2_ft, 2_ft, 100_deg);
-  execute("3", false);
-  destroy("3");
+  print("Auton initialized!");
+}
 
-  generate("4", 4.5_ft, 4_ft, 0_deg);
-  execute("4", false);
-  destroy("4");
+void addAuton(const char * autonName, void(*function)()) {
+  Autonomous.insert(make_pair(Autonomous.size(), function));
+  SlotName.insert(make_pair(SlotName.size(), autonName));
+}
 
-  generate("5", 5_ft, -4_ft, -10_deg);
-  execute("5", false);
-  destroy("5");
+void setAuton(int slot) {
+  autonSlot = slot;
+}
 
-  generate("5", 9_ft, 0.3_ft, 0_deg);
-  execute("5", true);
-  destroy("5");
+int getSlot() {
+  return autonSlot;
+}
 
-  generate("6", 5_ft, 3_ft, 0_deg);
-  execute("6", false);
-  destroy("6");
-
-  generate("6", 4_ft, 1_ft, 0_deg);
-  execute("6", false);
-  destroy("6");
-
-  generate("7", 0_ft, 0_ft, 90_deg);
-  execute("7", false);
-  destroy("7");
+const char * getName(int slot) {
+  return SlotName[slot];
 }
