@@ -9,5 +9,5 @@ extern pros::Motor RB;
 extern pros::Motor LiftL;
 extern pros::Motor LiftR;
 
-extern pros::Motor ClawL;
-extern pros::Motor ClawR;
+extern pros::Motor FlapL;
+extern pros::Motor FlapR;

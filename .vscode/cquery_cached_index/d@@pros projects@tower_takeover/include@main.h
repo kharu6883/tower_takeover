@@ -10,6 +10,8 @@
 #include "pros/rtos.h"
 #include "okapi/api.hpp"
 
+#include "autonController.h"
+
 #include "display.h"
 #include "movement.h"
 #include "odometry.h"
@@ -17,17 +19,21 @@
 
 #include "macro.h"
 
+// Image declaration
+LV_IMG_DECLARE(title);
+LV_IMG_DECLARE(intro);
+
 // Motor ports & ADI
-#define LFPORT 10
+#define LFPORT 1
 #define LBPORT 9
-#define RFPORT 20
-#define RBPORT 19
+#define RFPORT 2
+#define RBPORT 10
 
-#define LIFTL 2
-#define LIFTR 8
+#define LIFTL 3
+#define LIFTR 4
 
-#define CLAWL 1
-#define CLAWR 2
+#define FLAPL 7
+#define FLAPR 8
 
 using namespace okapi;
 
@@ -44,6 +50,12 @@ void opcontrol(void);
 #endif
 
 #ifdef __cplusplus
+
+#include <iostream>
+#include <chrono>
+#include <cstdlib>
+
+#include <vector>
 
 #include <stdio.h>
 #include <stdarg.h>

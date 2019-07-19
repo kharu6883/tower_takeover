@@ -10,7 +10,5 @@ pros::Motor RB(RBPORT, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS); // 19 10
 pros::Motor LiftL(LIFTL, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
 pros::Motor LiftR(LIFTR, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_ROTATIONS);
 
-pros::Motor ClawL(CLAWL);
-pros::Motor ClawR(CLAWR);
-
-pros::ADIPotentiometer Arm(1);
+pros::Motor FlapL(FLAPL);
+pros::Motor FlapR(FLAPR);
