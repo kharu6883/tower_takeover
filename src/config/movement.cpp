@@ -1,10 +1,10 @@
 #include "main.h"
 #include "config.h"
 
-double current, error, last, dTerm, output;
+double current, error, last, derivative, output, slewOutput;
 
 void reset() {
-  current = 0; error = 0; last = 0; dTerm = 0; output = 0;
+  current = 0; error = 0; last = 0; derivative = 0; output = 0; slewOutput = 0;
 
   LF.tare_position();
   LB.tare_position();
@@ -14,34 +14,28 @@ void reset() {
   right(0);
 }
 
+bool isMoving() {
+  static int now, last = 0;
+
+  now = LF.get_position();
+
+  return true;
+}
+
 void drive(double target, int speed, double rate) {
   const double kP = 70;
   const double kD = 2;
 
   reset();
 
-  while(target > 0) {
+  while(target > 0 && isMoving()) {
+    wait(20);
     current = LF.get_position();
     error = target - current;
-    dTerm = error - last;
+
+    output = pTerm(target, LF.get_position(), kP) + dTerm(error, last);
+
     last = error;
-
-    output = ( error * kP ) + ( dTerm * kD );
-
-    if(output > speed) output = speed;
-
-    left(output);
-    right(output);
-    wait(5);
-  }
-
-  while(target < 0) {
-    current = LF.get_position();
-    error = target - current;
-    dTerm = error - last;
-    last = error;
-
-    output = ( error * kP ) + ( dTerm * kD );
 
     if(output > speed) output = speed;
 
@@ -50,17 +44,14 @@ void drive(double target, int speed, double rate) {
 }
 
 void slew(int target, double rate) {
-  output = 0;
-
-  if(output < target) {
-    output += rate;
-    wait(1);
+  if(target > slewOutput + rate) {
+    slewOutput += rate;
+  } else {
+    slewOutput = target;
   }
 
-  if(output > target) output = target;
-
-  left(output);
-  right(output);
+  left(abs(slewOutput));
+  right(abs(slewOutput));
 }
 
 void slop() {
@@ -78,7 +69,8 @@ void right(int speed) {
 }
 
 void lift(int speed) {
-  Lift.move(speed);
+  LiftL.move(speed);
+  LiftR.move(speed);
 }
 
 void flap(int speed) {

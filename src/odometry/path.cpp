@@ -5,13 +5,13 @@ namespace path {
     {LFPORT, LBPORT},
     {-RFPORT, -RBPORT},
     AbstractMotor::gearset::green,
-    {4.125_in, 29_in}
+    {4.125_in, 30_in}
   );
 
   // Acceleration factor
   auto profile = AsyncControllerFactory::motionProfile(
     1, // Max possible velocity in m/s
-    4, // Max possible acceleration in m/s^2
+    3, // Max possible acceleration in m/s^2
     10, // Max possible jerk in m/s^3
     driver
   );

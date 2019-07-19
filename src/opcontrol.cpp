@@ -1,8 +1,11 @@
 #include "main.h"
 #include "config.h"
 
+const double kP = 2;
+
 void opcontrol() {
-	Lift.set_brake_mode(MOTOR_BRAKE_HOLD);
+	LiftL.set_brake_mode(MOTOR_BRAKE_HOLD);
+	LiftR.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) + master.get_analog(ANALOG_LEFT_X) * 2);
@@ -11,9 +14,9 @@ void opcontrol() {
 		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) + master.get_analog(ANALOG_LEFT_X) * 2);
 
 		if(master.get_digital(DIGITAL_L1)) {
-			lift(127);
+			lift(pTerm(3, LiftL.get_position(), 40));
 		} else if(master.get_digital(DIGITAL_L2)) {
-			lift(-127);
+			lift(pTerm(0, LiftL.get_position(), 40));
 		} else {
 			lift(0);
 		}

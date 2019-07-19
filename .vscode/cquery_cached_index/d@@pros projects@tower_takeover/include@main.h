@@ -24,15 +24,16 @@ LV_IMG_DECLARE(title);
 LV_IMG_DECLARE(intro);
 
 // Motor ports & ADI
-#define LFPORT 2
-#define LBPORT 10
-#define RFPORT 3
-#define RBPORT 20
+#define LFPORT 1
+#define LBPORT 9
+#define RFPORT 2
+#define RBPORT 10
 
-#define LIFT 1
+#define LIFTL 3
+#define LIFTR 4
 
-#define FLAPL 11
-#define FLAPR 12
+#define FLAPL 7
+#define FLAPR 8
 
 using namespace okapi;
 

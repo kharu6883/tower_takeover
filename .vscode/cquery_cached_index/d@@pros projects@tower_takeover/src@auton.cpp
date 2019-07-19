@@ -1,8 +1,41 @@
 #include "main.h"
 using namespace path;
 
-void autonboi() {
-  std::cout << "Hello world!" << std::endl;
+void tester() {
+  std::cout << "Testing" << std::endl;
+  roller(127);
+
+  generate("1", 0.9_ft, 0_ft, 0_deg);
+  execute("1", false);
+  destroy("1");
+
+  generate("suckCube", 0.55_ft, 0_ft, 0_deg);
+  execute("suckCube", false);
+  wait();
+  execute("suckCube", false);
+  wait();
+  execute("suckCube", false);
+  destroy("suckCube");
+
+  generate("2", 2_ft, 2_ft, 0_deg);
+  execute("2", true);
+  destroy("2");
+
+  generate("3", 1_ft, 2_ft, 0_deg);
+  execute("3", false);
+  destroy("3");
+
+  generate("4", 1_ft, 0.1_ft, 0_deg);
+  execute("4", false);
+  destroy("4");
+
+  generate("5", 3_ft, 3_ft, 90_deg);
+  execute("5", true);
+  destroy("5");
+
+  generate("6", 5.2_ft, -2.5_ft, -70_deg);
+  execute("6", false);
+  destroy("6");
 }
 
 void motionTest() {

@@ -30,6 +30,7 @@ EXCLUDE_SRC_FROM_LIB+=$(foreach file, $(SRCDIR)/opcontrol $(SRCDIR)/initialize $
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/auton.cpp
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/config
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/display
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/odometry
 
 # files that get distributed to every user (beyond your source archive) - add
 # whatever files you want here. This line is configured to add all header files
