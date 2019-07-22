@@ -3,45 +3,51 @@
 
 bool isStacking = false;
 
-const double kP = 40;
+const double kP = 60;
 
-// Basic Movement
+
+
+void rack(int speed) {
+  Rack.move_velocity(speed);
+}
+
+void arm(int speed) {
+  Arm.move_velocity(speed);
+}
+
 void roller(int speed) {
-  flap(speed);
+  FlapL.move_velocity(speed);
+  FlapR.move_velocity(-speed);
 }
 
-void roller(int speed, bool suck) {
-  while(suck) {
-    flap(speed);
-  }
 
-  while(!suck) {
-    flap(-speed);
-  }
-}
 
-// Complex Movement
-void lift(double target, int speed) {
+void rackAsync(double target, int speed, double rate) {
   while(target > 0) {
-    double output = pTerm(target, LiftL.get_position(), 3);
+    double output = pTerm(target, Rack.get_position(), 3);
 
     if(output > speed) output = speed;
-    lift(output);
+    rack(output);
 
     if(output < 1) break;
   }
 
   while(target < 0) {
-    double output = pTerm(target, LiftL.get_position(), 3);
+    double output = pTerm(target, Rack.get_position(), 3);
 
     if(abs(output) > speed) output = speed;
-    lift(-output);
+    rack(-output);
 
     if(abs(output) < 1) break;
   }
 }
 
-// PID Calculation
+void armAsync(double target, int speed, double rate) {
+
+}
+
+
+
 double pTerm(double target, double sensor, double kP) {
   return(target - sensor) * kP;
 }
@@ -50,8 +56,20 @@ double dTerm(double now, double last) {
   return now - last;
 }
 
-// Etc
-void wait(int ms) { // Just does pros::delay, so nothing to worry about
+double slew(double target, double actual, double rate) {
+  double output;
+
+  if(target > actual + rate) {
+    output = actual;
+    output += rate;
+  } else {
+    output = target;
+  }
+
+  return output;
+}
+
+void wait(int ms) {
   pros::delay(ms);
 }
 

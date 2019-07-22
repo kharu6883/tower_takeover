@@ -1,4 +1,5 @@
 #include "main.h"
+#include "config.h"
 using namespace Display;
 
 void initialize() {
