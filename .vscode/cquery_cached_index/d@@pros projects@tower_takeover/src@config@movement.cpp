@@ -14,43 +14,155 @@ void reset() {
   right(0);
 }
 
-bool isMoving() {
-  static int now, last = 0;
-
-  now = LF.get_position();
-
-  return true;
-}
-
 void drive(double target, int speed, double rate) {
-  const double kP = 70;
-  const double kD = 2;
+  const double kP = 0.4;
+  const double kD = 0.6;
 
-  double lastSlew = 0, nowSlew = 0;
+  double deltaL, deltaR;
+  double lastSlew = 0, nowSlew = 0, slewOutput = 0;
 
   reset();
 
-  while(target > 0 && isMoving()) {
-    wait(20);
-    lastSlew = nowSlew;
-    current = LF.get_position();
+  while(target > 0) {
+    deltaL = (LF.get_position() + LB.get_position()) / 2;
+    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    current = ( deltaL + deltaR ) / 2;
     error = target - current;
 
-    output = pTerm(target, LF.get_position(), kP) + dTerm(error, last);
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
 
     last = error;
 
-    if(output > speed) output = speed;
+    if(output > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = output;
+    }
 
-    nowSlew = slew(output, lastSlew, 9);
+    if(slewOutput > speed) slewOutput = speed;
 
-    left(nowSlew);
-    right(nowSlew);
+    if(isSettled(error, 9)) break;
+
+    left(slewOutput - slop());
+    right(slewOutput + slop());
+
+    std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
+    wait(20);
   }
+
+  while(target < 0) {
+    deltaL = (LF.get_position() + LB.get_position()) / 2;
+    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    current = ( deltaL + deltaR ) / 2;
+    error = target - current;
+
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(abs(output) > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = abs(output);
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(abs(error), 9)) break;
+
+    left(-slewOutput - slop());
+    right(-slewOutput + slop());
+
+    std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
+    wait(20);
+  }
+
+  reset();
 }
 
-void slop() {
-  int error = 0;
+void turn(double target, int speed, double rate) {
+  const double kP = 0.6;
+  const double kD = 0.6;
+
+  double deltaL, deltaR;
+  double lastSlew = 0, nowSlew = 0, slewOutput = 0;
+
+  reset();
+
+  while(target > 0) { // Turn Right
+    deltaL = (LF.get_position() + LB.get_position()) / 2;
+    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    current = ( deltaL + abs(deltaR) ) / 2;
+    error = target - current;
+
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(output > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = output;
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(error, 6)) break;
+
+    left(slewOutput);
+    right(-slewOutput);
+
+    std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
+    wait(20);
+  }
+
+  while(target < 0) { // Turn Right
+    deltaL = (LF.get_position() + LB.get_position()) / 2;
+    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    current = ( abs(deltaL) + deltaR ) / 2;
+    error = target + current;
+
+    output = pTerm(target, -current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(abs(output) > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = abs(output);
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(error, 6)) break;
+
+    left(-slewOutput);
+    right(slewOutput);
+
+    std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
+    wait(20);
+  }
+
+  reset();
+}
+
+double slop() {
+  const double amp = 8;
+
+  double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
+  double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
+
+  return ( deltaL - deltaR ) / amp;
+}
+
+double slop(bool isTurn) {
+  const double amp = 8;
+
+  double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
+  double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
+
+  if(isTurn) return ( deltaL + deltaR ) * amp;
+    else return ( deltaL - deltaR ) / amp;
 }
 
 void left(int speed) {

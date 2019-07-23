@@ -23,27 +23,145 @@ void roller(int speed) {
 
 
 void rackAsync(double target, int speed, double rate) {
-  while(target > 0) {
-    double output = pTerm(target, Rack.get_position(), 3);
+  const double kP = 100;
 
-    if(output > speed) output = speed;
-    rack(output);
+  double tolerance = 3;
 
-    if(output < 1) break;
+  double slewOutput;
+
+  while(target > Rack.get_position()) { // Goin' up
+    double desired = pTerm(target, Rack.get_position(), kP);
+
+    if(desired > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = desired;
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(desired, tolerance)) break;
+
+    rack(slewOutput);
+
+    wait(20);
   }
 
-  while(target < 0) {
-    double output = pTerm(target, Rack.get_position(), 3);
+  while(target < Rack.get_position()) { // Goin' down
+    double desired = pTerm(target, Rack.get_position(), kP);
 
-    if(abs(output) > speed) output = speed;
-    rack(-output);
+    if(abs(desired) > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = abs(desired);
+    }
 
-    if(abs(output) < 1) break;
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(desired, tolerance)) break;
+
+    rack(-slewOutput);
+
+    wait(20);
   }
+
+  rack(0);
 }
 
 void armAsync(double target, int speed, double rate) {
+  const double kP = 100;
 
+  double tolerance = 3;
+
+  double slewOutput;
+
+  while(target > Arm.get_position()) { // Goin' up
+    double desired = pTerm(target, Arm.get_position(), kP);
+
+    if(desired > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = desired;
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(desired, tolerance)) break;
+
+    arm(slewOutput);
+
+    wait(20);
+  }
+
+  while(target < Rack.get_position()) { // Goin' down
+    double desired = pTerm(target, Arm.get_position(), kP);
+
+    if(abs(desired) > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = abs(desired);
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(desired, tolerance)) break;
+
+    arm(-slewOutput);
+
+    wait(20);
+  }
+
+  arm(0);
+}
+
+void tower(int id) {
+  const double kP = 200;
+  double rackTarget, armTarget, tolerance = 1;
+
+  //roller(200);
+  //wait(1000);
+  roller(-60);
+  wait(600);
+  roller(0);
+
+  drive(-200, 50, 9);
+
+  while(id == 1) { // Low Tower
+    rackTarget = pTerm(1.212, abs(Rack.get_position()), kP);
+    rack(rackTarget);
+
+    armTarget = pTerm(3.1, abs(Arm.get_position()), kP);
+    arm(armTarget);
+
+    if(isSettled(rackTarget, tolerance) && isSettled(armTarget, tolerance)) break;
+  }
+
+  while(id == 2) { // Middle tower
+    rackTarget = pTerm(2.2, abs(Rack.get_position()), kP);
+    rack(rackTarget);
+
+    armTarget = pTerm(4, abs(Arm.get_position()), kP);
+    arm(armTarget);
+
+    if(isSettled(rackTarget, tolerance) && isSettled(armTarget, tolerance)) break;
+  }
+
+  drive(150, 30, 9);
+  wait(200);
+  roller(-100);
+  wait(1000);
+  roller(0);
+  drive(-100, 30, 9);
+
+  while(true) { // Middle tower
+    rackTarget = pTerm(0, abs(Rack.get_position()), kP);
+    rack(rackTarget);
+
+    armTarget = pTerm(0, abs(Arm.get_position()), kP);
+    arm(armTarget);
+
+    if(isSettled(rackTarget, tolerance) && isSettled(armTarget, tolerance)) break;
+  }
 }
 
 
@@ -56,18 +174,15 @@ double dTerm(double now, double last) {
   return now - last;
 }
 
-double slew(double target, double actual, double rate) {
-  double output;
+bool isSettled(double error, double tolerance) {
+  bool settled = false;
 
-  if(target > actual + rate) {
-    output = actual;
-    output += rate;
-  } else {
-    output = target;
-  }
+  if(error > -tolerance && error < tolerance) settled = true;
 
-  return output;
+  return settled;
 }
+
+
 
 void wait(int ms) {
   pros::delay(ms);

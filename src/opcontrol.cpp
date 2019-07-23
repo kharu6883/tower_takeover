@@ -18,14 +18,14 @@ void opcontrol() {
 	pros::Task armAsync(armController);
 
 	while (true) {
-		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) + master.get_analog(ANALOG_LEFT_X) * 2);
-		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) - master.get_analog(ANALOG_LEFT_X) * 2);
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) - master.get_analog(ANALOG_LEFT_X) * 2);
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) + master.get_analog(ANALOG_LEFT_X) * 2);
+		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X) * 2);
+		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
+		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
+		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X) * 2);
 
 		if(master.get_digital(DIGITAL_L1) && !isMacro) {
 
-			target = pTerm(3.5, Rack.get_position(), kP);
+			target = pTerm(3.6, Rack.get_position(), kP - 50);
 
 			if(target > slewOutput + rate) {
 		    slewOutput += rate;
@@ -116,13 +116,13 @@ void armController(void* ignore) {
 
 		if(isMacro && !master.get_digital(DIGITAL_L1) && mode != 2 && !isReturn) { // Top Tower
 			mode = 1;
-			armTarget = pTerm(2, abs(rackPos), kP);
+			armTarget = pTerm(2.2, abs(rackPos), kP);
 			rack(armTarget);
 
-			armTarget = pTerm(3.7, abs(armPos), kP);
+			armTarget = pTerm(4, abs(armPos), kP);
 			arm(armTarget);
 
-			if(rackPos > 2 - tolerance && rackPos < 2 + tolerance && armPos > 3.7 - tolerance && armPos < 3.7 + tolerance) {
+			if(rackPos > 2.2 - tolerance && rackPos < 2.2 + tolerance && armPos > 4 - tolerance && armPos < 4 + tolerance) {
 				rack(0);
 				arm(0);
 
@@ -139,7 +139,7 @@ void armController(void* ignore) {
 			armTarget = pTerm(3.1, abs(armPos), kP);
 			arm(armTarget);
 
-			if(rackPos > 1.212 - tolerance && rackPos < 1.212 + tolerance && armPos > 3.1 - tolerance && armPos < 3.1 + tolerance) {
+			if(rackPos > 1.212 - tolerance && rackPos < 1.212 + tolerance && armPos > 3.1 - 0.05 && armPos < 3.1 + 0.05) {
 				rack(0);
 				arm(0);
 

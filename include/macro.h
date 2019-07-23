@@ -18,18 +18,18 @@ void roller(int speed);
     COMPLEX MOVEMENT
 --------------------------------*/
 
-// Moves the lift. This is for autonomouses only.
-void liftAsync(double target, int speed, double rate);
+// Moves the rack to the target, in a given speed.
+void rackAsync(double target, int speed, double rate);
 
-// Opens or closes the claw to an absolute target, in a given speed.
-void claw(double target, int speed);
+// Moves the arm to the target, in a given speed.
+void armAsync(double target, int speed, double rate);
 
-// Moves the claw. When boolean is set to true, it will open. If it is set to false, it will close.
-void clawTo(bool open);
+// Macro for putting a cube in the tower.
+void tower(int id);
 
 
 /*--------------------------------
-    PID CALCULATION
+    PID CALCULATION & CONTROL
 --------------------------------*/
 
 // Calculates P term with the following equation. (Target - Sensor) * kP
@@ -38,8 +38,9 @@ double pTerm(double target, double sensor, double kP);
 // Calculates D term with the following equation. (Now - Last)
 double dTerm(double now, double last);
 
-// Provides a slew output based on the input.
-double slew(double target, double actual, double rate);
+// Returns true if the error value is within the set tolerance.
+bool isSettled(double error, double tolerance);
+
 
 /*--------------------------------
     EXTRA FUNCTIONS
