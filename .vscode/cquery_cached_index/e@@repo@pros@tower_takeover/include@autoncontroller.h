@@ -15,5 +15,5 @@ int getSlot();
 const char * getName(int slot);
 
 // Auton Declarations
-void autonboi();
+void tester();
 void motionTest();
