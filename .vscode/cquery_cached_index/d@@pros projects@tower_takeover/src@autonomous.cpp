@@ -10,11 +10,14 @@ map<int, const char *> SlotName;
 map<int, const char *>::iterator SlotIter;
 
 void autonomous() {
-  Autonomous[autonSlot]();
+  Autonomous[1]();
 }
 
 void initAuton() { // The autons will be stored in this order, starting from 0.
   addAuton("Test Auton", tester);
+  addAuton("Skills 1", skills1);
+
+  // Running some tests below
   addAuton("Motion Test", motionTest);
 
   print("Auton initialized!");

@@ -1,8 +1,15 @@
 #include "main.h"
+#include "config.h"
 using namespace Display;
 
 void initialize() {
   initAuton();
+
+  Rack.tare_position();
+  Arm.tare_position();
+
+  Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
+  Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 
   Display::BrainDisplay brain;
   brain.main();

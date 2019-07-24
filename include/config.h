@@ -6,8 +6,8 @@ extern pros::Motor LB;
 extern pros::Motor RF;
 extern pros::Motor RB;
 
-extern pros::Motor LiftL;
-extern pros::Motor LiftR;
+extern pros::Motor Rack;
+extern pros::Motor Arm;
 
 extern pros::Motor FlapL;
 extern pros::Motor FlapR;

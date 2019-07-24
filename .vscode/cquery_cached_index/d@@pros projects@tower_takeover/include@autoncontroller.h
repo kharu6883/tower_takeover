@@ -16,4 +16,5 @@ const char * getName(int slot);
 
 // Auton Declarations
 void tester();
+void skills1();
 void motionTest();
