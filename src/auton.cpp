@@ -79,8 +79,6 @@ void skills1() {
   roller(-15);
   rackAsync(3.8, 90, 15);
 
-
-
   // Drive back
   roller(-200);
   drive(-300, 150, 9);
@@ -101,22 +99,21 @@ void skills1() {
   drive(200, 80, 9);
   drive(-400, 200, 9);
 
-  // Red cup and score low tower
+  // Towards red tower and score
   turn(380, 80, 5);
   drive(950, 200, 9);
   turn(80,30,4);
   tower(1);
 
-  //another cup Eony re format this lol
+  // Yoink one cube and score blue tower
   roller(200);
   turn(-500, 100, 5);
   drive(800, 200, 9);
   wait(1000);
   drive(-50, 200, 9);
-
   tower(1);
 
-  //more cubes
+  // Yoink more cubes
   turn(100,50,6);
   roller(200);
   drive(200,200,6);
@@ -131,7 +128,6 @@ void skills1() {
   roller(-15);
   rackAsync(3.8, 90, 9);
   roller(0);
-
 
   // Drive back
   roller(-200);
