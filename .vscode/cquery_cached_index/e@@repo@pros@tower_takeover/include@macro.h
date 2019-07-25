@@ -4,23 +4,32 @@ extern bool isStacking;
     BASIC MOVEMENT
 --------------------------------*/
 
-// Rolls the flaps inward (intake the cubes).
-void roller(int speed);
+// Moves the rack in a given speed. Use negative values for going down. Uses RPM for speed.
+void rack(int speed);
 
-//Rolls the flaps depending on the suck variable. If the boolean is set to false, the intake will run backwards, spitting out the cubes.
-void roller(int speed, bool suck);
+// Moves the arm speed in a given speed. Use negative values for going down. Uses RPM for speed.
+void arm(int speed);
+
+// Rotates the rollers in a given speed. Use negative values for going down. Uses RPM for speed.
+void roller(int speed);
 
 
 /*--------------------------------
     COMPLEX MOVEMENT
 --------------------------------*/
 
-// P loop lift. If a negative target is inserted, the lift will decline.
-void lift(double target, int speed);
+// Moves the rack to the target, in a given speed.
+void rackAsync(double target, int speed, double rate);
+
+// Moves the arm to the target, in a given speed.
+void armAsync(double target, int speed, double rate);
+
+// Macro for putting a cube in the tower.
+void tower(int id);
 
 
 /*--------------------------------
-    PID CALCULATION
+    PID CALCULATION & CONTROL
 --------------------------------*/
 
 // Calculates P term with the following equation. (Target - Sensor) * kP
@@ -29,6 +38,15 @@ double pTerm(double target, double sensor, double kP);
 // Calculates D term with the following equation. (Now - Last)
 double dTerm(double now, double last);
 
-// Etc
+// Returns true if the error value is within the set tolerance.
+bool isSettled(double error, double tolerance);
+
+
+/*--------------------------------
+    EXTRA FUNCTIONS
+--------------------------------*/
+
+// Basic functions that everybody knows.
+
 void wait(int ms);
 void print(const char * text);

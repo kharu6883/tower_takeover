@@ -29,11 +29,11 @@ LV_IMG_DECLARE(intro);
 #define RFPORT 2
 #define RBPORT 10
 
-#define LIFTL 3
-#define LIFTR 4
+#define RACK 3
+#define ARM 5
 
-#define FLAPL 7
-#define FLAPR 8
+#define FLAPL 11
+#define FLAPR 4
 
 using namespace okapi;
 
