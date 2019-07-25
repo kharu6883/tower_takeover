@@ -1,4 +1,3 @@
-# PROS Files
 .vs/
 .vscode/
 
@@ -6,4 +5,7 @@
 *.bin
 *.ini
 
+bin/output.elf
+bin/output.bin
+bin/_pros_ld_timestamp.o
 compile_commands.json
