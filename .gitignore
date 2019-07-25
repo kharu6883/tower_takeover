@@ -1,3 +1,9 @@
 # PROS Files
 .vs/
 .vscode/
+
+*.log
+*.bin
+*.ini
+
+compile_commands.json
