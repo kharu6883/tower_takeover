@@ -1,5 +1,5 @@
 #include "main.h"
-#include "config.h"
+#include "control/config.h"
 
 bool isStacking = false;
 

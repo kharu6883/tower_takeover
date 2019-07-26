@@ -28,9 +28,8 @@ VERSION:=1.0.0
 # this line excludes opcontrol.c and similar files
 EXCLUDE_SRC_FROM_LIB+=$(foreach file, $(SRCDIR)/opcontrol $(SRCDIR)/initialize $(SRCDIR)/autonomous,$(foreach cext,$(CEXTS),$(file).$(cext)) $(foreach cxxext,$(CXXEXTS),$(file).$(cxxext)))
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/auton.cpp
-EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/config
-EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/display
-EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/odometry
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/control
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/display/controller
 
 # files that get distributed to every user (beyond your source archive) - add
 # whatever files you want here. This line is configured to add all header files

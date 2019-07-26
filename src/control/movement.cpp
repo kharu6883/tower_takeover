@@ -1,5 +1,5 @@
 #include "main.h"
-#include "config.h"
+#include "control/config.h"
 
 double current, error, last, derivative, output;
 

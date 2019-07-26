@@ -13,11 +13,10 @@
 #include "autonController.h"
 
 #include "display.h"
-#include "movement.h"
-#include "odometry.h"
-#include "path.h"
 
-#include "macro.h"
+#include "control/movement.h"
+#include "control/macro.h"
+#include "control/path.h"
 
 // Image declaration
 LV_IMG_DECLARE(title);
