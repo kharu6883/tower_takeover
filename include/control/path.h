@@ -5,7 +5,5 @@ namespace path {
   void execute(std::string name, bool reverse);
   void destroy(std::string name);
 
-  void genTest();
-
   void wait();
 }

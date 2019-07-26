@@ -30,14 +30,6 @@ namespace path {
     }, name );
   }
 
-  void genTest() {
-    profile.generatePath({
-        Point{0_ft, 0_ft, 0_deg},
-        Point{1_ft, 1_ft, 0_deg},
-        Point{1_ft, -1_ft, 0_deg}
-      }, "testGen" );
-  }
-
   void execute(std::string name, bool reverse) {
     profile.setTarget(name, reverse);
   }
