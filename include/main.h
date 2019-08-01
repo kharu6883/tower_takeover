@@ -14,6 +14,7 @@
 
 #include "display.h"
 
+#include "control/asyncController.h"
 #include "control/movement.h"
 #include "control/macro.h"
 #include "control/path.h"
