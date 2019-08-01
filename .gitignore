@@ -45,3 +45,4 @@ compile_commands.json
 bin/output.elf
 bin/output.bin
 bin/_pros_ld_timestamp.o
+compile_commands.json
