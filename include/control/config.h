@@ -11,3 +11,6 @@ extern pros::Motor Arm;
 
 extern pros::Motor FlapL;
 extern pros::Motor FlapR;
+
+// Sensors
+extern pros::ADIPotentiometer rackPot;
