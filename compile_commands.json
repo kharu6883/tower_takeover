@@ -374,11 +374,11 @@
             "-fdiagnostics-color",
             "--std=gnu11",
             "-o",
-            "C:/Users/CLEARL~1/AppData/Local/Temp/tmp3yuy5c97/display/img/title.c.o",
-            "src\\display\\img\\title.c"
+            "C:/Users/CLEARL~1/AppData/Local/Temp/tmp9h_h7bva/display/img/intro.c.o",
+            "src\\display\\img\\intro.c"
         ],
         "directory": "E:\\repo\\pros\\tower_takeover",
-        "file": "src\\display\\img\\title.c"
+        "file": "src\\display\\img\\intro.c"
     },
     {
         "arguments": [
@@ -405,10 +405,10 @@
             "-fdiagnostics-color",
             "--std=gnu11",
             "-o",
-            "C:/Users/CLEARL~1/AppData/Local/Temp/tmp3yuy5c97/display/img/intro.c.o",
-            "src\\display\\img\\intro.c"
+            "C:/Users/CLEARL~1/AppData/Local/Temp/tmp9h_h7bva/display/img/title.c.o",
+            "src\\display\\img\\title.c"
         ],
         "directory": "E:\\repo\\pros\\tower_takeover",
-        "file": "src\\display\\img\\intro.c"
+        "file": "src\\display\\img\\title.c"
     }
 ]

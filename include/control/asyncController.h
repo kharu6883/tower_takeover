@@ -1,0 +1,7 @@
+class controlAsync {
+  public:
+    
+
+  private:
+
+};
