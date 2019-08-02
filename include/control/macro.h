@@ -19,10 +19,10 @@ void roller(int speed);
 --------------------------------*/
 
 // Moves the rack to the target, in a given speed.
-void rackAsync(double target, int speed, double rate);
+void rack(double target, int speed, double rate);
 
 // Moves the arm to the target, in a given speed.
-void armAsync(double target, int speed, double rate);
+void arm(double target, int speed, double rate);
 
 // Macro for putting a cube in the tower.
 void tower(int id);

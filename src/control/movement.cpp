@@ -3,6 +3,8 @@
 
 double current, error, last, derivative, output;
 
+ControlAsync Driver;
+
 void reset() {
   current = 0; error = 0; last = 0; derivative = 0; output = 0;
 
@@ -23,7 +25,7 @@ void drive(double target, int speed, double rate) {
 
   reset();
 
-  while(target > 0) {
+  while(target > 0 && !Driver.isDisabled()) {
     deltaL = (LF.get_position() + LB.get_position()) / 2;
     deltaR = (RF.get_position() + RB.get_position()) / 2;
     current = ( deltaL + deltaR ) / 2;
@@ -50,7 +52,7 @@ void drive(double target, int speed, double rate) {
     wait(20);
   }
 
-  while(target < 0) {
+  while(target < 0 && !Driver.isDisabled()) {
     deltaL = (LF.get_position() + LB.get_position()) / 2;
     deltaR = (RF.get_position() + RB.get_position()) / 2;
     current = ( deltaL + deltaR ) / 2;
@@ -89,7 +91,7 @@ void turn(double target, int speed, double rate) {
 
   reset();
 
-  while(target > 0) { // Turn Right
+  while(target > 0 && !Driver.isDisabled()) { // Turn Right
     deltaL = (LF.get_position() + LB.get_position()) / 2;
     deltaR = (RF.get_position() + RB.get_position()) / 2;
     current = ( deltaL + abs(deltaR) ) / 2;
@@ -116,7 +118,7 @@ void turn(double target, int speed, double rate) {
     wait(20);
   }
 
-  while(target < 0) { // Turn Right
+  while(target < 0 && !Driver.isDisabled()) { // Turn Right
     deltaL = (LF.get_position() + LB.get_position()) / 2;
     deltaR = (RF.get_position() + RB.get_position()) / 2;
     current = ( abs(deltaL) + deltaR ) / 2;

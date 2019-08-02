@@ -22,7 +22,7 @@ void roller(int speed) {
 
 
 
-void rackAsync(double target, int speed, double rate) {
+void rack(double target, int speed, double rate) {
   const double kP = 100;
 
   double tolerance = 3;
@@ -68,7 +68,7 @@ void rackAsync(double target, int speed, double rate) {
   rack(0);
 }
 
-void armAsync(double target, int speed, double rate) {
+void arm(double target, int speed, double rate) {
   const double kP = 100;
 
   double tolerance = 3;

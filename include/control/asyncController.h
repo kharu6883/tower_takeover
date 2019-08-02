@@ -10,14 +10,17 @@ class ControlAsync {
 
     void run(void* args);
     void reset();
+    void stop();
 
-    void rackAsync(Vector2 target);
-    void armAsync(Vector2 target);
+    // Getters and Setters
+    bool isDisabled();
+
+    void driveAsync(double length, int speed, int rate);
+    void turnAsync(double length, int speed, int rate);
 
   private:
     bool isDrive;
     bool isTurn;
 
-    bool isRack;
-    bool isArm;
+    Vector2 target;
 };

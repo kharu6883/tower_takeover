@@ -3,6 +3,8 @@ using namespace path;
 
 // 6 = tolerance
 
+ControlAsync Control;
+
 void tester() {
   std::cout << "Testing" << std::endl;
 
@@ -27,13 +29,13 @@ void tester() {
   turn(720, 80, 9);
   drive(1390, 100, 9);
   roller(0);
-  rackAsync(3.8, 70, 9);
+  rack(3.8, 70, 9);
   wait(800);
 
   // Pull back
   roller(-200);
   drive(-200, 100, 9);
-  rackAsync(0, 100, 9);
+  rack(0, 100, 9);
   roller(0);
 
   // Towards medium tower
@@ -77,13 +79,13 @@ void skills1() {
   turn(750, 80, 9);
   drive(455, 150, 5);
   roller(-15);
-  rackAsync(3.8, 90, 15);
+  rack(3.8, 90, 15);
 
   // Drive back
   roller(-200);
   drive(-300, 150, 9);
   roller(0);
-  rackAsync(0, 100, 20);
+  rack(0, 100, 20);
 
   // Middle tower
   turn(720, 100, 9);
@@ -126,14 +128,14 @@ void skills1() {
   turn(200,40,5);
   drive(600,110,6);
   roller(-15);
-  rackAsync(3.8, 90, 9);
+  rack(3.8, 90, 9);
   roller(0);
 
   // Drive back
   roller(-200);
   drive(-250, 150, 9);
   roller(0);
-  rackAsync(0, 100, 9);
+  rack(0, 100, 9);
 }
 
 void motionTest() {
