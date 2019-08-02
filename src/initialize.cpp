@@ -5,16 +5,20 @@ using namespace Display;
 void initialize() {
   initAuton();
 
-  Rack.tare_position();
+  // Start Asynchronous Driver
+  ControlAsync Control;
+  pros::Task controlDrive(Control.run);
+
+  // Reset Motor Positions. Note - Rack has its own potentiometer
   Arm.tare_position();
 
   Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
   Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 
-  Display::BrainDisplay brain;
+  BrainDisplay brain;
   brain.main();
 
-  Display::RemoteDisplay remote;
+  RemoteDisplay remote;
 
   pros::Task updateDisplay(brain.update);
   pros::Task updateRemote(remote.update);

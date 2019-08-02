@@ -8,7 +8,7 @@ class ControlAsync {
   public:
     ControlAsync();
 
-    void run(void* args);
+    static void run(void* args);
     void reset();
     void stop();
 
