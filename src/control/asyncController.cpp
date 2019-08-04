@@ -22,6 +22,7 @@ void ControlAsync::run(void* args) {
 }
 
 void ControlAsync::reset() {
+  stop();
   rack(0);
   arm(0);
   target = {0, 0, 0};

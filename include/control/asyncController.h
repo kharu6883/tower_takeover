@@ -9,8 +9,8 @@ class ControlAsync {
     ControlAsync();
 
     static void run(void* args);
-    void reset();
-    void stop();
+    static void reset();
+    static void stop();
 
     // Getters and Setters
     bool isDisabled();
@@ -19,8 +19,8 @@ class ControlAsync {
     void turnAsync(double length, int speed, int rate);
 
   private:
-    bool isDrive;
-    bool isTurn;
+    static bool isDrive;
+    static bool isTurn;
 
-    Vector2 target;
+    static Vector2 target;
 };

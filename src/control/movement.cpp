@@ -80,6 +80,7 @@ void drive(double target, int speed, double rate) {
   }
 
   reset();
+  Driver.reset();
 }
 
 void turn(double target, int speed, double rate) {
@@ -146,6 +147,7 @@ void turn(double target, int speed, double rate) {
   }
 
   reset();
+  Driver.reset();
 }
 
 double slop() {
