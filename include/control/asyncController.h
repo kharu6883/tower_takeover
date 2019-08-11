@@ -15,12 +15,16 @@ class ControlAsync {
     // Getters and Setters
     bool isDisabled();
 
-    void driveAsync(double length, int speed, int rate);
-    void turnAsync(double length, int speed, int rate);
+    void drive(double length, int speed, int rate);
+    void turn(double length, int speed, int rate);
+    void strafe(double length, int speed, int rate);
 
   private:
     static bool isDrive;
     static bool isTurn;
+    static bool isStrafe;
+
+    static double current, error, last, derivative, output, slewOutput;
 
     static Vector2 target;
 };

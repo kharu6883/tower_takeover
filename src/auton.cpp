@@ -3,46 +3,12 @@ using namespace path;
 
 // 6 = tolerance
 
-ControlAsync Control;
+ControlAsync Thread;
 
 void tester() {
   std::cout << "Testing" << std::endl;
 
-  // First 4 cubes
-  roller(200);
-  drive(1000, 35, 9);
-
-  // Reach 3 cube stack
-  generate("second cube stack", 3_ft, 3_ft, 0_deg);
-  execute("second cube stack", true);
-  destroy("second cube stack");
-  wait(100);
-
-  // Suck 3 cubes
-  turn(30, 20, 9);
-  drive(1000, 35, 9);
-  drive(-100, 80, 9);
-  drive(200, 80, 9);
-  wait(300);
-
-  // Red small corner and place loaded cubes
-  turn(720, 80, 9);
-  drive(1390, 100, 9);
-  roller(0);
-  rack(3.8, 70, 9);
-  wait(800);
-
-  // Pull back
-  roller(-200);
-  drive(-200, 100, 9);
-  rack(0, 100, 9);
-  roller(0);
-
-  // Towards medium tower
-  turn(750, 100, 9);
-  drive(900, 100, 9);
-  roller(50);
-  roller(0);
+  Thread.drive(1000, 100, 1);
 
   // generate("1", 1_ft, 0_ft, 0_deg);
   // execute("1", false);
@@ -72,70 +38,96 @@ void skills1() {
   roller(200);
   drive(300, 150, 9);
   drive(700, 30, 9);
-  wait(100);
+  roller(50);
+
+  // Swerve back to the 3 cubes
+  generate("yoink", 3_ft, 3_ft, 1_deg);
+  execute("yoink", true);
+  destroy("yoink");
+  turn(20, 60, 9);
+
+  // Yoink 3 more cubes
+  roller(200);
+  drive(1000, 35, 9);
+
+  // Drive back and turn right facing small red corner
+  drive(-1100, 85, 9);
+  turn(530, 100, 9);
 
   // Small red corner and place cubes
-  drive(-500,200,9);
-  turn(750, 80, 9);
-  drive(455, 150, 5);
+  drive(900, 80, 9);
+  wait(500);
   roller(-15);
-  rack(3.8, 90, 15);
+  rack(3615, 90, 9);
+  drive(50, 70, 15);
 
-  // Drive back
+  // Escape the area like the wind
+  Thread.drive(-950, 100, 9);
   roller(-200);
-  drive(-300, 150, 9);
-  roller(0);
-  rack(0, 100, 20);
+  rack(900, 150, 9);
 
-  // Middle tower
-  turn(720, 100, 9);
-  roller(100);
-  drive(930, 200, 9);
-  wait(1000);
-  drive(-80, 200, 9);
-  tower(2);
-
-  // Turn towards and pick up 1 cube
-  roller(200);
-  turn(450, 80, 5);
-  drive(200, 80, 9);
-  drive(-400, 200, 9);
-
-  // Towards red tower and score
-  turn(380, 80, 5);
-  drive(950, 200, 9);
-  turn(80,30,4);
-  tower(1);
-
-  // Yoink one cube and score blue tower
-  roller(200);
-  turn(-500, 100, 5);
-  drive(800, 200, 9);
-  wait(1000);
-  drive(-50, 200, 9);
-  tower(1);
-
-  // Yoink more cubes
-  turn(100,50,6);
-  roller(200);
-  drive(200,200,6);
-  turn(150,50,6);
-  drive(250,200,6);
-  turn(-200,80,6);
-  drive(200,200,9);
-  drive(1000,30,9);
-  drive(200,150,9);
-  turn(200,40,5);
-  drive(600,110,6);
-  roller(-15);
-  rack(3.8, 90, 9);
-  roller(0);
-
-  // Drive back
-  roller(-200);
-  drive(-250, 150, 9);
-  roller(0);
-  rack(0, 100, 9);
+  // // Small red corner and place cubes
+  // drive(-500,200,9);
+  // turn(750, 80, 9);
+  // drive(455, 150, 5);
+  // roller(-15);
+  // rack(3.8, 90, 15);
+  //
+  // // Drive back
+  // roller(-200);
+  // drive(-300, 150, 9);
+  // roller(0);
+  // rack(0, 100, 20);
+  //
+  // // Middle tower
+  // turn(720, 100, 9);
+  // roller(100);
+  // drive(930, 200, 9);
+  // wait(1000);
+  // drive(-80, 200, 9);
+  // tower(2);
+  //
+  // // Turn towards and pick up 1 cube
+  // roller(200);
+  // turn(450, 80, 5);
+  // drive(200, 80, 9);
+  // drive(-400, 200, 9);
+  //
+  // // Towards red tower and score
+  // turn(380, 80, 5);
+  // drive(950, 200, 9);
+  // turn(80,30,4);
+  // tower(1);
+  //
+  // // Yoink one cube and score blue tower
+  // roller(200);
+  // turn(-500, 100, 5);
+  // drive(800, 200, 9);
+  // wait(1000);
+  // drive(-50, 200, 9);
+  // tower(1);
+  //
+  // // Yoink more cubes
+  // turn(100,50,6);
+  // roller(200);
+  // drive(200,200,6);
+  // turn(150,50,6);
+  // drive(250,200,6);
+  // turn(-200,80,6);
+  // drive(200,200,9);
+  // drive(1000,30,9);
+  // drive(200,150,9);
+  // turn(200,40,5);
+  // drive(600,110,6);
+  // roller(-15);
+  // rack(3.8, 90, 9);
+  // roller(0);
+  //
+  // // Drive back
+  // roller(-200);
+  // drive(-250, 150, 9);
+  // roller(0);
+  // rack(0, 100, 9);
 }
 
 void motionTest() {

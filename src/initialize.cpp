@@ -4,10 +4,11 @@ using namespace Display;
 
 void initialize() {
   initAuton();
+  void* boi;
 
   // Start Asynchronous Driver
-  ControlAsync Control;
-  pros::Task controlDrive(Control.run);
+  ControlAsync Start;
+  pros::Task controlDrive(Start.run);
 
   // Reset Motor Positions. Note - Rack has its own potentiometer
   Arm.tare_position();

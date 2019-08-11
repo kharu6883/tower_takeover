@@ -3,8 +3,6 @@
 
 double current, error, last, derivative, output;
 
-ControlAsync Driver;
-
 void reset() {
   current = 0; error = 0; last = 0; derivative = 0; output = 0;
 
@@ -21,11 +19,11 @@ void drive(double target, int speed, double rate) {
   const double kD = 0.6;
 
   double deltaL, deltaR;
-  double lastSlew = 0, nowSlew = 0, slewOutput = 0;
+  double slewOutput = 0;
 
   reset();
 
-  while(target > 0 && !Driver.isDisabled()) {
+  while(target > 0) {
     deltaL = (LF.get_position() + LB.get_position()) / 2;
     deltaR = (RF.get_position() + RB.get_position()) / 2;
     current = ( deltaL + deltaR ) / 2;
@@ -52,7 +50,7 @@ void drive(double target, int speed, double rate) {
     wait(20);
   }
 
-  while(target < 0 && !Driver.isDisabled()) {
+  while(target < 0) {
     deltaL = (LF.get_position() + LB.get_position()) / 2;
     deltaR = (RF.get_position() + RB.get_position()) / 2;
     current = ( deltaL + deltaR ) / 2;
@@ -80,7 +78,6 @@ void drive(double target, int speed, double rate) {
   }
 
   reset();
-  Driver.reset();
 }
 
 void turn(double target, int speed, double rate) {
@@ -92,7 +89,7 @@ void turn(double target, int speed, double rate) {
 
   reset();
 
-  while(target > 0 && !Driver.isDisabled()) { // Turn Right
+  while(target > 0) { // Turn Right
     deltaL = (LF.get_position() + LB.get_position()) / 2;
     deltaR = (RF.get_position() + RB.get_position()) / 2;
     current = ( deltaL + abs(deltaR) ) / 2;
@@ -119,7 +116,7 @@ void turn(double target, int speed, double rate) {
     wait(20);
   }
 
-  while(target < 0 && !Driver.isDisabled()) { // Turn Right
+  while(target < 0) { // Turn Right
     deltaL = (LF.get_position() + LB.get_position()) / 2;
     deltaR = (RF.get_position() + RB.get_position()) / 2;
     current = ( abs(deltaL) + deltaR ) / 2;
@@ -147,26 +144,6 @@ void turn(double target, int speed, double rate) {
   }
 
   reset();
-  Driver.reset();
-}
-
-double slop() {
-  const double amp = 8;
-
-  double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
-  double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
-
-  return ( deltaL - deltaR ) / amp;
-}
-
-double slop(bool isTurn) {
-  const double amp = 8;
-
-  double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
-  double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
-
-  if(isTurn) return ( deltaL + deltaR ) * amp;
-    else return ( deltaL - deltaR ) / amp;
 }
 
 void left(int speed) {

@@ -29,7 +29,7 @@ void tower(int id);
 
 
 /*--------------------------------
-    PID CALCULATION & CONTROL
+    CONTROL & PID CALCULATION
 --------------------------------*/
 
 // Calculates P term with the following equation. (Target - Sensor) * kP
@@ -40,6 +40,12 @@ double dTerm(double now, double last);
 
 // Returns true if the error value is within the set tolerance.
 bool isSettled(double error, double tolerance);
+
+// Calculates slop.
+double slop();
+
+// Calculates slop. If set to true, outputs value for the turn.
+double slop(bool isTurn);
 
 
 /*--------------------------------

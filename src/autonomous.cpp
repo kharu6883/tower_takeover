@@ -3,14 +3,14 @@ using namespace okapi;
 using namespace path;
 using namespace std;
 
-int autonSlot = 0; // 0 = first slot;
+int autonSlot = 1; // 0 = first slot;
 
 map<int, void(*)(void)> Autonomous;
 map<int, const char *> SlotName;
 map<int, const char *>::iterator SlotIter;
 
 void autonomous() {
-  Autonomous[1]();
+  Autonomous[autonSlot]();
 }
 
 void initAuton() { // The autons will be stored in this order, starting from 0.

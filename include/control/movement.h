@@ -14,8 +14,5 @@ void turn(double target, int speed, double rate);
 
 // Ignore the below functions. They accomodate the functions above.
 
-double slop();
-double slop(bool isTurn);
-
 void left(int speed);
 void right(int speed);

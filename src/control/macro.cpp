@@ -29,8 +29,8 @@ void rack(double target, int speed, double rate) {
 
   double slewOutput;
 
-  while(target > Rack.get_position()) { // Goin' up
-    double desired = pTerm(target, Rack.get_position(), kP);
+  while(target > rackPot.get_value()) { // Goin' up
+    double desired = pTerm(target, rackPot.get_value(), kP);
 
     if(desired > slewOutput + rate) {
       slewOutput += rate;
@@ -47,8 +47,8 @@ void rack(double target, int speed, double rate) {
     wait(20);
   }
 
-  while(target < Rack.get_position()) { // Goin' down
-    double desired = pTerm(target, Rack.get_position(), kP);
+  while(target < rackPot.get_value()) { // Goin' down
+    double desired = pTerm(target, rackPot.get_value(), kP);
 
     if(abs(desired) > slewOutput + rate) {
       slewOutput += rate;
@@ -180,6 +180,25 @@ bool isSettled(double error, double tolerance) {
   if(error > -tolerance && error < tolerance) settled = true;
 
   return settled;
+}
+
+double slop() {
+  const double amp = 8;
+
+  double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
+  double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
+
+  return ( deltaL - deltaR ) / amp;
+}
+
+double slop(bool isTurn) {
+  const double amp = 8;
+
+  double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
+  double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
+
+  if(isTurn) return ( deltaL + deltaR ) * amp;
+    else return ( deltaL - deltaR ) / amp;
 }
 
 

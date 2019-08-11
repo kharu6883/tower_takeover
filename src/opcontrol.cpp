@@ -25,7 +25,7 @@ void opcontrol() {
 		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
 		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
 
-		if(master.get_digital(DIGITAL_L1) && !isMacro) {
+		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 
 			target = pTerm(3615, rackPot.get_value(), kP);
 
@@ -37,7 +37,7 @@ void opcontrol() {
 
 			rack(slewOutput);
 
-		} else if(master.get_digital(DIGITAL_L2) && !isMacro) {
+		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
 
 			target = pTerm(900, rackPot.get_value(), kP + 0.2);
 
@@ -49,7 +49,7 @@ void opcontrol() {
 
 			rack(-slewOutput);
 
-		} else if(!isMacro) {
+		} else {
 
 			slewOutput = 0;
 			rack(0);
