@@ -1,5 +1,10 @@
 #include "main.h"
-#include "control/config.h"
+
+#include "config/motor.h"
+#include "config/io.h"
+
+#include "control/macro.h"
+#include "control/drive.h"
 
 bool isStacking = false;
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef _PROS_MAIN_H_
 #define _PROS_MAIN_H_
 
@@ -5,19 +6,15 @@
 
 #define PROS_USE_LITERALS
 
+// Nice things below
 #include "api.h"
 #include "pros/apix.h"
 #include "pros/rtos.h"
 #include "okapi/api.hpp"
 
-#include "autonController.h"
-
-#include "display.h"
-
-#include "control/asyncController.h"
-#include "control/movement.h"
-#include "control/macro.h"
-#include "control/path.h"
+// It's Everyday Functions Bro
+void wait(int ms);
+void print(const char * text);
 
 // Image declaration
 LV_IMG_DECLARE(title);
@@ -34,6 +31,16 @@ LV_IMG_DECLARE(intro);
 
 #define FLAPL 1
 #define FLAPR 2
+
+#define RACKPOT 1
+
+#define ULTRALPING 1
+#define ULTRALECHO 1
+
+#define ULTRARPING 1
+#define ULTRARECHO 1
+
+#define FRONTVISION 33
 
 using namespace okapi;
 

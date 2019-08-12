@@ -41,18 +41,10 @@ double dTerm(double now, double last);
 // Returns true if the error value is within the set tolerance.
 bool isSettled(double error, double tolerance);
 
-// Calculates slop.
+// Calculates slop, utilizing all four motors.
 double slop();
 
 // Calculates slop. If set to true, outputs value for the turn.
 double slop(bool isTurn);
 
-
-/*--------------------------------
-    EXTRA FUNCTIONS
---------------------------------*/
-
-// Basic functions that everybody knows.
-
-void wait(int ms);
-void print(const char * text);
+// Note - functions like 'wait' and 'print' have been moved to main.h

@@ -12,6 +12,9 @@ void drive(double target, int speed, double rate);
 // Turns the robot to the target in rotations, in a given speed(rpm). Uses PD looop. Rate controls the slew constant.
 void turn(double target, int speed, double rate);
 
+// Lines upto the wall using the two ultrasonic sensors, to a given distance(cm).
+void align(double tolerance);
+
 // Ignore the below functions. They accomodate the functions above.
 
 void left(int speed);

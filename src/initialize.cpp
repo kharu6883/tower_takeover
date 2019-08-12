@@ -1,5 +1,10 @@
 #include "main.h"
-#include "control/config.h"
+
+#include "config/motor.h"
+
+#include "control/displayController.h"
+#include "control/autonController.h"
+#include "control/asyncController.h"
 using namespace Display;
 
 void initialize() {
@@ -22,7 +27,7 @@ void initialize() {
   RemoteDisplay remote;
 
   pros::Task updateDisplay(brain.update);
-  pros::Task updateRemote(remote.update);
+  // pros::Task updateRemote(remote.update);
 
   wait(2000);
   brain.cleanup();

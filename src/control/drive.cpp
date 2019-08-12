@@ -1,5 +1,10 @@
 #include "main.h"
-#include "control/config.h"
+
+#include "config/motor.h"
+#include "config/io.h"
+
+#include "control/drive.h"
+#include "control/macro.h"
 
 double current, error, last, derivative, output;
 
@@ -144,6 +149,25 @@ void turn(double target, int speed, double rate) {
   }
 
   reset();
+}
+
+void align(double target, double tolerance) {
+
+  double outputL, outputR;
+
+  double kP = 1, kD = 1;
+
+  reset();
+
+  while(true) {
+    outputL = pTerm(target, ultraL.get_value(), kP);
+    outputR = pTerm(target, ultraL.get_value(), kP);
+
+    left(outputL);
+    right(outputR);
+
+    if(isSettled(outputL, tolerance) && isSettled(outputR, tolerance)) break;
+  }
 }
 
 void left(int speed) {

@@ -1,5 +1,9 @@
 #include "main.h"
-#include "control/config.h"
+
+#include "config/motor.h"
+#include "config/io.h"
+
+#include "control/macro.h"
 
 const double kP = 0.1;
 

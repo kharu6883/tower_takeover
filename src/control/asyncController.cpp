@@ -1,5 +1,9 @@
 #include "main.h"
-#include "config.h"
+
+#include "config/motor.h"
+#include "control/asyncController.h"
+#include "control/drive.h"
+#include "control/macro.h"
 
 bool ControlAsync::isDrive = false;
 bool ControlAsync::isTurn = false;

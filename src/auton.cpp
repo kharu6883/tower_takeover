@@ -1,4 +1,9 @@
 #include "main.h"
+
+#include "control/drive.h"
+#include "control/asyncController.h"
+#include "control/macro.h"
+#include "control/path.h"
 using namespace path;
 
 // 6 = tolerance

@@ -1,4 +1,8 @@
 #include "main.h"
+
+#include "control/displayController.h"
+#include "control/autonController.h"
+#include "control/macro.h"
 using namespace Display;
 
 lv_obj_t * scr;

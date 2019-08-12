@@ -1,4 +1,7 @@
-#include "control/config.h"
+#include "main.h"
+
+#include "config/io.h"
+#include "control/displayController.h"
 using namespace Display;
 
 int count = 0;

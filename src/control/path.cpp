@@ -1,4 +1,5 @@
 #include "main.h"
+#include "control/path.h"
 
 namespace path {
   auto driver = ChassisControllerFactory::create(
