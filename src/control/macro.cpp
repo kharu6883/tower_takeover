@@ -152,7 +152,7 @@ void tower() {
     if(isSettled(armTarget, tolerance)) { arm(0); break; }
   }
 
-  roller(-3, 200);
+  roller(-2, 200);
   wait(1000);
   while(true) {
     armTarget = pTerm(0, abs(Arm.get_position()), kP);

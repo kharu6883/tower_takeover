@@ -132,7 +132,7 @@ void macroTask(void* ignore) {
 				wait(20);
 			}
 
-			roller(-1.5, 200);
+			roller(-1, 200);
 			while(true) {
 				armTarget = pTerm(2.509, abs(Arm.get_position()), kP + 50);
 				arm(armTarget);
