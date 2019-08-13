@@ -117,7 +117,7 @@ void BrainDisplay::main() {
   lv_obj_t * mainImg = lv_img_create(scr, NULL);
   lv_obj_set_size(mainImg, 240, 240);
   lv_obj_set_pos(mainImg, 0, -5);
-  lv_img_set_src(mainImg, &title);
+  lv_img_set_src(mainImg, &michael1);
 
   lv_obj_t * container_main = lv_cont_create(scr, NULL);
   lv_obj_set_style(container_main, &mainScr);

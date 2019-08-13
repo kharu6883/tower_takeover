@@ -23,6 +23,9 @@ void print(const char * text);
 LV_IMG_DECLARE(title);
 LV_IMG_DECLARE(intro);
 
+LV_IMG_DECLARE(michael1);
+LV_IMG_DECLARE(michael2);
+
 // Motor ports & ADI
 #define LFPORT 9
 #define LBPORT 10
