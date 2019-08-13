@@ -7,13 +7,16 @@
 #include "control/asyncController.h"
 using namespace Display;
 
+pros::Task armAsync(macroTask);
+
 void initialize() {
   initAuton();
-  void* boi;
 
   // Start Asynchronous Driver
   ControlAsync Start;
   pros::Task controlDrive(Start.run);
+  
+  armAsync.suspend();
 
   // Reset Motor Positions. Note - Rack has its own potentiometer
   Arm.tare_position();
@@ -35,7 +38,7 @@ void initialize() {
 }
 
 void disabled() {
-
+  armAsync.suspend();
 }
 
 void competition_initialize() {

@@ -13,15 +13,13 @@ double target, clawTarget;
 
 bool isMacro = false;
 
-void macroTask(void* ignore);
-
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 	FlapL.set_brake_mode(MOTOR_BRAKE_HOLD);
 	FlapR.set_brake_mode(MOTOR_BRAKE_HOLD);
 
-	pros::Task armAsync(macroTask);
+	armAsync.resume();
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
@@ -85,39 +83,43 @@ void macroTask(void* ignore) {
 	const double kP = 150;
 
 	bool isReturn = false;
-	int mode = 0; // 1 = Top Tower, 2 = Bottom Tower
+	bool isRatchet = false;
+	int towerMode = 0; // 1 = Top Tower, 2 = Bottom Tower
 
 	while(true) {
 		armPos = Arm.get_position();
 
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2)) {
 			arm(0);
-			rack(0);
-			roller(0);
 
-			mode = 0;
+			towerMode = 0;
 			isMacro = true;
 		}
 
-		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) {
+		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) isReturn = true;
+
+		if(master.get_digital_new_press(DIGITAL_DOWN)) {
+			if(!isRatchet) isRatchet = true;
+				else isRatchet = false;
 			isReturn = true;
 		}
 
 		if(isReturn) {
-			mode = 0;
+			towerMode = 0;
 
-			armTarget = pTerm(0, abs(armPos), kP);
+			if(!isRatchet) armTarget = pTerm(0, armPos, kP + 150);
+				else armTarget = pTerm(0.38, armPos, kP + 150);
 			arm(armTarget);
 
-			if(armPos > 0 - tolerance && armPos < 0 + tolerance) {
+			if(isSettled(armTarget, 3)) {
 				arm(0);
 				isReturn = false;
 				isMacro = false;
 			}
 		}
 
-		if(isMacro && !master.get_digital(DIGITAL_L1) && mode != 2 && !isReturn) {
-			mode = 1;
+		if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) {
+			towerMode = 1;
 
 			armTarget = pTerm(3.2, abs(armPos), kP); // Top Tower
 			arm(armTarget);
@@ -126,8 +128,8 @@ void macroTask(void* ignore) {
 				arm(0);
 				isMacro = false;
 			}
-		} else if(isMacro && !master.get_digital(DIGITAL_L2) && mode != 1 && !isReturn) {
-			mode = 2;
+		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) {
+			towerMode = 2;
 
 			armTarget = pTerm(2.509, abs(armPos), kP); // Bottom Tower
 			arm(armTarget);

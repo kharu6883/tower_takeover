@@ -12,6 +12,9 @@
 #include "pros/rtos.h"
 #include "okapi/api.hpp"
 
+void macroTask(void* ignore);
+extern pros::Task armAsync;
+
 // It's Everyday Functions Bro
 void wait(int ms);
 void print(const char * text);
