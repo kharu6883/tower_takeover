@@ -5,9 +5,8 @@ Our programs are so finger lickin' good that you will literally CLONE this bro i
 
 ## Contents
 - Very neatly organized code - a dog can read this and understand what this code does
+- Dank Display
 - Nobody actually cares about this part
-- Not everyone can download this because it is actually privatized
-- What am I doing here I should be doing homework right now and studying for my chemistry final
 - This year's challenge is going to be epic
 - Vex needs to hire a competent narrator
 
