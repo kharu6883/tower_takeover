@@ -21,8 +21,13 @@ void arm(int speed) {
 }
 
 void roller(int speed) {
-  FlapL.move_velocity(speed);
-  FlapR.move_velocity(-speed);
+  RollerL.move_velocity(speed);
+  RollerR.move_velocity(speed);
+}
+
+void roller(double rot, int speed) {
+  RollerL.move_relative(rot, speed);
+  RollerR.move_relative(rot, speed);
 }
 
 
@@ -119,9 +124,9 @@ void arm(double target, int speed, double rate) {
   arm(0);
 }
 
-void tower(int id) {
+void tower() {
   const double kP = 200;
-  double rackTarget, armTarget, tolerance = 1;
+  double rackTarget, armTarget, tolerance = 2.5;
 
   //roller(200);
   //wait(1000);
@@ -131,41 +136,30 @@ void tower(int id) {
 
   drive(-200, 50, 9);
 
-  while(id == 1) { // Low Tower
-    rackTarget = pTerm(1.212, abs(Rack.get_position()), kP);
-    rack(rackTarget);
-
-    armTarget = pTerm(3.1, abs(Arm.get_position()), kP);
-    arm(armTarget);
-
-    if(isSettled(rackTarget, tolerance) && isSettled(armTarget, tolerance)) break;
-  }
-
-  while(id == 2) { // Middle tower
-    rackTarget = pTerm(2.2, abs(Rack.get_position()), kP);
-    rack(rackTarget);
-
-    armTarget = pTerm(4, abs(Arm.get_position()), kP);
-    arm(armTarget);
-
-    if(isSettled(rackTarget, tolerance) && isSettled(armTarget, tolerance)) break;
-  }
-
-  drive(150, 30, 9);
-  wait(200);
-  roller(-100);
-  wait(1000);
-  roller(0);
-  drive(-100, 30, 9);
-
-  while(true) { // Middle tower
-    rackTarget = pTerm(0, abs(Rack.get_position()), kP);
-    rack(rackTarget);
-
+  while(true) {
     armTarget = pTerm(0, abs(Arm.get_position()), kP);
     arm(armTarget);
 
-    if(isSettled(rackTarget, tolerance) && isSettled(armTarget, tolerance)) break;
+    if(isSettled(armTarget, tolerance)) { arm(0); break; }
+    wait(20);
+  }
+
+  roller(-1.5, 200);
+  while(true) {
+    armTarget = pTerm(2.509, abs(Arm.get_position()), kP);
+    arm(armTarget);
+
+    if(isSettled(armTarget, tolerance)) { arm(0); break; }
+  }
+
+  roller(-3, 200);
+  wait(1000);
+  while(true) {
+    armTarget = pTerm(0, abs(Arm.get_position()), kP);
+    arm(armTarget);
+
+    if(isSettled(armTarget, tolerance)) { arm(0); break; }
+    wait(20);
   }
 }
 

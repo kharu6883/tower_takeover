@@ -16,8 +16,8 @@ bool isMacro = false;
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-	FlapL.set_brake_mode(MOTOR_BRAKE_HOLD);
-	FlapR.set_brake_mode(MOTOR_BRAKE_HOLD);
+	RollerL.set_brake_mode(MOTOR_BRAKE_BRAKE);
+	RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
 	armAsync.resume();
 
@@ -58,15 +58,15 @@ void opcontrol() {
 
 		}
 
-		if(master.get_digital(DIGITAL_R1)) {
+		if(master.get_digital(DIGITAL_R1) && !isMacro) {
 
 			roller(200);
 
-		} else if(master.get_digital(DIGITAL_R2)) {
+		} else if(master.get_digital(DIGITAL_R2) && !isMacro) {
 
 			roller(-200);
 
-		} else {
+		} else if(!isMacro) {
 
 			roller(0);
 
@@ -76,9 +76,13 @@ void opcontrol() {
 	}
 }
 
+void yeet() {
+
+}
+
 void macroTask(void* ignore) {
 
-	double armPos, armTarget, armOutput, tolerance = 0.08;
+	double armPos, armTarget, armOutput, tolerance = 2.5;
 
 	const double kP = 150;
 
@@ -120,18 +124,26 @@ void macroTask(void* ignore) {
 
 		if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) {
 			towerMode = 1;
+			while(true) {
+				armTarget = pTerm(0, abs(Arm.get_position()), kP + 50);
+				arm(armTarget);
 
-			armTarget = pTerm(3.2, abs(armPos), kP); // Top Tower
-			arm(armTarget);
-
-			if(isSettled(armTarget, tolerance)) {
-				arm(0);
-				isMacro = false;
+				if(isSettled(armTarget, tolerance)) { arm(0); break; }
+				wait(20);
 			}
+
+			roller(-1.5, 200);
+			while(true) {
+				armTarget = pTerm(2.509, abs(Arm.get_position()), kP + 50);
+				arm(armTarget);
+
+				if(isSettled(armTarget, tolerance)) { arm(0); isMacro = false; break; }
+			}
+
 		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) {
 			towerMode = 2;
 
-			armTarget = pTerm(2.509, abs(armPos), kP); // Bottom Tower
+			armTarget = pTerm(2.509, abs(armPos), kP);
 			arm(armTarget);
 
 			if(isSettled(armTarget, tolerance)) {

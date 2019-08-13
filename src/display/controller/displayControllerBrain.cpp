@@ -117,7 +117,7 @@ void BrainDisplay::main() {
   lv_obj_t * mainImg = lv_img_create(scr, NULL);
   lv_obj_set_size(mainImg, 240, 240);
   lv_obj_set_pos(mainImg, 0, -5);
-  lv_img_set_src(mainImg, &michael1);
+  lv_img_set_src(mainImg, &title);
 
   lv_obj_t * container_main = lv_cont_create(scr, NULL);
   lv_obj_set_style(container_main, &mainScr);
@@ -179,6 +179,10 @@ void BrainDisplay::setting() {
 
   lv_obj_t * placeholder = lv_label_create(scr, NULL);
   lv_label_set_text(placeholder, "Hello, World!");
+  lv_obj_t * mainImg = lv_img_create(scr, NULL);
+  lv_obj_set_size(mainImg, 240, 240);
+  lv_obj_set_pos(mainImg, 0, -5);
+  lv_img_set_src(mainImg, &michael2);
 }
 
 void BrainDisplay::update(void* ignore) {

@@ -8,5 +8,5 @@ extern pros::Motor RB;
 extern pros::Motor Rack;
 extern pros::Motor Arm;
 
-extern pros::Motor FlapL;
-extern pros::Motor FlapR;
+extern pros::Motor RollerL;
+extern pros::Motor RollerR;
