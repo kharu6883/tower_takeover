@@ -182,7 +182,7 @@ void BrainDisplay::setting() {
   lv_obj_t * mainImg = lv_img_create(scr, NULL);
   lv_obj_set_size(mainImg, 240, 240);
   lv_obj_set_pos(mainImg, 0, -5);
-  lv_img_set_src(mainImg, &title);
+  lv_img_set_src(mainImg, &michael2);
 }
 
 void BrainDisplay::update(void* ignore) {

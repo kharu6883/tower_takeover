@@ -12,6 +12,7 @@ double slewOutput = 0, rate = 9;
 double target, clawTarget;
 
 bool isMacro = false;
+bool isTrack = false;
 
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -26,12 +27,11 @@ void opcontrol() {
 		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
 		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
 		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
-		if(master.get_digital(DIGITAL_A))
-		{
-		count++;
-		while(master.get_digital(DIGITAL_A))
-		{}
-	  }
+
+		if(master.get_digital_new_press(DIGITAL_A)) {
+			if(!isTrack) isTrack = true;
+				else isTrack = false;
+		}
 
 
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
@@ -65,6 +65,7 @@ void opcontrol() {
 
 		}
 
+
 		if(master.get_digital(DIGITAL_R1) && !isMacro) {
 
 			roller(200);
@@ -74,37 +75,25 @@ void opcontrol() {
 			roller(-200);
 
 		} else if(!isMacro) {
- 			if(count%2==1)
-			{
+ 			if(isTrack) {
 
-				if(rackPot.get_value()<1000)
-		 	{
-			 		if(rollerline.get_value()<2500)
-			 		{
+				if(rackPot.get_value() < 100) {
+			 		if(rollerline.get_value()<250) {
 			 			roller(150);
-			 		}
-					else
-					{
+			 		} else {
 					 roller(0);
 					}
-			 	}
-			 else
-			 {
-			 	roller(0);
-			 }
-			}
-			else
-			{
-			 roller(0);
+			 	} else {
+					roller(0);
+				}
+			} else {
+				roller(0);
 		  }
 		}
 
+		// Yeet
 		wait(20);
 	}
-}
-
-void yeet() {
-
 }
 
 void macroTask(void* ignore) {
