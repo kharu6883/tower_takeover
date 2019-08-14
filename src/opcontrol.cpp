@@ -5,7 +5,7 @@
 
 #include "control/macro.h"
 
-const double kP = 0.1;
+const double kP = 0.11;
 
 double slewOutput = 0, rate = 9;
 
@@ -20,12 +20,19 @@ void opcontrol() {
 	RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
 	armAsync.resume();
-
+  int  count=0;
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
 		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
 		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
 		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
+		if(master.get_digital(DIGITAL_A))
+		{
+		count++;
+		while(master.get_digital(DIGITAL_A))
+		{}
+	  }
+
 
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 
@@ -41,7 +48,7 @@ void opcontrol() {
 
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
 
-			target = pTerm(900, rackPot.get_value(), kP + 0.2);
+			target = pTerm(900, rackPot.get_value(), kP + 0.3);
 
 			if(abs(target) > slewOutput + rate) {
 		    slewOutput += rate;
@@ -67,9 +74,29 @@ void opcontrol() {
 			roller(-200);
 
 		} else if(!isMacro) {
+ 			if(count%2==1)
+			{
 
-			roller(0);
-
+				if(rackPot.get_value()<1000)
+		 	{
+			 		if(rollerline.get_value()<2500)
+			 		{
+			 			roller(150);
+			 		}
+					else
+					{
+					 roller(0);
+					}
+			 	}
+			 else
+			 {
+			 	roller(0);
+			 }
+			}
+			else
+			{
+			 roller(0);
+		  }
 		}
 
 		wait(20);

@@ -40,6 +40,8 @@ LV_IMG_DECLARE(michael2);
 
 #define RACKPOT 1
 
+#define ROLLERLINE 2
+
 #define ULTRALPING 1
 #define ULTRALECHO 1
 
