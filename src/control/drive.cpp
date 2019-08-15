@@ -151,20 +151,163 @@ void turn(double target, int speed, double rate) {
   reset();
 }
 
+void strafe(double target, int speed, double rate) {
+
+  const double kP = 0.6;
+  const double kD = 0.6;
+
+  double deltaL, deltaR;
+  double lastSlew = 0, nowSlew = 0, slewOutput = 0;
+
+  while(target > 0) {
+    deltaL = (LF.get_position() - LB.get_position()) / 2;
+    deltaR = (RB.get_position() - RF.get_position()) / 2;
+    current = (deltaL + deltaR) / 2;
+    error = target - current;
+
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(output > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = output;
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    LF.move_velocity(slewOutput + slop(2, 0));
+    LB.move_velocity(-slewOutput + slop(2, 0));
+    RF.move_velocity(-slewOutput - slop(2, 0));
+    RB.move_velocity(slewOutput - slop(2, 0));
+
+    if(isSettled(error, 6)) break;
+    wait(20);
+  }
+
+  while(target < 0) {
+    deltaL = (LF.get_position() - LB.get_position()) / 2;
+    deltaR = (RB.get_position() - RF.get_position()) / 2;
+    current = (deltaL + deltaR) / 2;
+    error = target - current;
+
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(abs(output) > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = abs(output);
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    LF.move_velocity(-slewOutput + slop(2, 0));
+    LB.move_velocity(slewOutput + slop(2, 0));
+    RF.move_velocity(slewOutput - slop(2, 0));
+    RB.move_velocity(-slewOutput - slop(2, 0));
+
+    if(isSettled(abs(error), 6)) break;
+    wait(20);
+  }
+
+  reset();
+}
+
+void strafe(double target, int speed, double rate, double sturn) {
+
+  const double kP = 0.6;
+  const double kD = 0.6;
+
+  double deltaL, deltaR;
+  double lastSlew = 0, nowSlew = 0, slewOutput = 0;
+
+  while(target > 0) {
+    deltaL = (LF.get_position() - LB.get_position()) / 2;
+    deltaR = (RB.get_position() - RF.get_position()) / 2;
+    current = (deltaL + deltaR) / 2;
+    error = target - current;
+
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(output > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = output;
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    LF.move_velocity(slewOutput + slop(2, sturn));
+    LB.move_velocity(-slewOutput + slop(2, sturn));
+    RF.move_velocity(-slewOutput - slop(2, sturn));
+    RB.move_velocity(slewOutput - slop(2, sturn));
+
+    if(isSettled(error, 6)) break;
+    wait(20);
+  }
+
+  while(target < 0) {
+    deltaL = (LF.get_position() - LB.get_position()) / 2;
+    deltaR = (RB.get_position() - RF.get_position()) / 2;
+    current = (deltaL + deltaR) / 2;
+    error = target - current;
+
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(abs(output) > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = abs(output);
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    LF.move_velocity(-slewOutput + slop(2, -sturn));
+    LB.move_velocity(slewOutput + slop(2, -sturn));
+    RF.move_velocity(slewOutput - slop(2, -sturn));
+    RB.move_velocity(-slewOutput - slop(2, -sturn));
+
+    if(isSettled(abs(error), 6)) break;
+    wait(20);
+  }
+
+  reset();
+}
+
+
 void align(double target, double tolerance) {
 
-  double outputL, outputR;
+  double errorL, errorR, lastL, lastR, outputL, outputR;
+  double now, last, elapsed;
 
-  double kP = 1, kD = 1;
+  double kP = 0.7, kI = 1, kD = 8;
 
   reset();
 
   while(true) {
-    outputL = pTerm(target, ultraL.get_value(), kP);
-    outputR = pTerm(target, ultraL.get_value(), kP);
+    elapsed = now - last;
+    now = clock();
+
+    errorL = target - ultraL.get_value();
+    errorR = target - ultraR.get_value();
+
+    outputL = pTerm(target, ultraL.get_value(), kP) + kD * dTerm(errorL, lastL) * elapsed;
+    outputR = pTerm(target, ultraR.get_value(), kP) + kD * dTerm(errorR, lastR) * elapsed;
 
     left(outputL);
     right(outputR);
+
+    lastL = errorL;
+    lastR = errorR;
+
+    last = clock();
 
     if(isSettled(outputL, tolerance) && isSettled(outputR, tolerance)) break;
   }

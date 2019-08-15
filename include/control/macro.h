@@ -47,7 +47,7 @@ bool isSettled(double error, double tolerance);
 // Calculates slop, utilizing all four motors.
 double slop();
 
-// Calculates slop. If set to true, outputs value for the turn.
-double slop(bool isTurn);
+// Calculates slop. If set to 1, will return turning slop calculation. If set to 2, strafe calculation.
+double slop(int mode, double offset);
 
 // Note - functions like 'wait' and 'print' have been moved to main.h

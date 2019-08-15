@@ -13,6 +13,8 @@
 #include "okapi/api.hpp"
 
 void macroTask(void* ignore);
+
+extern pros::Task controlDrive;
 extern pros::Task armAsync;
 
 // It's Everyday Functions Bro
@@ -42,11 +44,11 @@ LV_IMG_DECLARE(michael2);
 
 #define ROLLERLINE 2
 
-#define ULTRALPING 1
-#define ULTRALECHO 1
+#define ULTRALPING 5
+#define ULTRALECHO 6
 
-#define ULTRARPING 1
-#define ULTRARECHO 1
+#define ULTRARPING 3
+#define ULTRARECHO 4
 
 #define FRONTVISION 33
 
@@ -68,6 +70,7 @@ void opcontrol(void);
 
 #include <iostream>
 #include <chrono>
+#include <ctime>
 #include <cstdlib>
 
 #include <vector>

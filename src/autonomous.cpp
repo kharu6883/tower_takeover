@@ -13,17 +13,20 @@ map<int, const char *> SlotName;
 map<int, const char *>::iterator SlotIter;
 
 void autonomous() {
+  controlDrive.resume();
   Autonomous[autonSlot]();
 }
 
 void initAuton() { // The autons will be stored in this order, starting from 0.
   addAuton("Test Auton", tester);
+
+
+  addAuton("Red Small zone 8 cubes", r_s_8); // Slot 1
   addAuton("Skills 1", skills1);
+
 
   // Running some tests below
   addAuton("Motion Test", motionTest);
-
-  print("Auton initialized!");
 }
 
 void addAuton(const char * autonName, void(*function)()) {

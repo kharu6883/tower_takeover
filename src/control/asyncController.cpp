@@ -9,6 +9,8 @@ bool ControlAsync::isDrive = false;
 bool ControlAsync::isTurn = false;
 bool ControlAsync::isStrafe = false;
 
+double ControlAsync::sturn = 0;
+
 double ControlAsync::current = 0,
 ControlAsync::error = 0,
 ControlAsync::last = 0,
@@ -29,11 +31,12 @@ void ControlAsync::run(void* args) {
 
   double deltaL, deltaR;
 
-  /*===========================================
-    DRIVING
-  ===========================================*/
-
   while(true) {
+
+    /*===========================================
+      DRIVING
+    ===========================================*/
+
     if(isDrive) {
       if(target.length > 0) {
         deltaL = (LF.get_position() + LB.get_position()) / 2;
@@ -113,7 +116,7 @@ void ControlAsync::run(void* args) {
         if(isSettled(error, 6)) { reset(); isTurn = false; }
       }
 
-      if(target.length < 0) { // Turn Right
+      if(target.length < 0) { // Turn Left
         deltaL = (LF.get_position() + LB.get_position()) / 2;
         deltaR = (RF.get_position() + RB.get_position()) / 2;
         current = ( abs(deltaL) + deltaR ) / 2;
@@ -143,13 +146,29 @@ void ControlAsync::run(void* args) {
     ===========================================*/
 
     if(isStrafe) {
-      if(target.length > 0) { // Strafe Left
+      deltaL = (LF.get_position() - LB.get_position()) / 2;
+      deltaR = (RB.get_position() - RF.get_position()) / 2;
+      current = (deltaL + deltaR) / 2;
+      error = target.length - current;
 
+      output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
+
+      last = error;
+
+      if(output > slewOutput + target.rate) {
+        slewOutput += target.rate;
+      } else {
+        slewOutput = output;
       }
 
-      if(target.length < 0) { // Strafe Right
+      if(slewOutput > target.speed) slewOutput = target.speed;
 
-      }
+      LF.move_velocity(slewOutput + slop(2, sturn));
+      LB.move_velocity(-slewOutput + slop(2, sturn));
+      RF.move_velocity(-slewOutput - slop(2, sturn));
+      RB.move_velocity(slewOutput - slop(2, sturn));
+
+      if(isSettled(error, 6)) { reset(); isStrafe = false; }
     }
 
     wait(20);
@@ -168,6 +187,7 @@ void ControlAsync::reset() {
   right(0);
 
   ControlAsync::target = {0, 0, 0};
+  sturn = 0;
 }
 
 void ControlAsync::stop() {
@@ -205,5 +225,14 @@ void ControlAsync::strafe(double length, int speed, int rate) {
   this -> target.length = length;
   this -> target.speed = speed;
   this -> target.rate = rate;
+  isStrafe = true;
+}
+
+void ControlAsync::strafe(double length, int speed, int rate, double sturn) {
+  reset();
+  this -> target.length = length;
+  this -> target.speed = speed;
+  this -> target.rate = rate;
+  this -> sturn = sturn;
   isStrafe = true;
 }

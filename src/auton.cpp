@@ -13,7 +13,8 @@ ControlAsync Thread;
 void tester() {
   std::cout << "Testing" << std::endl;
 
-  Thread.drive(1000, 100, 1);
+  align(500, 0.5);
+
 
   // generate("1", 1_ft, 0_ft, 0_deg);
   // execute("1", false);
@@ -36,6 +37,11 @@ void tester() {
   // generate("7", 0.6_ft, 0_ft, 0_deg);
   // execute("7", false);
   // destroy("7");
+}
+
+void r_s_8() {
+  strafe(800, 100, 9, 30);
+  strafe(-800, 100, 9, 30);
 }
 
 void skills1() {

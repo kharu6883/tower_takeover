@@ -7,15 +7,14 @@
 #include "control/asyncController.h"
 using namespace Display;
 
+ControlAsync Start;
+pros::Task controlDrive(Start.run);
 pros::Task armAsync(macroTask);
 
 void initialize() {
   initAuton();
 
-  // Start Asynchronous Driver
-  ControlAsync Start;
-  pros::Task controlDrive(Start.run);
-  
+  controlDrive.suspend();
   armAsync.suspend();
 
   // Reset Motor Positions. Note - Rack has its own potentiometer
@@ -30,6 +29,7 @@ void initialize() {
   RemoteDisplay remote;
 
   pros::Task updateDisplay(brain.update);
+  updateDisplay.set_priority(TASK_PRIORITY_MIN);
   // pros::Task updateRemote(remote.update);
 
   wait(2000);
@@ -38,6 +38,7 @@ void initialize() {
 }
 
 void disabled() {
+  controlDrive.suspend();
   armAsync.suspend();
 }
 

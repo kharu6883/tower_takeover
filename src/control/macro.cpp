@@ -170,7 +170,7 @@ double pTerm(double target, double sensor, double kP) {
 }
 
 double dTerm(double now, double last) {
-  return now - last;
+  return (now - last);
 }
 
 bool isSettled(double error, double tolerance) {
@@ -190,14 +190,26 @@ double slop() {
   return ( deltaL - deltaR ) / amp;
 }
 
-double slop(bool isTurn) {
+double slop(int mode, double offset) {
   const double amp = 8;
 
   double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
   double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
 
-  if(isTurn) return ( deltaL + deltaR ) * amp;
-    else return ( deltaL - deltaR ) / amp;
+  switch(mode) {
+    case 1:
+      return (deltaL + deltaR) * amp;
+      break;
+
+    case 2:
+      deltaL = ( LF.get_position() - LB.get_position() ) / 2;
+      deltaR = ( RB.get_position() - RF.get_position() ) / 2;
+      return ( deltaL - deltaR ) / amp + offset;
+      break;
+
+    default:
+      return ( deltaL - deltaR ) / amp;
+  }
 }
 
 

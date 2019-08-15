@@ -202,11 +202,11 @@ void BrainDisplay::update(void* ignore) {
       name.erase(name.begin() + 16, name.end());
       name.append(now);
       c = name.c_str();
+      lv_label_set_text(autonStat, c);
     }
 
-    lv_label_set_text(autonStat, c);
     last = now;
-    wait(2);
+    wait(20);
   }
 }
 

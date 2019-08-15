@@ -77,8 +77,8 @@ void opcontrol() {
 		} else if(!isMacro) {
  			if(isTrack) {
 
-				if(rackPot.get_value() < 100) {
-			 		if(rollerline.get_value()<250) {
+				if(rackPot.get_value() < 1000) {
+			 		if(rollerline.get_value()<2500) {
 			 			roller(150);
 			 		} else {
 					 roller(0);
@@ -140,6 +140,7 @@ void macroTask(void* ignore) {
 
 		if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) {
 			towerMode = 1;
+			
 			while(true) {
 				armTarget = pTerm(0, abs(Arm.get_position()), kP + 50);
 				arm(armTarget);
@@ -153,7 +154,7 @@ void macroTask(void* ignore) {
 				armTarget = pTerm(2.509, abs(Arm.get_position()), kP + 50);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance)) { arm(0); isMacro = false; break; }
+				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
 			}
 
 		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) {
