@@ -142,7 +142,7 @@ void BrainDisplay::auton() {
   isMain = false;
 
   // This needs to happen because it does not return a proper integer
-  // It is a way to force change the variable type which works
+  // It is a way to explicitly cast the variable type which works
   int size = SlotName.size();
 
   // Making buttons on autonomouses on a selected order from 0 to ~lOL
