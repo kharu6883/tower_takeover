@@ -30,7 +30,6 @@ void initialize() {
 
   pros::Task updateDisplay(brain.update);
   updateDisplay.set_priority(TASK_PRIORITY_MIN);
-  // pros::Task updateRemote(remote.update);
 
   wait(2000);
   brain.cleanup();

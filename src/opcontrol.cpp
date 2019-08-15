@@ -92,7 +92,7 @@ void opcontrol() {
 		}
 
 		// Yeet
-		wait(20);
+		pros::delay(20);
 	}
 }
 
@@ -140,7 +140,7 @@ void macroTask(void* ignore) {
 
 		if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) {
 			towerMode = 1;
-			
+
 			while(true) {
 				armTarget = pTerm(0, abs(Arm.get_position()), kP + 50);
 				arm(armTarget);
@@ -169,6 +169,6 @@ void macroTask(void* ignore) {
 			}
 		}
 
-		wait(20);
+		pros::delay(20);
 	}
 }

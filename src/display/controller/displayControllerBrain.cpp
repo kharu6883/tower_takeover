@@ -206,7 +206,7 @@ void BrainDisplay::update(void* ignore) {
     }
 
     last = now;
-    wait(20);
+    pros::delay(20);
   }
 }
 
