@@ -146,29 +146,57 @@ void ControlAsync::run(void* args) {
     ===========================================*/
 
     if(isStrafe) {
-      deltaL = (LF.get_position() - LB.get_position()) / 2;
-      deltaR = (RB.get_position() - RF.get_position()) / 2;
-      current = (deltaL + deltaR) / 2;
-      error = target.length - current;
+      if(target.length > 0) {
+        deltaL = (LF.get_position() - LB.get_position()) / 2;
+        deltaR = (RB.get_position() - RF.get_position()) / 2;
+        current = (deltaL + deltaR) / 2;
+        error = target.length - current;
 
-      output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
+        output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
 
-      last = error;
+        last = error;
 
-      if(output > slewOutput + target.rate) {
-        slewOutput += target.rate;
-      } else {
-        slewOutput = output;
+        if(output > slewOutput + target.rate) {
+          slewOutput += target.rate;
+        } else {
+          slewOutput = output;
+        }
+
+        if(slewOutput > target.speed) slewOutput = target.speed;
+
+        LF.move_velocity(slewOutput + slop(2, sturn));
+        LB.move_velocity(-slewOutput + slop(2, sturn));
+        RF.move_velocity(-slewOutput - slop(2, sturn));
+        RB.move_velocity(slewOutput - slop(2, sturn));
+
+        if(isSettled(error, 6)) { reset(); isStrafe = false; }
       }
 
-      if(slewOutput > target.speed) slewOutput = target.speed;
+      if(target.length < 0) {
+        deltaL = (LF.get_position() - LB.get_position()) / 2;
+        deltaR = (RB.get_position() - RF.get_position()) / 2;
+        current = (deltaL + deltaR) / 2;
+        error = target.length - current;
 
-      LF.move_velocity(slewOutput + slop(2, sturn));
-      LB.move_velocity(-slewOutput + slop(2, sturn));
-      RF.move_velocity(-slewOutput - slop(2, sturn));
-      RB.move_velocity(slewOutput - slop(2, sturn));
+        output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
 
-      if(isSettled(error, 6)) { reset(); isStrafe = false; }
+        last = error;
+
+        if(abs(output) > slewOutput + target.rate) {
+          slewOutput += target.rate;
+        } else {
+          slewOutput = abs(output);
+        }
+
+        if(slewOutput > target.speed) slewOutput = target.speed;
+
+        LF.move_velocity(-slewOutput + slop(2, -sturn));
+        LB.move_velocity(slewOutput + slop(2, -sturn));
+        RF.move_velocity(slewOutput - slop(2, -sturn));
+        RB.move_velocity(-slewOutput - slop(2, -sturn));
+
+        if(isSettled(abs(error), 6)) { reset(); isStrafe = false; }
+      }
     }
 
     wait(20);
