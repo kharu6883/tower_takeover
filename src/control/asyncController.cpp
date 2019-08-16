@@ -5,6 +5,8 @@
 #include "control/drive.h"
 #include "control/macro.h"
 
+bool ControlAsync::isRunning = false;
+
 bool ControlAsync::isDrive = false;
 bool ControlAsync::isTurn = false;
 bool ControlAsync::isStrafe = false;
@@ -24,6 +26,8 @@ ControlAsync::ControlAsync() {}
 
 void ControlAsync::run(void* args) {
 
+  isRunning = true;
+
   reset();
 
   const double kP = 0.6;
@@ -31,7 +35,7 @@ void ControlAsync::run(void* args) {
 
   double deltaL, deltaR;
 
-  while(true) {
+  while(isRunning) {
 
     /*===========================================
       DRIVING
@@ -201,6 +205,8 @@ void ControlAsync::run(void* args) {
 
     wait(20);
   }
+
+  print("Async Controller Terminated");
 }
 
 void ControlAsync::reset() {
@@ -219,9 +225,7 @@ void ControlAsync::reset() {
 }
 
 void ControlAsync::stop() {
-  ControlAsync::isDrive = false;
-  ControlAsync::isTurn = false;
-  ControlAsync::isStrafe = false;
+  isRunning = false;
 }
 
 bool ControlAsync::isDisabled() {

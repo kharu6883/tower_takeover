@@ -1,5 +1,6 @@
 #include "main.h"
 
+#include "control/asyncController.h"
 #include "control/autonController.h"
 #include "control/path.h"
 using namespace okapi;
@@ -12,8 +13,10 @@ map<int, void(*)(void)> Autonomous;
 map<int, const char *> SlotName;
 map<int, const char *>::iterator SlotIter;
 
+ControlAsync Start;
+
 void autonomous() {
-  controlDrive.resume();
+  pros::Task asyncDrive(Start.run);
   Autonomous[autonSlot]();
 }
 

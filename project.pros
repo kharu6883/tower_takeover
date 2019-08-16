@@ -1,11 +1,11 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "tower_takeover",
+        "project_name": "Tower_Takeover",
         "target": "v5",
         "templates": {
             "kernel": {
-                "location": "C:\\Users\\ClearLoadSave\\AppData\\Roaming\\PROS\\templates\\kernel@3.1.6",
+                "location": "C:\\Users\\Gauthier\\AppData\\Roaming\\PROS\\templates\\kernel@3.1.6",
                 "metadata": {
                     "cold_addr": "58720256",
                     "cold_output": "bin/cold.package.bin",
@@ -125,7 +125,7 @@
                 "version": "3.1.6"
             },
             "okapilib": {
-                "location": "C:\\Users\\ClearLoadSave\\AppData\\Roaming\\PROS\\templates\\okapilib@3.3.13",
+                "location": "C:\\Users\\Gauthier\\AppData\\Roaming\\PROS\\templates\\okapilib@3.3.13",
                 "metadata": {
                     "origin": "pros-mainline"
                 },

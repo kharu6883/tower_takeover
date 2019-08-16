@@ -15,12 +15,14 @@ namespace Display {
       void camera();
       void setting();
 
-      static void update(void* ignore);
+      void update();
+      static void run(void* ignore);
 
     private:
       // Macros
-      void setLabel(lv_obj_t * labelId, const char * text, lv_coord_t x, lv_coord_t y);
-      void setButton(lv_obj_t * buttonID, int uniqueID, const char * name, lv_coord_t w, lv_coord_t h, lv_coord_t x, lv_coord_t y);
+      lv_obj_t * createLabel(int x, int y, const char * text, lv_obj_t * parent);
+      lv_obj_t * createButton(int id, int x, int y, int width, int height, const char * text, lv_obj_t * parent);
+      lv_obj_t * drawRectangle(int x, int y, int width, int height, lv_color_t stroke, lv_color_t fill, lv_obj_t * parent);
   };
 
   class RemoteDisplay {
@@ -33,5 +35,3 @@ namespace Display {
 
   };
 }
-
-void update();

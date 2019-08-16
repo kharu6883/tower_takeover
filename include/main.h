@@ -50,7 +50,7 @@ LV_IMG_DECLARE(michael2);
 #define ULTRARPING 3
 #define ULTRARECHO 4
 
-#define FRONTVISION 6
+#define FRONTVISION 13
 
 using namespace okapi;
 

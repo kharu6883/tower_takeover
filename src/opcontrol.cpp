@@ -21,7 +21,7 @@ void opcontrol() {
 	RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
 	armAsync.resume();
-  int  count=0;
+
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
 		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
@@ -72,7 +72,7 @@ void opcontrol() {
 
 		} else if(master.get_digital(DIGITAL_R2) && !isMacro) {
 
-			roller(-200);
+			roller(-100);
 
 		} else if(!isMacro) {
  			if(isTrack) {
@@ -98,7 +98,7 @@ void opcontrol() {
 
 void macroTask(void* ignore) {
 
-	double armPos, armTarget, armOutput, tolerance = 2.5;
+	double armPos, armTarget, armOutput, tolerance = 4;
 
 	const double kP = 150;
 
@@ -149,7 +149,7 @@ void macroTask(void* ignore) {
 				wait(20);
 			}
 
-			roller(-1, 200);
+			roller(-1, 70);
 			while(true) {
 				armTarget = pTerm(2.509, abs(Arm.get_position()), kP + 50);
 				arm(armTarget);

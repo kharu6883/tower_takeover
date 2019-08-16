@@ -1,20 +1,20 @@
 #include "main.h"
 
 #include "config/motor.h"
+#include "config/vision.h"
 
 #include "control/displayController.h"
 #include "control/autonController.h"
 #include "control/asyncController.h"
 using namespace Display;
 
-ControlAsync Start;
-pros::Task controlDrive(Start.run);
+ControlAsync Control;
 pros::Task armAsync(macroTask);
 
 void initialize() {
   initAuton();
+  initVision();
 
-  controlDrive.suspend();
   armAsync.suspend();
 
   // Reset Motor Positions. Note - Rack has its own potentiometer
@@ -23,21 +23,17 @@ void initialize() {
   Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
   Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 
-  BrainDisplay brain;
-  brain.main();
-
-  RemoteDisplay remote;
-
-  pros::Task updateDisplay(brain.update);
-  updateDisplay.set_priority(TASK_PRIORITY_MIN);
+  BrainDisplay Brain;
+  Brain.main();
+  pros::Task display(Brain.run);
 
   wait(2000);
-  brain.cleanup();
+  Brain.cleanup();
   std::cout << "Done!" << std::endl;
 }
 
 void disabled() {
-  controlDrive.suspend();
+  Control.stop();
   armAsync.suspend();
 }
 

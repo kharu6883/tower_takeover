@@ -21,6 +21,8 @@ class ControlAsync {
     void strafe(double length, int speed, int rate, double sturn);
 
   private:
+    static bool isRunning;
+
     static bool isDrive;
     static bool isTurn;
     static bool isStrafe;
