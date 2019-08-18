@@ -5,7 +5,6 @@ namespace Display {
   class BrainDisplay {
     public:
       BrainDisplay();
-      //~Display();
 
       void cleanup();
 

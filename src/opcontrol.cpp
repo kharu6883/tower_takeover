@@ -76,7 +76,6 @@ void opcontrol() {
 
 		} else if(!isMacro) {
  			if(isTrack) {
-
 				if(rackPot.get_value() < 1000) {
 			 		if(rollerline.get_value()<2500) {
 			 			roller(150);
