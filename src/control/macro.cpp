@@ -103,7 +103,7 @@ void arm(double target, int speed, double rate) {
     wait(20);
   }
 
-  while(target < Rack.get_position()) { // Goin' down
+  while(target < Arm.get_position()) { // Goin' down
     double desired = pTerm(target, Arm.get_position(), kP);
 
     if(abs(desired) > slewOutput + rate) {
@@ -126,15 +126,7 @@ void arm(double target, int speed, double rate) {
 
 void tower() {
   const double kP = 200;
-  double rackTarget, armTarget, tolerance = 2.5;
-
-  //roller(200);
-  //wait(1000);
-  roller(-60);
-  wait(600);
-  roller(0);
-
-  drive(-200, 50, 9);
+  double rackTarget, armTarget, tolerance = 4;
 
   while(true) {
     armTarget = pTerm(0, abs(Arm.get_position()), kP);
@@ -144,7 +136,7 @@ void tower() {
     wait(20);
   }
 
-  roller(-1.5, 200);
+  roller(-1.3, 80);
   while(true) {
     armTarget = pTerm(2.509, abs(Arm.get_position()), kP);
     arm(armTarget);
@@ -160,6 +152,39 @@ void tower() {
 
     if(isSettled(armTarget, tolerance)) { arm(0); break; }
     wait(20);
+  }
+}
+
+void tower(bool isManual) {
+  const double kP = 200;
+  double rackTarget, armTarget, tolerance = 4;
+
+  while(true) {
+    armTarget = pTerm(0, Arm.get_position(), kP);
+    arm(armTarget);
+
+    if(isSettled(armTarget, tolerance)) { arm(0); break; }
+    wait(20);
+  }
+
+  roller(-0.8, 80);
+  while(true) {
+    armTarget = pTerm(2.509, abs(Arm.get_position()), kP);
+    arm(armTarget);
+
+    if(isSettled(armTarget, tolerance)) { arm(0); break; }
+  }
+
+  if(!isManual) {
+    roller(-2, 200);
+    wait(1000);
+    while(true) {
+      armTarget = pTerm(0, abs(Arm.get_position()), kP);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
   }
 }
 

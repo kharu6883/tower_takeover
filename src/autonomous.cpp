@@ -7,7 +7,7 @@ using namespace okapi;
 using namespace path;
 using namespace std;
 
-int autonSlot = 1; // 0 = first slot;
+int autonSlot = 3; // 0 = first slot;
 
 map<int, void(*)(void)> Autonomous;
 map<int, const char *> SlotName;
@@ -26,6 +26,7 @@ void initAuton() { // The autons will be stored in this order, starting from 0.
 
   addAuton("Red Small zone 8 cubes", r_s_8); // Slot 1
   addAuton("Skills 1", skills1);
+  addAuton("Skills 2", skills2);
 
 
   // Running some tests below

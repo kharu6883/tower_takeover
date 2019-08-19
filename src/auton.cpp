@@ -141,6 +141,55 @@ void skills1() {
   // rack(0, 100, 9);
 }
 
+void skills2() {
+  // Pick up 4 cubes
+  roller(200);
+  drive(1200, 50, 9);
+  roller(0);
+
+  // Score low tower
+  wait(50);
+  Thread.strafe(-380, 100, 5);
+  tower(true);
+  roller(-2, 150);
+  wait(500);
+  roller(200);
+
+  // Approach red alliance tower and score
+  Thread.drive(-600, 100, 9);
+  tower(true);
+  turn(400, 100, 9);
+  drive(380, 100, 9);
+  roller(-2, 180);
+
+  // Drive to the wall, line up
+  arm(0, 200, 9);
+  generate("wallboi", -2.6_ft, 2_ft, -90_deg);
+  execute("wallboi", true);
+  destroy("wallboi");
+  align(300, 3);
+
+  // Yoink 9 cubes
+  roller(200);
+  drive(1800, 60, 5);
+  turn(700, 50, 5);
+  Thread.drive(380, 100, 9);
+  roller(0);
+  rack(3615, 60, 5);
+  rack(950, 200, 15);
+
+  // wait(500);
+  // roller(50);
+  // turn(200, 100, 9);
+  // drive(380, 100, 9);
+  // roller(200);
+  // wait(2000);
+  // turn(-150, 100, 9);
+  // Thread.drive(400, 100, 4);
+  // roller(-10);
+  // rack(3615, 60, 5);
+}
+
 void motionTest() {
   std::cout << "Reverse Traverse" << std::endl;
   generate("1", 5.5_ft, -1.5_ft, 0_deg);

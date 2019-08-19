@@ -311,6 +311,8 @@ void align(double target, double tolerance) {
 
     if(isSettled(outputL, tolerance) && isSettled(outputR, tolerance)) break;
   }
+
+  reset();
 }
 
 void left(int speed) {

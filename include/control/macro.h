@@ -28,7 +28,10 @@ void rack(double target, int speed, double rate);
 void arm(double target, int speed, double rate);
 
 // Macro for putting a cube in the tower.
-void tower(int id);
+void tower();
+
+// Macro for putting a cube in the tower. If set to true, the cube deployment will be disabled.
+void tower(bool isManual);
 
 
 /*--------------------------------

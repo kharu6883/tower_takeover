@@ -10,6 +10,7 @@ bool ControlAsync::isRunning = false;
 bool ControlAsync::isDrive = false;
 bool ControlAsync::isTurn = false;
 bool ControlAsync::isStrafe = false;
+bool ControlAsync::isPause = false;
 
 double ControlAsync::sturn = 0;
 
@@ -19,6 +20,8 @@ ControlAsync::last = 0,
 ControlAsync::derivative = 0,
 ControlAsync::output = 0,
 ControlAsync::slewOutput = 0;
+
+int ControlAsync::pause = 0;
 
 Vector2 ControlAsync::target = {0, 0, 0};
 
@@ -40,6 +43,11 @@ void ControlAsync::run(void* args) {
     /*===========================================
       DRIVING
     ===========================================*/
+
+    if(isPause) {
+      wait(pause);
+      isPause = false;
+    }
 
     if(isDrive) {
       if(target.length > 0) {
@@ -266,5 +274,46 @@ void ControlAsync::strafe(double length, int speed, int rate, double sturn) {
   this -> target.speed = speed;
   this -> target.rate = rate;
   this -> sturn = sturn;
+  isStrafe = true;
+}
+
+void ControlAsync::drive(double length, int speed, int rate, int pause) {
+  reset();
+  this -> target.length = length;
+  this -> target.speed = speed;
+  this -> target.rate = rate;
+  this -> pause = pause;
+  isPause = true;
+  isDrive = true;
+}
+
+void ControlAsync::turn(double length, int speed, int rate, int pause) {
+  reset();
+  this -> target.length = length;
+  this -> target.speed = speed;
+  this -> target.rate = rate;
+  this -> pause = pause;
+  isPause = true;
+  isTurn = true;
+}
+
+void ControlAsync::strafe(double length, int speed, int rate, int pause) {
+  reset();
+  this -> target.length = length;
+  this -> target.speed = speed;
+  this -> target.rate = rate;
+  this -> pause = pause;
+  isPause = true;
+  isStrafe = true;
+}
+
+void ControlAsync::strafe(double length, int speed, int rate, double sturn, int pause) {
+  reset();
+  this -> target.length = length;
+  this -> target.speed = speed;
+  this -> target.rate = rate;
+  this -> sturn = sturn;
+  this -> pause = pause;
+  isPause = true;
   isStrafe = true;
 }
