@@ -148,9 +148,9 @@ void macroTask(void* ignore) {
 				wait(20);
 			}
 
-			roller(-1, 70);
+			roller(-0.8, 70);
 			while(true) {
-				armTarget = pTerm(2.509, abs(Arm.get_position()), kP + 50);
+				armTarget = pTerm(3.1, abs(Arm.get_position()), kP + 50);
 				arm(armTarget);
 
 				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
@@ -159,7 +159,7 @@ void macroTask(void* ignore) {
 		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) {
 			towerMode = 2;
 
-			armTarget = pTerm(2.509, abs(armPos), kP);
+			armTarget = pTerm(2.409, abs(armPos), kP);
 			arm(armTarget);
 
 			if(isSettled(armTarget, tolerance)) {
