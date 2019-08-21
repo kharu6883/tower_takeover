@@ -7,7 +7,8 @@
 
 const double kP = 0.11;
 
-double slewOutput = 0, rate = 9;
+double slewOutput = 0, accel = 9, decel = 20;
+int lastBtn = 0;
 
 double target, clawTarget;
 
@@ -36,10 +37,11 @@ void opcontrol() {
 
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 
+			lastBtn = 1;
 			target = pTerm(3615, rackPot.get_value(), kP);
 
-			if(target > slewOutput + rate) {
-		    slewOutput += rate;
+			if(target > slewOutput + accel) {
+		    slewOutput += accel;
 		  } else {
 		    slewOutput = target;
 		  }
@@ -48,16 +50,30 @@ void opcontrol() {
 
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
 
+			lastBtn = 2;
 			target = pTerm(900, rackPot.get_value(), kP + 0.3);
 
-			if(abs(target) > slewOutput + rate) {
-		    slewOutput += rate;
+			if(abs(target) > slewOutput + accel) {
+		    slewOutput += accel;
 		  } else {
 		    slewOutput = abs(target);
 		  }
 
 			rack(-slewOutput);
 
+		} else if(slewOutput > 0) {
+
+			if(lastBtn == 1) {
+
+			  slewOutput -= decel;
+				rack(slewOutput);
+
+			} else if(lastBtn == 2) {
+
+				slewOutput -= decel;
+				rack(-slewOutput);
+
+			}
 		} else {
 
 			slewOutput = 0;

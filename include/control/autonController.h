@@ -4,7 +4,6 @@
 
 extern std::map<int, void(*)(void)> Autonomous;
 extern std::map<int, const char *> SlotName;
-extern std::map<int, const char *>::iterator SlotIter;
 
 void initAuton();
 void addAuton(const char * autonName, void(*function)());

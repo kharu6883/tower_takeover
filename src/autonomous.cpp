@@ -11,11 +11,11 @@ int autonSlot = 3; // 0 = first slot;
 
 map<int, void(*)(void)> Autonomous;
 map<int, const char *> SlotName;
-map<int, const char *>::iterator SlotIter;
 
 ControlAsync Start;
 
 void autonomous() {
+
   pros::Task asyncDrive(Start.run);
   Autonomous[autonSlot]();
 }
