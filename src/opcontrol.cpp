@@ -118,7 +118,6 @@ void macroTask(void* ignore) {
 	const double kP = 150;
 
 	bool isReturn = false;
-	bool isRatchet = false;
 	int towerMode = 0; // 1 = Top Tower, 2 = Bottom Tower
 
 	while(true) {
@@ -133,17 +132,10 @@ void macroTask(void* ignore) {
 
 		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) isReturn = true;
 
-		if(master.get_digital_new_press(DIGITAL_DOWN)) {
-			if(!isRatchet) isRatchet = true;
-				else isRatchet = false;
-			isReturn = true;
-		}
-
 		if(isReturn) {
 			towerMode = 0;
 
-			if(!isRatchet) armTarget = pTerm(0, armPos, kP + 150);
-				else armTarget = pTerm(0.38, armPos, kP + 150);
+			armTarget = pTerm(0, armPos, kP + 150);
 			arm(armTarget);
 
 			if(isSettled(armTarget, 3)) {
@@ -164,23 +156,35 @@ void macroTask(void* ignore) {
 				wait(20);
 			}
 
-			roller(-0.8, 70);
-			while(true) {
-				armTarget = pTerm(3.1, abs(Arm.get_position()), kP + 50);
+			roller(-0.7, 110);
+			wait(300)
+;			while(true) {
+				armTarget = pTerm(1.605 * COEFFICIENT_ARM, abs(Arm.get_position()), kP + 50);
 				arm(armTarget);
 
 				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
+				wait(20);
 			}
 
 		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) {
 			towerMode = 2;
 
-			armTarget = pTerm(2.409, abs(armPos), kP);
-			arm(armTarget);
+			while(true) {
+				armTarget = pTerm(0, abs(Arm.get_position()), kP + 50);
+				arm(armTarget);
 
-			if(isSettled(armTarget, tolerance)) {
-				arm(0);
-				isMacro = false;
+				if(isSettled(armTarget, tolerance)) { arm(0); break; }
+				wait(20);
+			}
+
+			roller(-0.7, 110);
+			wait(300);
+			while(true) {
+				armTarget = pTerm(1.201 * COEFFICIENT_ARM, abs(Arm.get_position()), kP + 50);
+				arm(armTarget);
+
+				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
+				wait(20);
 			}
 		}
 
