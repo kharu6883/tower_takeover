@@ -34,19 +34,33 @@ void opcontrol() {
 				else isTrack = false;
 		}
 
-
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
-
 			lastBtn = 1;
-			target = pTerm(3615, rackPot.get_value(), kP);
 
-			if(target > slewOutput + accel) {
-		    slewOutput += accel;
+			if(!isTrack) {
+
+				target = pTerm(3615, rackPot.get_value(), kP);
+
+				if(target > slewOutput + accel) {
+			    slewOutput += accel;
+			  } else {
+			    slewOutput = target;
+			  }
+
+				rack(slewOutput);
+
 		  } else {
-		    slewOutput = target;
-		  }
 
-			rack(slewOutput);
+				target = pTerm(1650, rackPot.get_value(), kP + 1);
+
+				if(target > slewOutput + accel) {
+			    slewOutput += accel;
+			  } else {
+			    slewOutput = target;
+			  }
+
+				rack(slewOutput);
+			}
 
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
 
@@ -62,7 +76,6 @@ void opcontrol() {
 			rack(-slewOutput);
 
 		} else if(slewOutput > 0) {
-
 			if(lastBtn == 1) {
 
 			  slewOutput -= decel;
@@ -81,7 +94,6 @@ void opcontrol() {
 
 		}
 
-
 		if(master.get_digital(DIGITAL_R1) && !isMacro) {
 
 			roller(200);
@@ -91,19 +103,9 @@ void opcontrol() {
 			roller(-100);
 
 		} else if(!isMacro) {
- 			if(isTrack) {
-				if(rackPot.get_value() < 1000) {
-			 		if(rollerline.get_value()<2500) {
-			 			roller(150);
-			 		} else {
-					 roller(0);
-					}
-			 	} else {
-					roller(0);
-				}
-			} else {
-				roller(0);
-		  }
+
+			roller(0);
+
 		}
 
 		// Yeet
@@ -113,8 +115,8 @@ void opcontrol() {
 
 void macroTask(void* ignore) {
 
-	double armPos, armTarget, armOutput, tolerance = 4;
-
+	double armPos, armTarget, armOutput, tolerance = 8;
+  double rollerRot = -0.7, rollerSpeed = 80, rollerWait = 0;
 	const double kP = 150;
 
 	bool isReturn = false;
@@ -156,10 +158,10 @@ void macroTask(void* ignore) {
 				wait(20);
 			}
 
-			roller(-0.7, 110);
-			wait(300)
-;			while(true) {
-				armTarget = pTerm(1.605 * COEFFICIENT_ARM, abs(Arm.get_position()), kP + 50);
+			roller(rollerRot, rollerSpeed);
+			wait(rollerWait);
+			while(true) {
+				armTarget = pTerm(1.605 * COEFFICIENT_ARM, abs(Arm.get_position()), kP + 100);
 				arm(armTarget);
 
 				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
@@ -177,10 +179,10 @@ void macroTask(void* ignore) {
 				wait(20);
 			}
 
-			roller(-0.7, 110);
-			wait(300);
+			roller(rollerRot, rollerSpeed);
+			wait(rollerWait);
 			while(true) {
-				armTarget = pTerm(1.201 * COEFFICIENT_ARM, abs(Arm.get_position()), kP + 50);
+				armTarget = pTerm(1.401 * COEFFICIENT_ARM, abs(Arm.get_position()), kP + 100);
 				arm(armTarget);
 
 				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
