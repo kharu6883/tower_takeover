@@ -1,10 +1,10 @@
 #include "main.h"
 
-// pros::Controller master(pros::E_CONTROLLER_PARTNER);  //for comp
-pros::Controller master(pros::E_CONTROLLER_MASTER); //for downloading
+pros::Controller master(pros::E_CONTROLLER_MASTER);
+
 // Sensors
 pros::ADIPotentiometer rackPot(RACKPOT);
-pros::ADILineSensor rollerline(ROLLERLINE);
+pros::ADIPotentiometer armPot(ARMPOT);
 
 // Ultrasonics
 pros::ADIUltrasonic ultraL(ULTRALPING, ULTRALECHO);

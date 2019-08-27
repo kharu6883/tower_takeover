@@ -86,7 +86,7 @@ void arm(double target, int speed, double rate) {
   double slewOutput;
 
   while(target > Arm.get_position()) { // Goin' up
-    double desired = pTerm(target * COEFFICIENT_ARM, Arm.get_position(), kP);
+    double desired = pTerm(target, Arm.get_position(), kP);
 
     if(desired > slewOutput + rate) {
       slewOutput += rate;
@@ -104,7 +104,7 @@ void arm(double target, int speed, double rate) {
   }
 
   while(target < Arm.get_position()) { // Goin' down
-    double desired = pTerm(target * COEFFICIENT_ARM, Arm.get_position(), kP);
+    double desired = pTerm(target, Arm.get_position(), kP);
 
     if(abs(desired) > slewOutput + rate) {
       slewOutput += rate;
@@ -138,7 +138,7 @@ void tower() {
 
   roller(-1.3, 80);
   while(true) {
-    armTarget = pTerm(1.254 * COEFFICIENT_ARM, abs(Arm.get_position()), kP);
+    armTarget = pTerm(1.254, abs(Arm.get_position()), kP);
     arm(armTarget);
 
     if(isSettled(armTarget, tolerance)) { arm(0); break; }
@@ -169,7 +169,7 @@ void tower(bool isManual) {
 
   roller(-0.8, 80);
   while(true) {
-    armTarget = pTerm(1.254 * COEFFICIENT_ARM, abs(Arm.get_position()), kP);
+    armTarget = pTerm(1.254, abs(Arm.get_position()), kP);
     arm(armTarget);
 
     if(isSettled(armTarget, tolerance)) { arm(0); break; }

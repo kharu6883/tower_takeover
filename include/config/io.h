@@ -4,7 +4,7 @@ extern pros::Controller master;
 
 // Sensors
 extern pros::ADIPotentiometer rackPot;
-extern pros::ADILineSensor rollerline;
+extern pros::ADIPotentiometer armPot;
 
 // Ultrasonics
 extern pros::ADIUltrasonic ultraL;

@@ -41,8 +41,7 @@ LV_IMG_DECLARE(michael2);
 #define FLAPR 2
 
 #define RACKPOT 1
-
-#define ROLLERLINE 2
+#define ARMPOT 2
 
 #define ULTRALPING 5
 #define ULTRALECHO 6

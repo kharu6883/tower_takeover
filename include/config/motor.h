@@ -1,7 +1,5 @@
 #include "main.h"
 
-#define COEFFICIENT_ARM 1
-
 extern pros::Motor LF;
 extern pros::Motor LB;
 extern pros::Motor RF;

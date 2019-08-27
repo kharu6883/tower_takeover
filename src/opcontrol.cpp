@@ -117,13 +117,19 @@ void macroTask(void* ignore) {
 
 	double armPos, armTarget, armOutput, tolerance = 8;
   double rollerRot = -0.7, rollerSpeed = 80, rollerWait = 0;
-	const double kP = 150;
+	const double kP = 50;
+
+	const int ARM_BOTTOM = 2300;
+	const int ARM_LOW_TOWER = 2500;
+	const int ARM_LOW_TOWER_DESCORE = 2500;
+	const int ARM_TOP = 2500;
 
 	bool isReturn = false;
 	int towerMode = 0; // 1 = Top Tower, 2 = Bottom Tower
 
 	while(true) {
-		armPos = Arm.get_position();
+		armPos = armPot.get_value();
+		std::cout << armPos << ", " << Arm.get_position() << std::endl;
 
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2)) {
 			arm(0);
@@ -137,21 +143,21 @@ void macroTask(void* ignore) {
 		if(isReturn) {
 			towerMode = 0;
 
-			armTarget = pTerm(0, armPos, kP + 150);
+			armTarget = pTerm(2300, armPos, kP);
 			arm(armTarget);
 
-			if(isSettled(armTarget, 3)) {
+			if(isSettled(armTarget, 10)) {
 				arm(0);
-				isReturn = false;
 				isMacro = false;
+				isReturn = false;
 			}
 		}
 
 		if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) {
 			towerMode = 1;
 
-			while(true) {
-				armTarget = pTerm(0, abs(Arm.get_position()), kP + 50);
+			while(!isReturn) {
+				armTarget = pTerm(ARM_BOTTOM, armPos, kP);
 				arm(armTarget);
 
 				if(isSettled(armTarget, tolerance)) { arm(0); break; }
@@ -160,8 +166,9 @@ void macroTask(void* ignore) {
 
 			roller(rollerRot, rollerSpeed);
 			wait(rollerWait);
-			while(true) {
-				armTarget = pTerm(1.605 * COEFFICIENT_ARM, abs(Arm.get_position()), kP + 100);
+
+			while(!isReturn) {
+				armTarget = pTerm(ARM_TOP, armPos, kP);
 				arm(armTarget);
 
 				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
@@ -171,8 +178,8 @@ void macroTask(void* ignore) {
 		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) {
 			towerMode = 2;
 
-			while(true) {
-				armTarget = pTerm(0, abs(Arm.get_position()), kP + 50);
+			while(!isReturn) {
+				armTarget = pTerm(ARM_BOTTOM, armPos, kP);
 				arm(armTarget);
 
 				if(isSettled(armTarget, tolerance)) { arm(0); break; }
@@ -181,8 +188,9 @@ void macroTask(void* ignore) {
 
 			roller(rollerRot, rollerSpeed);
 			wait(rollerWait);
-			while(true) {
-				armTarget = pTerm(1.401 * COEFFICIENT_ARM, abs(Arm.get_position()), kP + 100);
+
+			while(!isReturn) {
+				armTarget = pTerm(ARM_LOW_TOWER, armPos, kP);
 				arm(armTarget);
 
 				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
