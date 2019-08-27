@@ -85,8 +85,8 @@ void arm(double target, int speed, double rate) {
 
   double slewOutput;
 
-  while(target > Arm.get_position()) { // Goin' up
-    double desired = pTerm(target, Arm.get_position(), kP);
+  while(target > armPot.get_value()) { // Goin' up
+    double desired = pTerm(target, armPot.get_value(), kP);
 
     if(desired > slewOutput + rate) {
       slewOutput += rate;
@@ -103,8 +103,8 @@ void arm(double target, int speed, double rate) {
     wait(20);
   }
 
-  while(target < Arm.get_position()) { // Goin' down
-    double desired = pTerm(target, Arm.get_position(), kP);
+  while(target < armPot.get_value()) { // Goin' down
+    double desired = pTerm(target, armPot.get_value(), kP);
 
     if(abs(desired) > slewOutput + rate) {
       slewOutput += rate;
@@ -124,65 +124,49 @@ void arm(double target, int speed, double rate) {
   arm(0);
 }
 
-void tower() {
-  const double kP = 200;
-  double rackTarget, armTarget, tolerance = 4;
+void tower(int tower) {
+  const double kP = 1;
+  double rollerRot = -0.7, rollerSpeed = 80, rollerWait = 0;
+  double armTarget, tolerance = 4;
 
-  while(true) {
-    armTarget = pTerm(0, abs(Arm.get_position()), kP);
-    arm(armTarget);
-
-    if(isSettled(armTarget, tolerance)) { arm(0); break; }
-    wait(20);
-  }
-
-  roller(-1.3, 80);
-  while(true) {
-    armTarget = pTerm(1.254, abs(Arm.get_position()), kP);
-    arm(armTarget);
-
-    if(isSettled(armTarget, tolerance)) { arm(0); break; }
-  }
-
-  roller(-2, 200);
-  wait(1000);
-  while(true) {
-    armTarget = pTerm(0, abs(Arm.get_position()), kP);
-    arm(armTarget);
-
-    if(isSettled(armTarget, tolerance)) { arm(0); break; }
-    wait(20);
-  }
-}
-
-void tower(bool isManual) {
-  const double kP = 200;
-  double rackTarget, armTarget, tolerance = 4;
-
-  while(true) {
-    armTarget = pTerm(0, Arm.get_position(), kP);
-    arm(armTarget);
-
-    if(isSettled(armTarget, tolerance)) { arm(0); break; }
-    wait(20);
-  }
-
-  roller(-0.8, 80);
-  while(true) {
-    armTarget = pTerm(1.254, abs(Arm.get_position()), kP);
-    arm(armTarget);
-
-    if(isSettled(armTarget, tolerance)) { arm(0); break; }
-  }
-
-  if(!isManual) {
-    roller(-2, 200);
-    wait(1000);
+  if(tower == 1) {
     while(true) {
-      armTarget = pTerm(0, abs(Arm.get_position()), kP);
+      armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
+
+    roller(rollerRot, rollerSpeed);
+    wait(rollerWait);
+
+    while(true) {
+      armTarget = pTerm(ARM_LOW_TOWER, armPot.get_value(), kP);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance + 1)) { arm(0); break; }
+      wait(20);
+    }
+  }
+
+  if(tower == 2) {
+    while(true) {
+      armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
+
+    roller(rollerRot, rollerSpeed);
+    wait(rollerWait);
+
+    while(true) {
+      armTarget = pTerm(ARM_MID_TOWER, armPot.get_value(), kP);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance + 1)) { arm(0); break; }
       wait(20);
     }
   }

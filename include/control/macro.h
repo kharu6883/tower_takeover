@@ -27,11 +27,8 @@ void rack(double target, int speed, double rate);
 // Moves the arm to the target, in a given speed.
 void arm(double target, int speed, double rate);
 
-// Macro for putting a cube in the tower.
-void tower();
-
-// Macro for putting a cube in the tower. If set to true, the cube deployment will be disabled.
-void tower(bool isManual);
+// Macro for towers. 1 - Low Tower, 2 - Mid Tower
+void tower(int tower);
 
 
 /*--------------------------------

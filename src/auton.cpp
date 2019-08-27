@@ -150,14 +150,14 @@ void skills2() {
   // Score low tower
   wait(50);
   Thread.strafe(-380, 100, 5);
-  tower(true);
+  tower(1);
   roller(-2, 150);
   wait(500);
   roller(200);
 
   // Approach red alliance tower and score
   Thread.drive(-600, 100, 9);
-  tower(true);
+  tower(1);
   turn(400, 100, 9);
   drive(380, 100, 9);
   roller(-2, 180);
