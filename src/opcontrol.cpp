@@ -110,6 +110,9 @@ void opcontrol() {
 
 		}
 
+		std::cout << Arm.get_current_draw() << std::endl;
+		std::cout << Arm.get_brake_mode() << std::endl;
+
 		// Yeet
 		pros::delay(20);
 	}
@@ -125,7 +128,6 @@ void macroTask(void* ignore) {
 	int towerMode = 0; // 1 = Top Tower, 2 = Bottom Tower, 3 = Descore Bottom Tower
 
 	while(true) {
-
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400) {
 			arm(0);
 
@@ -139,6 +141,9 @@ void macroTask(void* ignore) {
 		if(isReturn) {
 			towerMode = 0;
 
+			Arm.set_current_limit(6000);
+			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+
 			armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 0.2);
 			arm(armTarget);
 
@@ -151,6 +156,9 @@ void macroTask(void* ignore) {
 
 		if(towerMode == 3) { // Descore
 
+			Arm.set_current_limit(6000);
+			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+
 			armTarget = pTerm(ARM_LOW_TOWER_DESCORE, armPot.get_value(), kP);
 			arm(armTarget);
 
@@ -158,6 +166,9 @@ void macroTask(void* ignore) {
 
 		} else if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) { // Mid Tower
 			towerMode = 1;
+
+			Arm.set_current_limit(6000);
+			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 			while(!isReturn) {
 				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 1);
@@ -181,6 +192,9 @@ void macroTask(void* ignore) {
 		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) { // Low Tower
 			towerMode = 2;
 
+			Arm.set_current_limit(6000);
+			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+
 			while(!isReturn) {
 				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 1);
 				arm(armTarget);
@@ -199,6 +213,14 @@ void macroTask(void* ignore) {
 				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
 				wait(20);
 			}
+		}
+
+		if(towerMode != 0 && !isReturn) {
+			Arm.set_current_limit(20);
+			Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+		} else if(!isReturn) {
+			Arm.set_current_limit(20);
+			Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 		}
 
 		pros::delay(20);
