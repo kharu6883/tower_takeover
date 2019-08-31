@@ -121,7 +121,7 @@ void opcontrol() {
 void macroTask(void* ignore) {
 
 	double armTarget, armOutput, tolerance = 15;
-  double rollerRot = -0.7, rollerSpeed = 80, rollerWait = 0;
+  double rollerRot = -0.7, rollerSpeed = 200, rollerWait = 0;
 	const double kP = 2;
 
 	bool isReturn = false;
@@ -141,16 +141,18 @@ void macroTask(void* ignore) {
 		if(isReturn) {
 			towerMode = 0;
 
-			Arm.set_current_limit(6000);
+			Arm.set_current_limit(4000);
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
-			armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 0.2);
+			armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP - 1);
 			arm(armTarget);
 
-			if(isSettled(armTarget, tolerance)) {
+			if(isSettled(armTarget, tolerance-13)) {
 				arm(0);
 				isMacro = false;
 				isReturn = false;
+			//	Arm.set_current_limit(10);
+			//	Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
 			}
 		}
 
@@ -162,19 +164,19 @@ void macroTask(void* ignore) {
 			armTarget = pTerm(ARM_LOW_TOWER_DESCORE, armPot.get_value(), kP);
 			arm(armTarget);
 
-			if(isSettled(armTarget, tolerance)) { arm(0); towerMode = 0; }
+			if(isSettled(armTarget, tolerance-5)) { arm(0); towerMode = 0; }
 
 		} else if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) { // Mid Tower
 			towerMode = 1;
 
-			Arm.set_current_limit(6000);
+			Arm.set_current_limit(8000);
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 			while(!isReturn) {
-				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 1);
+				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 5);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance)) { arm(0); break; }
+				if(isSettled(armTarget, tolerance+20)) { arm(0); break; }
 				wait(20);
 			}
 
@@ -192,14 +194,14 @@ void macroTask(void* ignore) {
 		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) { // Low Tower
 			towerMode = 2;
 
-			Arm.set_current_limit(6000);
+			Arm.set_current_limit(8000);
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 			while(!isReturn) {
-				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 1);
+				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 5);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance)) { arm(0); break; }
+				if(isSettled(armTarget, tolerance+20)) { arm(0); break; }
 				wait(20);
 			}
 
@@ -207,20 +209,21 @@ void macroTask(void* ignore) {
 			wait(rollerWait);
 
 			while(!isReturn) {
-				armTarget = pTerm(ARM_LOW_TOWER, armPot.get_value(), kP);
+				armTarget = pTerm(ARM_LOW_TOWER, armPot.get_value(), kP-1);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
+				if(isSettled(armTarget, tolerance -5 )) { arm(0); isMacro = false; break; }
 				wait(20);
 			}
 		}
 
 		if(towerMode != 0 && !isReturn) {
-			Arm.set_current_limit(20);
+			Arm.set_current_limit(5);
 			Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 		} else if(!isReturn) {
-			Arm.set_current_limit(20);
-			Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+
+			Arm.set_current_limit(5);
+			Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
 		}
 
 		pros::delay(20);

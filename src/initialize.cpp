@@ -1,11 +1,13 @@
 #include "main.h"
 
+#include "config/io.h"
 #include "config/motor.h"
 #include "config/vision.h"
 
 #include "control/displayController.h"
 #include "control/autonController.h"
 #include "control/asyncController.h"
+#include "control/macro.h"
 using namespace Display;
 
 ControlAsync Control;
@@ -35,6 +37,11 @@ void initialize() {
 void disabled() {
   Control.stop();
   armAsync.suspend();
+
+  while(true) {
+    if(master.get_digital_new_press(DIGITAL_Y)) armReset();
+    wait(20);
+  }
 }
 
 void competition_initialize() {

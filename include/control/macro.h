@@ -30,6 +30,9 @@ void arm(double target, int speed, double rate);
 // Macro for towers. 1 - Low Tower, 2 - Mid Tower
 void tower(int tower);
 
+// Resets the arm using the limit switch.
+void armReset();
+
 
 /*--------------------------------
     CONTROL & PID CALCULATION

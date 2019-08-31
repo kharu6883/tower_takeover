@@ -42,6 +42,7 @@ LV_IMG_DECLARE(michael2);
 
 #define RACKPOT 1
 #define ARMPOT 2
+#define ARMLIMIT 7
 
 #define ULTRALPING 5
 #define ULTRALECHO 6
@@ -52,10 +53,10 @@ LV_IMG_DECLARE(michael2);
 #define FRONTVISION 13
 
 // Constants
-#define ARM_BOTTOM 2105
+#define ARM_BOTTOM 2080
 #define ARM_LOW_TOWER 3280
 #define ARM_LOW_TOWER_DESCORE 3190
-#define ARM_MID_TOWER 3550
+#define ARM_MID_TOWER 3530
 
 using namespace okapi;
 

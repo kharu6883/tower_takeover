@@ -172,6 +172,13 @@ void tower(int tower) {
   }
 }
 
+void armReset() {
+  arm(-200);
+  while (!armLimit.get_value()) wait(20);
+  arm(0);
+  Arm.tare_position();
+}
+
 
 
 double pTerm(double target, double sensor, double kP) {
