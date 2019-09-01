@@ -35,6 +35,8 @@ void opcontrol() {
 				else isTrack = false;
 		}
 
+		if(isReset) armReset();
+
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 			lastBtn = 1;
 

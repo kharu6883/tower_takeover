@@ -173,17 +173,12 @@ void tower(int tower) {
 }
 
 void armReset() {
-  setReset(true);
   Arm.set_current_limit(8000);
   arm(-100);
-  while(true) {
-    if(!armLimit.get_value()) {
-      arm(0);
-      break;
-    }
 
-    wait(20);
-  }
+  while(!armLimit.get_value()) pros::delay(20);
+
+  arm(0);
   Arm.tare_position();
   setReset(false);
 }
