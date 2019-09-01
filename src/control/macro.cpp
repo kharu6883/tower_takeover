@@ -177,7 +177,7 @@ void armReset() {
   Arm.set_current_limit(8000);
   arm(-100);
   while(true) {
-    if(armLimit.get_value() == 0) {
+    if(!armLimit.get_value()) {
       arm(0);
       break;
     }
