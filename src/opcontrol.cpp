@@ -12,13 +12,12 @@ int lastBtn = 0;
 
 double target, clawTarget;
 
-bool isMacro = false;
-bool isTrack = false;
+bool isMacro = false, isTrack = false, isReset = false;
 
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-	Arm.set_current_limit(5000);
+	Arm.set_current_limit(8000);
 
 	RollerL.set_brake_mode(MOTOR_BRAKE_BRAKE);
 	RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
@@ -110,9 +109,6 @@ void opcontrol() {
 
 		}
 
-		std::cout << Arm.get_current_draw() << std::endl;
-		std::cout << Arm.get_brake_mode() << std::endl;
-
 		// Yeet
 		pros::delay(20);
 	}
@@ -128,6 +124,8 @@ void macroTask(void* ignore) {
 	int towerMode = 0; // 1 = Top Tower, 2 = Bottom Tower, 3 = Descore Bottom Tower
 
 	while(true) {
+		if(isReset) continue;
+
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400) {
 			arm(0);
 
@@ -147,12 +145,10 @@ void macroTask(void* ignore) {
 			armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP - 1);
 			arm(armTarget);
 
-			if(isSettled(armTarget, tolerance-13)) {
+			if(isSettled(armTarget, tolerance - 13)) {
 				arm(0);
 				isMacro = false;
 				isReturn = false;
-			//	Arm.set_current_limit(10);
-			//	Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
 			}
 		}
 
@@ -201,7 +197,7 @@ void macroTask(void* ignore) {
 				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 5);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance+20)) { arm(0); break; }
+				if(isSettled(armTarget, tolerance + 20)) { arm(0); break; }
 				wait(20);
 			}
 
@@ -212,7 +208,7 @@ void macroTask(void* ignore) {
 				armTarget = pTerm(ARM_LOW_TOWER, armPot.get_value(), kP-1);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance -5 )) { arm(0); isMacro = false; break; }
+				if(isSettled(armTarget, tolerance - 5)) { arm(0); isMacro = false; break; }
 				wait(20);
 			}
 		}
@@ -229,3 +225,5 @@ void macroTask(void* ignore) {
 		pros::delay(20);
 	}
 }
+
+void setReset(bool set) { isReset = set; }

@@ -20,6 +20,7 @@ extern pros::Task armAsync;
 // It's Everyday Functions Bro
 void wait(int ms);
 void print(const char * text);
+void setReset(bool set);
 
 // Image declaration
 LV_IMG_DECLARE(title);

@@ -67,6 +67,16 @@ static lv_res_t camera_click_action(lv_obj_t * btn) {
   return LV_RES_OK;
 }
 
+static lv_res_t settings_click_action(lv_obj_t * btn) {
+  int id = lv_obj_get_free_num(btn);
+
+  switch(id) {
+    case 1: armReset(); break;
+  }
+
+  return LV_RES_OK;
+}
+
 BrainDisplay::BrainDisplay() {
   if(!initialized) {
     // Theme & Style init
@@ -178,6 +188,10 @@ void BrainDisplay::sensor() {
 
   lv_obj_t * placeholder = lv_label_create(scr, NULL);
   lv_label_set_text(placeholder, "Hello, World!");
+  lv_obj_t * mainImg = lv_img_create(scr, NULL);
+  lv_obj_set_size(mainImg, 240, 240);
+  lv_obj_set_pos(mainImg, 0, -5);
+  lv_img_set_src(mainImg, &michael1);
 }
 
 void BrainDisplay::camera() {
@@ -197,7 +211,8 @@ void BrainDisplay::camera() {
 void BrainDisplay::setting() {
   isMain = false;
 
-  lv_obj_t * reset_arm = createButton(2048, 0, 0, 50, 200, "Reset", scr);
+  lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr);
+  lv_btn_set_action(arm_reset, LV_BTN_ACTION_CLICK, settings_click_action);
 }
 
 void BrainDisplay::update() {

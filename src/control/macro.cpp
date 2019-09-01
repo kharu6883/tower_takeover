@@ -173,10 +173,19 @@ void tower(int tower) {
 }
 
 void armReset() {
-  arm(-200);
-  while (!armLimit.get_value()) wait(20);
-  arm(0);
+  setReset(true);
+  Arm.set_current_limit(8000);
+  arm(-100);
+  while(true) {
+    if(armLimit.get_value() == 0) {
+      arm(0);
+      break;
+    }
+
+    wait(20);
+  }
   Arm.tare_position();
+  setReset(false);
 }
 
 

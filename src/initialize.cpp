@@ -37,11 +37,6 @@ void initialize() {
 void disabled() {
   Control.stop();
   armAsync.suspend();
-
-  while(true) {
-    if(master.get_digital_new_press(DIGITAL_Y)) armReset();
-    wait(20);
-  }
 }
 
 void competition_initialize() {
