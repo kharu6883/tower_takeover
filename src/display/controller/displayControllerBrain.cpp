@@ -71,7 +71,7 @@ static lv_res_t settings_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
   switch(id) {
-    case 1: armReset(); break;
+    case 1: setReset(true); break;
   }
 
   return LV_RES_OK;
