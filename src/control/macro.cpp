@@ -176,14 +176,13 @@ void armReset() {
   setReset(true);
   Arm.set_current_limit(8000);
   arm(-100);
-  while(true) {
-    if(!armLimit.get_value()) {
-      arm(0);
-      break;
-    }
 
+  while(true) {
+    if(!armLimit.get_value()) break;
     wait(20);
   }
+
+  arm(0);
   Arm.tare_position();
   setReset(false);
 }
