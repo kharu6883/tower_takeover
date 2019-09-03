@@ -170,12 +170,14 @@ void armReset() {
   Arm.set_current_limit(10000);
   arm(-200);
 
+  bool isDown = armLimit.get_value();
+
   while(true) {
     if(armLimit.get_new_press()) {
       arm(0);
       Arm.tare_position();
       break;
-    }
+    } else if(isDown) break;
 
     pros::delay(20);
   }
