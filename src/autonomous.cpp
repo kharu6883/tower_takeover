@@ -7,7 +7,7 @@ using namespace okapi;
 using namespace path;
 using namespace std;
 
-int autonSlot = 3; // 0 = first slot;
+static int autonSlot = 1; // 0 = first slot;
 
 map<int, void(*)(void)> Autonomous;
 map<int, const char *> SlotName;
@@ -15,7 +15,6 @@ map<int, const char *> SlotName;
 ControlAsync Start;
 
 void autonomous() {
-
   pros::Task asyncDrive(Start.run);
   Autonomous[autonSlot]();
 }

@@ -6,12 +6,6 @@
 #include "control/macro.h"
 #include "control/drive.h"
 
-bool isStacking = false;
-
-const double kP = 60;
-
-
-
 void rack(int speed) {
   Rack.move_velocity(speed);
 }
@@ -85,8 +79,8 @@ void arm(double target, int speed, double rate) {
 
   double slewOutput;
 
-  while(target > armPot.get_value()) { // Goin' up
-    double desired = pTerm(target, armPot.get_value(), kP);
+  while(target > Arm.get_position()) { // Goin' up
+    double desired = pTerm(target, Arm.get_position(), kP);
 
     if(desired > slewOutput + rate) {
       slewOutput += rate;
@@ -103,8 +97,8 @@ void arm(double target, int speed, double rate) {
     wait(20);
   }
 
-  while(target < armPot.get_value()) { // Goin' down
-    double desired = pTerm(target, armPot.get_value(), kP);
+  while(target < Arm.get_position()) { // Goin' down
+    double desired = pTerm(target, Arm.get_position(), kP);
 
     if(abs(desired) > slewOutput + rate) {
       slewOutput += rate;
@@ -126,12 +120,12 @@ void arm(double target, int speed, double rate) {
 
 void tower(int tower) {
   const double kP = 1;
-  double rollerRot = -0.7, rollerSpeed = 80, rollerWait = 0;
+  double rollerRot = -0.8, rollerSpeed = 80, rollerWait = 0;
   double armTarget, tolerance = 4;
 
   if(tower == 1) {
     while(true) {
-      armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP);
+      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
@@ -142,7 +136,7 @@ void tower(int tower) {
     wait(rollerWait);
 
     while(true) {
-      armTarget = pTerm(ARM_LOW_TOWER, armPot.get_value(), kP);
+      armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance + 1)) { arm(0); break; }
@@ -152,7 +146,7 @@ void tower(int tower) {
 
   if(tower == 2) {
     while(true) {
-      armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP);
+      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
@@ -163,7 +157,7 @@ void tower(int tower) {
     wait(rollerWait);
 
     while(true) {
-      armTarget = pTerm(ARM_MID_TOWER, armPot.get_value(), kP);
+      armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance + 1)) { arm(0); break; }
@@ -173,20 +167,20 @@ void tower(int tower) {
 }
 
 void armReset() {
-  Arm.set_current_limit(8000);
-  arm(-100);
+  Arm.set_current_limit(10000);
+  arm(-200);
 
-<<<<<<< HEAD
   while(true) {
-    if(!armLimit.get_value()) break;
-    wait(20);
+    if(armLimit.get_new_press()) {
+      arm(0);
+      Arm.tare_position();
+      break;
+    }
+
+    pros::delay(20);
   }
-=======
-  while(!armLimit.get_value()) pros::delay(20);
->>>>>>> cac96c1e3ad366574302412a06498dd9dfb03775
 
   arm(0);
-  Arm.tare_position();
   setReset(false);
 }
 

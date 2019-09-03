@@ -6,42 +6,40 @@
 #include "control/path.h"
 using namespace path;
 
-// 6 = tolerance
-
 ControlAsync Thread;
 
 void tester() {
   std::cout << "Testing" << std::endl;
-
-  align(500, 0.5);
-
-
-  // generate("1", 1_ft, 0_ft, 0_deg);
-  // execute("1", false);
-  // destroy("1");
-  // generate("2", 0.6_ft, 0_ft, 0_deg);
-  // execute("2", false);
-  // destroy("2");
-  // generate("3", 0.6_ft, 0_ft, 0_deg);
-  // execute("3", false);
-  // destroy("3");
-  // generate("4", 0.6_ft, 0_ft, 0_deg);
-  // execute("4", false);
-  // destroy("4");
-  // generate("5", 3_ft, 3_ft, 1_deg);
-  // execute("5", true);
-  // destroy("5");
-  // generate("6", 1_ft, 0_ft, 0_deg);
-  // execute("6", false);
-  // destroy("6");
-  // generate("7", 0.6_ft, 0_ft, 0_deg);
-  // execute("7", false);
-  // destroy("7");
 }
 
 void r_s_8() {
-  strafe(800, 100, 9, 30);
-  strafe(-800, 100, 9, 30);
+  generate("yoink", 3_ft, 3_ft, 1_deg);
+  armReset();
+
+  // Pick up 4 cubes
+  roller(200);
+  drive(1000, 95, 7);
+
+  // Swerve back to the 3 cubes
+  execute("yoink", true);
+  destroy("yoink");
+  align(300, 5);
+
+  // Yoink 3 more cubes and turn right facing small red corner
+  drive(1000, 80, 9);
+  turn(750, 90, 5);
+
+  // Drive to small red corner and place
+  roller(-20);
+  Thread.drive(1480, 200, 9);
+  rack(RACK_UP, 100, 9);
+  roller(150);
+
+  // Yeet outta there
+  wait(300);
+  Thread.drive(-300, 200, 9);
+  roller(-100);
+  rack(RACK_DOWN, 200, 9);
 }
 
 void skills1() {
@@ -52,7 +50,7 @@ void skills1() {
   roller(50);
 
   // Swerve back to the 3 cubes
-  generate("yoink", 3_ft, 3_ft, 1_deg);
+  generate("yoink", 3_ft, 3_ft, 3_deg);
   execute("yoink", true);
   destroy("yoink");
   turn(20, 60, 9);

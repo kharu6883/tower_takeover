@@ -1,4 +1,3 @@
-#pragma once
 #ifndef _PROS_MAIN_H_
 #define _PROS_MAIN_H_
 
@@ -42,8 +41,8 @@ LV_IMG_DECLARE(michael2);
 #define FLAPR 2
 
 #define RACKPOT 1
-#define ARMPOT 2
-#define ARMLIMIT 7
+#define ARMPOT 7
+#define ARMLIMIT 2
 
 #define ULTRALPING 5
 #define ULTRALECHO 6
@@ -54,10 +53,13 @@ LV_IMG_DECLARE(michael2);
 #define FRONTVISION 13
 
 // Constants
-#define ARM_BOTTOM 2080
-#define ARM_LOW_TOWER 3280
-#define ARM_LOW_TOWER_DESCORE 3190
-#define ARM_MID_TOWER 3530
+#define RACK_DOWN 900
+#define RACK_UP 3615
+
+#define ARM_BOTTOM 0
+#define ARM_LOW_TOWER 1.3
+#define ARM_LOW_TOWER_DESCORE 1.1
+#define ARM_MID_TOWER 1.6
 
 using namespace okapi;
 

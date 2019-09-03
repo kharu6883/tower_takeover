@@ -7,12 +7,11 @@
 
 const double kP = 0.11;
 
-double slewOutput = 0, accel = 9, decel = 20;
-int lastBtn = 0;
+static int lastBtn = 0;
 
-double target, clawTarget;
+static double target, clawTarget, slewOutput = 0, accel = 9, decel = 20;
 
-bool isMacro = false, isTrack = false, isReset = false;
+static bool isMacro = false, isTrack = false, isReset = false;
 
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -35,7 +34,7 @@ void opcontrol() {
 				else isTrack = false;
 		}
 
-		if(isReset) armReset();
+		if(master.get_digital_new_press(DIGITAL_DOWN)) setReset(true);
 
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 			lastBtn = 1;
@@ -118,15 +117,15 @@ void opcontrol() {
 
 void macroTask(void* ignore) {
 
-	double armTarget, armOutput, tolerance = 15;
-  double rollerRot = -0.7, rollerSpeed = 200, rollerWait = 0;
-	const double kP = 2;
+	double armTarget, armOutput, tolerance = 3;
+  double rollerRot = -0.8, rollerSpeed = 200, rollerWait = 0;
+	const double kP = 190;
 
 	bool isReturn = false;
 	int towerMode = 0; // 1 = Top Tower, 2 = Bottom Tower, 3 = Descore Bottom Tower
 
 	while(true) {
-		if(isReset) continue;
+		if(isReset) { armReset(); pros::delay(20); continue; }
 
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400) {
 			arm(0);
@@ -144,11 +143,12 @@ void macroTask(void* ignore) {
 			Arm.set_current_limit(4000);
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
-			armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP - 1);
+			armTarget = pTerm(ARM_BOTTOM - 0.03, Arm.get_position(), kP);
 			arm(armTarget);
 
-			if(isSettled(armTarget, tolerance - 13)) {
+			if(isSettled(armTarget, tolerance) || armLimit.get_value()) {
 				arm(0);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				isMacro = false;
 				isReturn = false;
 			}
@@ -159,10 +159,10 @@ void macroTask(void* ignore) {
 			Arm.set_current_limit(6000);
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
-			armTarget = pTerm(ARM_LOW_TOWER_DESCORE, armPot.get_value(), kP);
+			armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP);
 			arm(armTarget);
 
-			if(isSettled(armTarget, tolerance-5)) { arm(0); towerMode = 0; }
+			if(isSettled(armTarget, tolerance)) { arm(0); towerMode = 0; }
 
 		} else if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) { // Mid Tower
 			towerMode = 1;
@@ -171,10 +171,10 @@ void macroTask(void* ignore) {
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 			while(!isReturn) {
-				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 5);
+				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance+20)) { arm(0); break; }
+				if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
 				wait(20);
 			}
 
@@ -182,10 +182,10 @@ void macroTask(void* ignore) {
 			wait(rollerWait);
 
 			while(!isReturn) {
-				armTarget = pTerm(ARM_MID_TOWER, armPot.get_value(), kP);
+				armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance + 1)) { arm(0); isMacro = false; break; }
+				if(isSettled(armTarget, tolerance)) { arm(0); isMacro = false; break; }
 				wait(20);
 			}
 
@@ -196,10 +196,10 @@ void macroTask(void* ignore) {
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 			while(!isReturn) {
-				armTarget = pTerm(ARM_BOTTOM, armPot.get_value(), kP + 5);
+				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance + 20)) { arm(0); break; }
+				if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
 				wait(20);
 			}
 
@@ -207,10 +207,10 @@ void macroTask(void* ignore) {
 			wait(rollerWait);
 
 			while(!isReturn) {
-				armTarget = pTerm(ARM_LOW_TOWER, armPot.get_value(), kP-1);
+				armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance - 5)) { arm(0); isMacro = false; break; }
+				if(isSettled(armTarget, tolerance)) { arm(0); isMacro = false; break; }
 				wait(20);
 			}
 		}
@@ -219,7 +219,6 @@ void macroTask(void* ignore) {
 			Arm.set_current_limit(5);
 			Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 		} else if(!isReturn) {
-
 			Arm.set_current_limit(5);
 			Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
 		}

@@ -6,11 +6,7 @@
 #include "control/drive.h"
 #include "control/macro.h"
 
-double current, error, last, derivative, output;
-
 void reset() {
-  current = 0; error = 0; last = 0; derivative = 0; output = 0;
-
   LF.tare_position();
   LB.tare_position();
   RF.tare_position();
@@ -20,7 +16,9 @@ void reset() {
 }
 
 void drive(double target, int speed, double rate) {
-  const double kP = 0.4;
+  double current, error, last, derivative, output;
+
+  const double kP = 0.6;
   const double kD = 0.6;
 
   double deltaL, deltaR;
@@ -86,6 +84,8 @@ void drive(double target, int speed, double rate) {
 }
 
 void turn(double target, int speed, double rate) {
+  double current, error, last, derivative, output;
+
   const double kP = 0.6;
   const double kD = 0.6;
 
@@ -152,6 +152,7 @@ void turn(double target, int speed, double rate) {
 }
 
 void strafe(double target, int speed, double rate) {
+  double current, error, last, derivative, output;
 
   const double kP = 0.6;
   const double kD = 0.6;
@@ -217,6 +218,7 @@ void strafe(double target, int speed, double rate) {
 }
 
 void strafe(double target, int speed, double rate, double sturn) {
+  double current, error, last, derivative, output;
 
   const double kP = 0.6;
   const double kD = 0.6;

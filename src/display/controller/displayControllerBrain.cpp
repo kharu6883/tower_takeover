@@ -9,42 +9,42 @@
 #include "control/macro.h"
 using namespace Display;
 
-int screen = 0;
+static int screen = 0;
 
-bool isVision;
+static bool isVision;
 
 static lv_style_t overlay;
 static lv_style_t mainScr;
-lv_obj_t * scr;
+static lv_obj_t * scr;
 
-lv_obj_t * loading;
-lv_obj_t * loader;
-lv_obj_t * loadText;
+static lv_obj_t * loading;
+static lv_obj_t * loader;
+static lv_obj_t * loadText;
 
-bool initialized = false;
-bool isMain = true;
+static bool initialized = false;
+static bool isMain = true;
 
-lv_obj_t * autonStat;
-lv_obj_t * btnBack;
+static lv_obj_t * autonStat;
+static lv_obj_t * btnBack;
 
-lv_obj_t * expVal;
+static lv_obj_t * expVal;
 
-lv_obj_t * visorCont;
+static lv_obj_t * visorCont;
 
-lv_res_t btn_click_action(lv_obj_t * btn) {
+static lv_res_t main_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
   lv_obj_del(scr);
 
   Display::BrainDisplay display;
 
-  if(id == 1) { display.auton(); screen = 1; }
-  if(id == 2) { display.sensor(); screen = 2; }
-  if(id == 3) { display.camera(); screen = 3; }
-  if(id == 4) { display.setting(); screen = 4; }
+  if(id == 1) { display.auton(); }
+  if(id == 2) { display.sensor(); }
+  if(id == 3) { display.camera(); }
+  if(id == 4) { display.setting(); }
 
   // Home Button
-  if(id == 420) { display.main(); screen = 0; isVision = false; }
+  if(id == 420) { display.main(); isVision = false; }
 
   return LV_RES_OK;
 }
@@ -127,12 +127,13 @@ BrainDisplay::BrainDisplay() {
     lv_obj_set_style(autonStat, &overlay);
     lv_obj_set_y(autonStat, 2);
 
-    btnBack = createButton(420, 5, 190, 100, 40, SYMBOL_HOME" Home", lv_layer_top());
+    btnBack = createButton(420, 5, 190, 100, 40, SYMBOL_HOME" Home", lv_layer_top(), main_click_action);
 
     print("Display initialized!");
     initialized = true;
   }
 
+  screen = 0;
   scr = lv_page_create(NULL, NULL);
   lv_scr_load(scr);
 }
@@ -145,6 +146,7 @@ void BrainDisplay::cleanup() {
 
 void BrainDisplay::main() {
   isMain = true;
+  screen = 0;
 
   lv_obj_t * mainImg = lv_img_create(scr, NULL);
   lv_obj_set_size(mainImg, 240, 240);
@@ -157,14 +159,15 @@ void BrainDisplay::main() {
   lv_obj_set_pos(container_main, 250, 55);
   lv_obj_set_size(container_main, 200, 170);
 
-  lv_obj_t * btnAuton = createButton(1, 250, 0, 200, 40, SYMBOL_LIST" Autonomous", container_main);
-  lv_obj_t * btnSensor = createButton(2, 250, 65, 200, 40, SYMBOL_GPS" Sensors", container_main);
-  lv_obj_t * btnCamera = createButton(3, 250, 110, 200, 40, SYMBOL_IMAGE" Camera", container_main);
-  lv_obj_t * btnSetting = createButton(4, 250, 155, 200, 40, SYMBOL_SETTINGS" Settings", container_main);
+  lv_obj_t * btnAuton = createButton(1, 250, 0, 200, 40, SYMBOL_LIST" Autonomous", container_main, main_click_action);
+  lv_obj_t * btnSensor = createButton(2, 250, 65, 200, 40, SYMBOL_GPS" Sensors", container_main, main_click_action);
+  lv_obj_t * btnCamera = createButton(3, 250, 110, 200, 40, SYMBOL_IMAGE" Camera", container_main, main_click_action);
+  lv_obj_t * btnSetting = createButton(4, 250, 155, 200, 40, SYMBOL_SETTINGS" Settings", container_main, main_click_action);
 }
 
 void BrainDisplay::auton() {
   isMain = false;
+  screen = 1;
 
   // This needs to happen because it does not return a proper integer
   // It is a way to explicitly cast the variable type which works
@@ -174,17 +177,16 @@ void BrainDisplay::auton() {
   lv_obj_t * btnAutonm[] = {};
   for(int i = 0; i < size; i++) {
     if(i == 0) {
-      btnAutonm[i] = createButton(i, 200, 40, 250, 40, getName(i), scr);
-      lv_btn_set_action(btnAutonm[i], LV_BTN_ACTION_CLICK, auton_click_action);
+      btnAutonm[i] = createButton(i, 200, 40, 250, 40, getName(i), scr, auton_click_action);
     } else {
-      btnAutonm[i] = createButton(i, 200, i * 45 + 20, 250, 40, getName(i), scr);
-      lv_btn_set_action(btnAutonm[i], LV_BTN_ACTION_CLICK, auton_click_action);
+      btnAutonm[i] = createButton(i, 200, i * 45 + 20, 250, 40, getName(i), scr, auton_click_action);
     }
   }
 }
 
 void BrainDisplay::sensor() {
   isMain = false;
+  screen = 2;
 
   lv_obj_t * placeholder = lv_label_create(scr, NULL);
   lv_label_set_text(placeholder, "Hello, World!");
@@ -196,23 +198,23 @@ void BrainDisplay::sensor() {
 
 void BrainDisplay::camera() {
   isMain = false;
+  screen = 3;
+
   visorCont = lv_cont_create(scr, NULL);
   lv_obj_set_pos(visorCont, 134, 22);
   lv_obj_set_size(visorCont, 316, 212);
   isVision = true;
 
-  lv_obj_t * expDec = createButton(1, 0, 25, 40, 40, SYMBOL_LEFT, scr);
-  lv_btn_set_action(expDec, LV_BTN_ACTION_CLICK, camera_click_action);
+  lv_obj_t * expDec = createButton(1, 0, 25, 40, 40, SYMBOL_LEFT, scr, camera_click_action);
   expVal = createLabel(52, 35, "Exp", scr);
-  lv_obj_t * expInc = createButton(2, 85, 25, 40, 40, SYMBOL_RIGHT, scr);
-  lv_btn_set_action(expInc, LV_BTN_ACTION_CLICK, camera_click_action);
+  lv_obj_t * expInc = createButton(2, 85, 25, 40, 40, SYMBOL_RIGHT, scr, camera_click_action);
 }
 
 void BrainDisplay::setting() {
   isMain = false;
+  screen = 4;
 
-  lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr);
-  lv_btn_set_action(arm_reset, LV_BTN_ACTION_CLICK, settings_click_action);
+  lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
 }
 
 void BrainDisplay::update() {
@@ -229,27 +231,54 @@ void BrainDisplay::update() {
   name = "Auton Selected: ";
 
   while(true) {
-    if(isVision) {
-      std::string exposure;
-      lv_obj_clean(visorCont);
-      for(int i = 0; i < CamFront.get_object_count(); i++) {
-        pros::vision_object_s_t sig = CamFront.get_by_size(i);
-        if(sig.signature == 1) { fill = LV_COLOR_PURPLE; sigName = "Purple Cube"; }
+
+    switch(screen) {
+      case 0: {
+        lv_obj_set_pos(btnBack, -100, 190);
+        break;
+      }
+
+      case 1: {
+        lv_obj_set_pos(btnBack, 5, 190);
+        break;
+      }
+
+      case 2: {
+        lv_obj_set_pos(btnBack, 5, 190);
+        break;
+      }
+
+      case 3: {
+        lv_obj_set_pos(btnBack, 5, 190);
+        std::string exposure;
+        lv_obj_clean(visorCont);
+        for(int i = 0; i < CamFront.get_object_count(); i++) {
+          pros::vision_object_s_t sig = CamFront.get_by_size(i);
+          if(sig.signature == 1) { fill = LV_COLOR_PURPLE; sigName = "Purple Cube"; }
           else if(sig.signature == 2) { fill = LV_COLOR_ORANGE; sigName = "Orange Cube"; }
           else if(sig.signature == 3) { fill = LV_COLOR_GREEN; sigName = "Green Cube"; }
           else { fill = LV_COLOR_WHITE; sigName = "Unknown"; }
 
-        visor = drawRectangle(sig.left_coord, sig.top_coord, sig.width, sig.height, LV_COLOR_WHITE, fill, visorCont);
-        visorInfo = createLabel(sig.left_coord, sig.top_coord - 20, sigName, visorCont);
-      }
-      exposure += std::to_string(CamFront.get_exposure());
-      c = exposure.c_str();
-      lv_label_set_text(expVal, c);
-    }
+          visor = drawRectangle(sig.left_coord, sig.top_coord, sig.width, sig.height, LV_COLOR_WHITE, fill, visorCont);
+          visorInfo = createLabel(sig.left_coord, sig.top_coord - 20, sigName, visorCont);
+        }
 
-    // Hides the home button whenever at home
-    if(isMain) lv_obj_set_pos(btnBack, -100, 190);
-      else lv_obj_set_pos(btnBack, 5, 190);
+        exposure += std::to_string(CamFront.get_exposure());
+        c = exposure.c_str();
+        lv_label_set_text(expVal, c);
+        break;
+      }
+
+      case 4: {
+        lv_obj_set_pos(btnBack, 5, 190);
+        break;
+      }
+
+      default: {
+        lv_obj_set_pos(btnBack, 5, 190);
+        break;
+      }
+    }
 
     // Auton name display
     now = getName(getSlot());
@@ -281,12 +310,12 @@ lv_obj_t * BrainDisplay::createLabel(int x, int y, const char * text, lv_obj_t *
   return label;
 }
 
-lv_obj_t * BrainDisplay::createButton(int id, int x, int y, int width, int height, const char * text, lv_obj_t * parent) {
+lv_obj_t * BrainDisplay::createButton(int id, int x, int y, int width, int height, const char * text, lv_obj_t * parent, lv_action_t action) {
   lv_obj_t * button = lv_btn_create(parent, NULL);
   lv_obj_set_pos(button, x, y);
   lv_obj_set_size(button, width, height);
   lv_obj_set_free_num(button, id);
-  lv_btn_set_action(button, LV_BTN_ACTION_CLICK, btn_click_action);
+  lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
   lv_obj_t * buttonLabel = createLabel(0, 0, text, button);
   lv_obj_align(buttonLabel, button, LV_ALIGN_CENTER, 0, 0);
 

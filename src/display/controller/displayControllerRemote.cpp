@@ -4,7 +4,7 @@
 #include "control/displayController.h"
 using namespace Display;
 
-int count = 0;
+static int count = 0;
 
 RemoteDisplay::RemoteDisplay() {
 
