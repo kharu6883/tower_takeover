@@ -12,7 +12,7 @@ static int lastBtn = 0;
 static double target, clawTarget, slewOutput = 0, accel = 9, decel = 20;
 
 static bool isMacro = false, isTrack = false, isReset = false;
-
+static int rackTower = 30, rackDown = 30, rackUp = 0;
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -41,7 +41,7 @@ void opcontrol() {
 
 			if(!isTrack) {
 
-				target = pTerm(3615, rackPot.get_value(), kP);
+				target = pTerm(rackDown, rackPot.get_value(), kP);
 
 				if(target > slewOutput + accel) {
 			    slewOutput += accel;
@@ -53,7 +53,7 @@ void opcontrol() {
 
 		  } else {
 
-				target = pTerm(1650, rackPot.get_value(), kP + 1);
+				target = pTerm(rackTower, rackPot.get_value(), kP + 1);
 
 				if(target > slewOutput + accel) {
 			    slewOutput += accel;
@@ -67,7 +67,7 @@ void opcontrol() {
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
 
 			lastBtn = 2;
-			target = pTerm(900, rackPot.get_value(), kP + 0.3);
+			target = pTerm(rackUp, rackPot.get_value(), kP + 0.3);
 
 			if(abs(target) > slewOutput + accel) {
 		    slewOutput += accel;
@@ -102,7 +102,7 @@ void opcontrol() {
 
 		} else if(master.get_digital(DIGITAL_R2) && !isMacro) {
 
-			roller(-100);
+			roller(-150);
 
 		} else if(!isMacro) {
 
@@ -118,8 +118,8 @@ void opcontrol() {
 void macroTask(void* ignore) {
 
 	double armTarget, armOutput, tolerance = 3;
-  double rollerRot = -0.8, rollerSpeed = 200, rollerWait = 0;
-	const double kP = 190;
+  double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 0;
+	const double kP = 210;
 
 	bool isReturn = false;
 	int towerMode = 0; // 1 = Top Tower, 2 = Bottom Tower, 3 = Descore Bottom Tower
@@ -156,10 +156,10 @@ void macroTask(void* ignore) {
 
 		if(towerMode == 3) { // Descore
 
-			Arm.set_current_limit(6000);
+			Arm.set_current_limit(10000);
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
-			armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP);
+			armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP+10);
 			arm(armTarget);
 
 			if(isSettled(armTarget, tolerance)) { arm(0); towerMode = 0; }
@@ -185,7 +185,7 @@ void macroTask(void* ignore) {
 				armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
 				arm(armTarget);
 
-				if(isSettled(armTarget, tolerance)) { arm(0); isMacro = false; break; }
+				if(isSettled(armTarget, tolerance+8)) { arm(0); isMacro = false; break; }
 				wait(20);
 			}
 

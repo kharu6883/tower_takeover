@@ -59,7 +59,7 @@ LV_IMG_DECLARE(michael2);
 #define ARM_BOTTOM 0
 #define ARM_LOW_TOWER 1.3
 #define ARM_LOW_TOWER_DESCORE 1.1
-#define ARM_MID_TOWER 1.6
+#define ARM_MID_TOWER 1.75
 
 using namespace okapi;
 
