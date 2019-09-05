@@ -7,12 +7,12 @@
 
 const double kP = 0.11;
 
-static int lastBtn = 0;
+static int towerMode = 0, lastBtn = 0;
 
 static double target, clawTarget, slewOutput = 0, accel = 9, decel = 20;
 
-static bool isMacro = false, isTrack = false, isReset = false;
-static int rackTower = 30, rackDown = 30, rackUp = 0;
+static bool isTrack = false, isReset = false;
+
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -96,15 +96,15 @@ void opcontrol() {
 
 		}
 
-		if(master.get_digital(DIGITAL_R1) && !isMacro) {
+		if(master.get_digital(DIGITAL_R1) && towerMode == 0) {
 
 			roller(200);
 
-		} else if(master.get_digital(DIGITAL_R2) && !isMacro) {
+		} else if(master.get_digital(DIGITAL_R2) && towerMode == 0) {
 
 			roller(-150);
 
-		} else if(!isMacro) {
+		} else if(towerMode == 0) {
 
 			roller(0);
 
@@ -122,19 +122,17 @@ void macroTask(void* ignore) {
 	const double kP = 210;
 
 	bool isReturn = false;
-	int towerMode = 0; // 1 = Top Tower, 2 = Bottom Tower, 3 = Descore Bottom Tower
+	int towerMode = 0; // 1 = Primed, 2 = Bottom Tower, 3 = Mid Tower, 4 = Descore Bottom Tower, 5 = Finalization
 
 	while(true) {
 		if(isReset) { armReset(); pros::delay(20); continue; }
 
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400) {
 			arm(0);
-
-			towerMode = 0;
-			isMacro = true;
+			towerMode = 1;
 		}
 
-		if(master.get_digital_new_press(DIGITAL_B) && rackPot.get_value() <= 1400) towerMode = 3;
+		if(master.get_digital_new_press(DIGITAL_B) && rackPot.get_value() <= 1400) towerMode = 4;
 		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) isReturn = true;
 
 		if(isReturn) {
@@ -149,78 +147,53 @@ void macroTask(void* ignore) {
 			if(isSettled(armTarget, tolerance) || armLimit.get_value()) {
 				arm(0);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-				isMacro = false;
 				isReturn = false;
 			}
 		}
 
-		if(towerMode == 3) { // Descore
-
-			Arm.set_current_limit(10000);
-			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
-
-			armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP+10);
-			arm(armTarget);
-
-			if(isSettled(armTarget, tolerance)) { arm(0); towerMode = 0; }
-
-		} else if(isMacro && !master.get_digital(DIGITAL_L1) && towerMode != 2 && !isReturn) { // Mid Tower
-			towerMode = 1;
-
-			Arm.set_current_limit(8000);
-			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
-
-			while(!isReturn) {
-				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
-				arm(armTarget);
-
-				if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
-				wait(20);
+		switch(towerMode) {
+			case 1: {
+				if(!master.get_digital(DIGITAL_L2)) towerMode = 2;
+				if(!master.get_digital(DIGITAL_L1)) towerMode = 3;
+				break;
 			}
 
-			roller(rollerRot, rollerSpeed);
-			wait(rollerWait);
-
-			while(!isReturn) {
-				armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
-				arm(armTarget);
-
-				if(isSettled(armTarget, tolerance+8)) { arm(0); isMacro = false; break; }
-				wait(20);
+			case 2: {
+				Arm.set_current_limit(8000);
+				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+				tower(1);
+				towerMode = 5;
+				break;
 			}
 
-		} else if(isMacro && !master.get_digital(DIGITAL_L2) && towerMode != 1 && !isReturn) { // Low Tower
-			towerMode = 2;
-
-			Arm.set_current_limit(8000);
-			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
-
-			while(!isReturn) {
-				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
-				arm(armTarget);
-
-				if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
-				wait(20);
+			case 3: {
+				Arm.set_current_limit(8000);
+				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+				tower(2);
+				towerMode = 5;
+				break;
 			}
 
-			roller(rollerRot, rollerSpeed);
-			wait(rollerWait);
-
-			while(!isReturn) {
-				armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
-				arm(armTarget);
-
-				if(isSettled(armTarget, tolerance)) { arm(0); isMacro = false; break; }
-				wait(20);
+			case 4: {
+				Arm.set_current_limit(6000);
+				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+				tower(3);
+				towerMode = 5;
+				break;
 			}
-		}
 
-		if(towerMode != 0 && !isReturn) {
-			Arm.set_current_limit(5);
-			Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-		} else if(!isReturn) {
-			Arm.set_current_limit(5);
-			Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
+			case 5: {
+				Arm.set_current_limit(5);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+				break;
+			}
+
+			default: {
+				if(!isReturn) {
+					Arm.set_current_limit(5);
+					Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
+				}
+			}
 		}
 
 		pros::delay(20);
