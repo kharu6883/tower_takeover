@@ -124,7 +124,7 @@ void tower(int tower) {
   double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 0;
   double armTarget, tolerance = 3;
 
-  if(tower == 1) {
+  if(tower == 1) { // Bottom Tower
     while(true) {
       armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
       arm(armTarget);
@@ -143,7 +143,7 @@ void tower(int tower) {
       if(isSettled(armTarget, tolerance + 1)) { arm(0); break; }
       wait(20);
     }
-  } else if(tower == 2) {
+  } else if(tower == 2) { // Mid Tower
     while(true) {
       armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
       arm(armTarget);
@@ -168,7 +168,7 @@ void tower(int tower) {
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
-      wait(20);
+      wait(20); 
     }
   }
 }
