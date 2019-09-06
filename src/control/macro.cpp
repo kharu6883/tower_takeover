@@ -14,14 +14,14 @@ void arm(int speed) {
   Arm.move_velocity(speed);
 }
 
-void roller(int speed) {
-  RollerL.move_velocity(speed);
-  RollerR.move_velocity(speed);
+int roller(int speed) {
+  if(RollerL.move_velocity(speed) == EACCES || RollerR.move_velocity(speed) == EACCES) return EACCES;
+  else return 1;
 }
 
-void roller(double rot, int speed) {
-  RollerL.move_relative(rot, speed);
-  RollerR.move_relative(rot, speed);
+int roller(double rot, int speed) {
+  if(RollerL.move_relative(rot, speed) == EACCES || RollerR.move_relative(rot, speed) == EACCES) return EACCES;
+  else return 1;
 }
 
 
@@ -119,7 +119,7 @@ void arm(double target, int speed, double rate) {
 }
 
 void tower(int tower) {
-  
+
   const double kP = 210;
   double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 0;
   double armTarget, tolerance = 3;
@@ -129,7 +129,7 @@ void tower(int tower) {
       armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
       arm(armTarget);
 
-      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
       wait(20);
     }
 
@@ -143,14 +143,12 @@ void tower(int tower) {
       if(isSettled(armTarget, tolerance + 1)) { arm(0); break; }
       wait(20);
     }
-  }
-
-  if(tower == 2) {
+  } else if(tower == 2) {
     while(true) {
       armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
       arm(armTarget);
 
-      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
       wait(20);
     }
 
@@ -164,9 +162,7 @@ void tower(int tower) {
       if(isSettled(armTarget, tolerance + 8)) { arm(0); break; }
       wait(20);
     }
-  }
-
-  if(tower == 3) {
+  } else if(tower == 3) {
     while(true) {
       armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP + 10);
       arm(armTarget);

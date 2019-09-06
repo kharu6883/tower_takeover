@@ -96,15 +96,15 @@ void opcontrol() {
 
 		}
 
-		if(master.get_digital(DIGITAL_R1) && towerMode == 0) {
+		if(master.get_digital(DIGITAL_R1) && (towerMode == 0 || towerMode == 5)) {
 
 			roller(200);
 
-		} else if(master.get_digital(DIGITAL_R2) && towerMode == 0) {
+		} else if(master.get_digital(DIGITAL_R2) && (towerMode == 0 || towerMode == 5)) {
 
 			roller(-150);
 
-		} else if(towerMode == 0) {
+		} else if(towerMode == 0 || towerMode == 5) {
 
 			roller(0);
 
@@ -121,7 +121,7 @@ void macroTask(void* ignore) {
 	const double kP = 210;
 
 	bool isReturn = false;
-	int towerMode = 0; // 1 = Primed, 2 = Bottom Tower, 3 = Mid Tower, 4 = Descore Bottom Tower, 5 = Finalization
+	// 1 = Primed, 2 = Bottom Tower, 3 = Mid Tower, 4 = Descore Bottom Tower, 5 = Finalization
 
 	while(true) {
 		if(isReset) { armReset(); pros::delay(20); continue; }
@@ -140,7 +140,7 @@ void macroTask(void* ignore) {
 			Arm.set_current_limit(4000);
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
-			armTarget = pTerm(ARM_BOTTOM - 0.03, Arm.get_position(), kP);
+			armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
 			arm(armTarget);
 
 			if(isSettled(armTarget, tolerance) || armLimit.get_value()) {
@@ -192,6 +192,7 @@ void macroTask(void* ignore) {
 					Arm.set_current_limit(5);
 					Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
 				}
+				break;
 			}
 		}
 
