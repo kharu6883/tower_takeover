@@ -41,7 +41,7 @@ void opcontrol() {
 
 			if(!isTrack) {
 
-				target = pTerm(rackDown, rackPot.get_value(), kP);
+				target = pTerm(RACK_UP, rackPot.get_value(), kP);
 
 				if(target > slewOutput + accel) {
 			    slewOutput += accel;
@@ -53,7 +53,7 @@ void opcontrol() {
 
 		  } else {
 
-				target = pTerm(rackTower, rackPot.get_value(), kP + 1);
+				target = pTerm(RACK_TOWER, rackPot.get_value(), kP + 1);
 
 				if(target > slewOutput + accel) {
 			    slewOutput += accel;
@@ -67,7 +67,7 @@ void opcontrol() {
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
 
 			lastBtn = 2;
-			target = pTerm(rackUp, rackPot.get_value(), kP + 0.3);
+			target = pTerm(RACK_DOWN, rackPot.get_value(), kP + 0.3);
 
 			if(abs(target) > slewOutput + accel) {
 		    slewOutput += accel;
@@ -117,8 +117,7 @@ void opcontrol() {
 
 void macroTask(void* ignore) {
 
-	double armTarget, armOutput, tolerance = 3;
-  double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 0;
+	double armTarget, tolerance = 3;
 	const double kP = 210;
 
 	bool isReturn = false;
@@ -175,7 +174,7 @@ void macroTask(void* ignore) {
 			}
 
 			case 4: {
-				Arm.set_current_limit(6000);
+				Arm.set_current_limit(10000);
 				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 				tower(3);
 				towerMode = 5;

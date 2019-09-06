@@ -119,9 +119,10 @@ void arm(double target, int speed, double rate) {
 }
 
 void tower(int tower) {
-  const double kP = 190;
-  double rollerRot = -0.8, rollerSpeed = 200, rollerWait = 0;
-  double armTarget, tolerance = 4;
+  
+  const double kP = 210;
+  double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 0;
+  double armTarget, tolerance = 3;
 
   if(tower == 1) {
     while(true) {
@@ -160,17 +161,18 @@ void tower(int tower) {
       armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
       arm(armTarget);
 
-      if(isSettled(armTarget, tolerance + 1)) { arm(0); break; }
+      if(isSettled(armTarget, tolerance + 8)) { arm(0); break; }
       wait(20);
     }
   }
 
   if(tower == 3) {
     while(true) {
-      armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP);
+      armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP + 10);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
     }
   }
 }

@@ -55,6 +55,7 @@ LV_IMG_DECLARE(michael2);
 // Constants
 #define RACK_DOWN 900
 #define RACK_UP 3615
+#define RACK_TOWER 1650
 
 #define ARM_BOTTOM 0
 #define ARM_LOW_TOWER 1.3
