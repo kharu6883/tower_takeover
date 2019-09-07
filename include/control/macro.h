@@ -1,3 +1,5 @@
+#include "api.h"
+
 extern bool isStacking;
 
 /*--------------------------------
@@ -32,6 +34,14 @@ void tower(int tower);
 
 // Resets the arm using the limit switch.
 void armReset();
+
+
+/*--------------------------------
+    VISION FEED
+--------------------------------*/
+
+// Gets information from the selected signature.
+pros::vision_object_s_t getVisionSig(int id, int size);
 
 
 /*--------------------------------

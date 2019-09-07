@@ -12,14 +12,13 @@ RemoteDisplay::RemoteDisplay() {
 
 void RemoteDisplay::update() {
   while(true) {
-    
-
+    master.print(0, 0, "Yee haw");
     pros::delay(50);
   }
 }
 
 void RemoteDisplay::run(void *ignore) {
   pros::delay(500);
-  BrainDisplay* that = static_cast<BrainDisplay*>(ignore);
+  RemoteDisplay* that = static_cast<RemoteDisplay*>(ignore);
   that -> update();
 }

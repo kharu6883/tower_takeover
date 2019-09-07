@@ -2,6 +2,7 @@
 
 #include "config/motor.h"
 #include "config/io.h"
+#include "config/vision.h"
 
 #include "control/macro.h"
 #include "control/drive.h"
@@ -168,7 +169,7 @@ void tower(int tower) {
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
-      wait(20); 
+      wait(20);
     }
   }
 }
@@ -191,6 +192,12 @@ void armReset() {
 
   arm(0);
   setReset(false);
+}
+
+
+
+pros::vision_object_s_t getVisionSig(int id, int size) {
+  return CamFront.get_by_sig(size, id);
 }
 
 

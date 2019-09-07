@@ -50,7 +50,12 @@ LV_IMG_DECLARE(michael2);
 #define ULTRARPING 3
 #define ULTRARECHO 4
 
+// Vision Constants
 #define FRONTVISION 13
+
+#define CUBE_PURPLE 1
+#define CUBE_ORANGE 2
+#define CUBE_GREEN 3
 
 // Constants
 #define RACK_DOWN 900
