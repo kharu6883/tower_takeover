@@ -2,16 +2,33 @@
 #include <iostream>
 #include <map>
 
-extern std::map<int, void(*)(void)> Autonomous;
-extern std::map<int, const char *> SlotName;
+class Autonomous {
+  public:
+    Autonomous();
 
-void initAuton();
-void addAuton(const char * autonName, void(*function)());
+    // Runs the selected auton.
+    void runAuton();
+    void addAuton(const char * autonName, void(*function)());
 
-// Getters and Setters
-void setAuton(int slot);
-int getSlot();
-const char * getName(int slot);
+    // Gets the current slot selected.
+    int getSlot();
+
+    // Sets an auton slot.
+    void setSlot(int slot);
+
+    // Gets the size of the SlotName array.
+    int getSize();
+
+    // Gets the name of a slot.
+    const char * getName(int slot);
+
+  private:
+    static bool isInitialized;
+    static int autonSlot;
+
+    static std::map<int, void(*)(void)> AutonArray;
+    static std::map<int, const char *> SlotName;
+};
 
 // Auton Declarations
 void tester();

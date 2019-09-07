@@ -28,7 +28,8 @@ namespace Display {
     public:
       RemoteDisplay();
 
-      static void update(void* ignore);
+      void update();
+      static void run(void *ignore);
 
     private:
 

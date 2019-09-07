@@ -10,13 +10,16 @@ RemoteDisplay::RemoteDisplay() {
 
 }
 
-void RemoteDisplay::update(void* ignore) {
+void RemoteDisplay::update() {
   while(true) {
-    if(!(count % 25)) {
-      master.set_text(0, 0, "Hello, World!");
-    }
+    
 
-    count++;
-    wait(2);
+    pros::delay(50);
   }
+}
+
+void RemoteDisplay::run(void *ignore) {
+  pros::delay(500);
+  BrainDisplay* that = static_cast<BrainDisplay*>(ignore);
+  that -> update();
 }

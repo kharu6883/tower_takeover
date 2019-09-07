@@ -14,7 +14,7 @@ ControlAsync Control;
 pros::Task armAsync(macroTask);
 
 void initialize() {
-  initAuton();
+  Autonomous Auton;
   initVision();
 
   armAsync.suspend();
@@ -28,6 +28,9 @@ void initialize() {
   BrainDisplay Brain;
   Brain.main();
   pros::Task display(Brain.run);
+
+  RemoteDisplay Remote;
+  pros::Task r_display(Remote.run);
 
   wait(2000);
   Brain.cleanup();

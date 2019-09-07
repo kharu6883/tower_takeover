@@ -9,6 +9,8 @@
 #include "control/macro.h"
 using namespace Display;
 
+Autonomous Auton;
+
 static int screen = 0;
 
 static bool isVision;
@@ -51,7 +53,7 @@ static lv_res_t main_click_action(lv_obj_t * btn) {
 
 static lv_res_t auton_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
-  setAuton(id);
+  Auton.setSlot(id);
 
   return LV_RES_OK;
 }
@@ -171,15 +173,15 @@ void BrainDisplay::auton() {
 
   // This needs to happen because it does not return a proper integer
   // It is a way to explicitly cast the variable type which works
-  int size = SlotName.size();
+  int size = Auton.getSize();
 
   // Making buttons on autonomouses on a selected order from 0 ~ yeet
   lv_obj_t * btnAutonm[] = {};
   for(int i = 0; i < size; i++) {
     if(i == 0) {
-      btnAutonm[i] = createButton(i, 200, 40, 250, 40, getName(i), scr, auton_click_action);
+      btnAutonm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(i), scr, auton_click_action);
     } else {
-      btnAutonm[i] = createButton(i, 200, i * 45 + 20, 250, 40, getName(i), scr, auton_click_action);
+      btnAutonm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(i), scr, auton_click_action);
     }
   }
 }
@@ -281,7 +283,7 @@ void BrainDisplay::update() {
     }
 
     // Auton name display
-    now = getName(getSlot());
+    now = Auton.getName(Auton.getSlot());
     if(last != now) {
       name.erase(name.begin() + 16, name.end());
       name.append(now);

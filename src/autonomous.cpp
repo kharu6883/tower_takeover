@@ -7,44 +7,58 @@ using namespace okapi;
 using namespace path;
 using namespace std;
 
-static int autonSlot = 1; // 0 = first slot;
-
-map<int, void(*)(void)> Autonomous;
-map<int, const char *> SlotName;
-
 ControlAsync Start;
+
+bool Autonomous::isInitialized = false;
+int Autonomous::autonSlot = 0;
+
+std::map<int, void(*)(void)> Autonomous::AutonArray;
+std::map<int, const char *> Autonomous::SlotName;
 
 void autonomous() {
   pros::Task asyncDrive(Start.run);
-  Autonomous[autonSlot]();
+  Autonomous Auton;
+  Auton.runAuton();
 }
 
-void initAuton() { // The autons will be stored in this order, starting from 0.
-  addAuton("Test Auton", tester);
+Autonomous::Autonomous() { // The autons will be stored in this order, starting from 0.
+  if(!isInitialized) {
+    addAuton("Test Auton", tester);
 
 
-  addAuton("Red Small zone 8 cubes", r_s_8); // Slot 1
-  addAuton("Skills 1", skills1);
-  addAuton("Skills 2", skills2);
+    addAuton("Red Small zone 8 cubes", r_s_8); // Slot 1
+    addAuton("Skills 1", skills1);
+    addAuton("Skills 2", skills2);
 
 
-  // Running some tests below
-  addAuton("Motion Test", motionTest);
+    // Running some tests below
+    addAuton("Motion Test", motionTest);
+
+    isInitialized = true;
+  }
 }
 
-void addAuton(const char * autonName, void(*function)()) {
-  Autonomous.insert(make_pair(Autonomous.size(), function));
+void Autonomous::runAuton() {
+  Autonomous::AutonArray[autonSlot]();
+}
+
+void Autonomous::addAuton(const char * autonName, void(*function)()) {
+  AutonArray.insert(make_pair(AutonArray.size(), function));
   SlotName.insert(make_pair(SlotName.size(), autonName));
 }
 
-void setAuton(int slot) {
-  autonSlot = slot;
-}
-
-int getSlot() {
+int Autonomous::getSlot() {
   return autonSlot;
 }
 
-const char * getName(int slot) {
+void Autonomous::setSlot(int slot) {
+  autonSlot = slot;
+}
+
+int Autonomous::getSize() {
+  return SlotName.size();
+}
+
+const char * Autonomous::getName(int slot) {
   return SlotName[slot];
 }
