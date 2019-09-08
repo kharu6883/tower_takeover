@@ -27,10 +27,12 @@ void initialize() {
 
   BrainDisplay Brain;
   Brain.main();
-  pros::Task display(Brain.run);
+  pros::Task b_display(Brain.run);
+  b_display.set_priority(TASK_PRIORITY_MIN);
 
   RemoteDisplay Remote;
   pros::Task r_display(Remote.run);
+  r_display.set_priority(TASK_PRIORITY_MIN);
 
   wait(2000);
   Brain.cleanup();
