@@ -11,8 +11,37 @@ ControlAsync Thread;
 void tester() {
   std::cout << "Testing" << std::endl;
 }
-
+void start()
+{
+  roller(-2,200);
+  rack(2000, 200, 9);
+  roller(0);
+  rack(950, 200, 9);
+  armReset();
+}
 void r_s_8() {
+
+roller(200);
+drive(1000, 200, 9);
+drive(600, 100, 9);
+drive(-200, 100, 9);
+turn(150, 200, 4);
+drive(300, 200, 9);
+drive(300, 200, 9);
+drive(-600, 200, 9);
+turn(1050, 200, 4);
+drive(600, 200, 9);
+
+wait(10000);
+turn(-100, 200, 4);
+generate("1", 4_ft, 2_ft, -1_deg);
+execute("1",false);
+destroy("1");
+turn(-100, 200, 4);
+drive(-200, 200, 9);
+turn(-500, 200, 4);
+drive(100, 200, 9);
+  wait(100000);
   generate("yoink", 3_ft, 3_ft, 1_deg);
   armReset();
 

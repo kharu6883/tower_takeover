@@ -102,7 +102,7 @@ void opcontrol() {
 
 		} else if(master.get_digital(DIGITAL_R2) && (towerMode == 0 || towerMode == 5)) {
 
-			roller(-150);
+			roller(-200);
 
 		} else if(towerMode == 0 || towerMode == 5) {
 
@@ -159,7 +159,7 @@ void macroTask(void* ignore) {
 
 			case 2: {
 				Arm.set_current_limit(8000);
-				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(1);
 				towerMode = 5;
 				break;
@@ -167,7 +167,7 @@ void macroTask(void* ignore) {
 
 			case 3: {
 				Arm.set_current_limit(8000);
-				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(2);
 				towerMode = 5;
 				break;
@@ -175,22 +175,22 @@ void macroTask(void* ignore) {
 
 			case 4: {
 				Arm.set_current_limit(10000);
-				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(3);
 				towerMode = 5;
 				break;
 			}
 
 			case 5: {
-				Arm.set_current_limit(5);
+				Arm.set_current_limit(50);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				break;
 			}
 
 			default: {
 				if(!isReturn) {
-					Arm.set_current_limit(5);
-					Arm.set_brake_mode(MOTOR_BRAKE_BRAKE);
+					Arm.set_current_limit(5000);
+					Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				}
 				break;
 			}
