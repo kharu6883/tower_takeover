@@ -29,16 +29,16 @@ LV_IMG_DECLARE(michael1);
 LV_IMG_DECLARE(michael2);
 
 // Motor ports & ADI
+#define RFPORT 1
+#define RBPORT 2
 #define LFPORT 9
 #define LBPORT 10
-#define RFPORT 3
-#define RBPORT 4
 
-#define RACK 11
-#define ARM 12
+#define RACK 5
+#define ARM 6
 
-#define FLAPL 1
-#define FLAPR 2
+#define FLAPL 8
+#define FLAPR 3
 
 #define RACKPOT 1
 #define ARMPOT 7

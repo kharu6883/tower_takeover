@@ -6,15 +6,30 @@ using namespace Display;
 
 static int count = 0;
 
+bool RemoteDisplay::isSetting = false;
+const char *RemoteDisplay::text = "";
+
 RemoteDisplay::RemoteDisplay() {
 
 }
 
 void RemoteDisplay::update() {
   while(true) {
-    master.print(0, 0, "Yee haw");
+    if(isSetting) {
+      master.print(0, 0, text);
+      isSetting = false;
+    }
+
     pros::delay(50);
   }
+}
+
+void RemoteDisplay::setText(const char *set) {
+  std::string applier;
+  applier.append(set);
+  applier.append("            ");
+  text = applier.c_str();
+  isSetting = true;
 }
 
 void RemoteDisplay::run(void *ignore) {

@@ -4,6 +4,7 @@
 #include "config/io.h"
 
 #include "control/macro.h"
+#include "control/displayController.h"
 
 const double kP = 0.11;
 
@@ -12,6 +13,8 @@ static int towerMode = 0, lastBtn = 0;
 static double target, clawTarget, slewOutput = 0, accel = 9, decel = 20;
 
 static bool isTrack = false, isReset = false;
+
+Display::RemoteDisplay remote;
 
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -121,14 +124,15 @@ void macroTask(void* ignore) {
 	const double kP = 210;
 
 	bool isReturn = false;
+	bool disconnected = false;
 	// 1 = Primed, 2 = Bottom Tower, 3 = Mid Tower, 4 = Descore Bottom Tower, 5 = Finalization
 
 	while(true) {
-		if(isReset) { armReset(); pros::delay(20); continue; }
-
-		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400) {
-			arm(0);
-			towerMode = 1;
+		if(!master.is_connected()) { disconnected = true; pros::delay(20); continue; }
+		if(isReset) { towerMode = 0; isReset = false; disconnected = false; armReset(); pros::delay(20); continue; }
+		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400 && !disconnected) {
+				arm(0);
+				towerMode = 1;
 		}
 
 		if(master.get_digital_new_press(DIGITAL_B) && rackPot.get_value() <= 1400) towerMode = 4;
@@ -136,6 +140,8 @@ void macroTask(void* ignore) {
 
 		if(isReturn) {
 			towerMode = 0;
+			disconnected = false;
+			remote.setText("Zero");
 
 			Arm.set_current_limit(4000);
 			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
@@ -162,6 +168,7 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(1);
 				towerMode = 5;
+				remote.setText("Low Tower");
 				break;
 			}
 
@@ -170,6 +177,7 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(2);
 				towerMode = 5;
+				remote.setText("Mid Tower");
 				break;
 			}
 
@@ -178,6 +186,7 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(3);
 				towerMode = 5;
+				remote.setText("Descore");
 				break;
 			}
 

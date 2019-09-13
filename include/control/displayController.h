@@ -28,10 +28,13 @@ namespace Display {
     public:
       RemoteDisplay();
 
+      void setText(const char * text);
+
       void update();
       static void run(void *ignore);
 
     private:
-
+      static bool isSetting;
+      static const char * text;
   };
 }
