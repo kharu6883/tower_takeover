@@ -178,8 +178,8 @@ void strafe(double target, int speed, double rate) {
 
     if(slewOutput > speed) slewOutput = speed;
 
-    LF.move_velocity(slewOutput + slop(2, 0));
-    LB.move_velocity(-slewOutput + slop(2, 0));
+    LF.move_velocity(-slewOutput + slop(2, 0));
+    LB.move_velocity(slewOutput + slop(2, 0));
     RF.move_velocity(-slewOutput - slop(2, 0));
     RB.move_velocity(slewOutput - slop(2, 0));
 
@@ -207,8 +207,8 @@ void strafe(double target, int speed, double rate) {
 
     LF.move_velocity(-slewOutput + slop(2, 0));
     LB.move_velocity(slewOutput + slop(2, 0));
-    RF.move_velocity(slewOutput - slop(2, 0));
-    RB.move_velocity(-slewOutput - slop(2, 0));
+    RF.move_velocity(-slewOutput - slop(2, 0));
+    RB.move_velocity(slewOutput - slop(2, 0));
 
     if(isSettled(abs(error), 6)) break;
     wait(20);
@@ -244,8 +244,8 @@ void strafe(double target, int speed, double rate, double sturn) {
 
     if(slewOutput > speed) slewOutput = speed;
 
-    LF.move_velocity(slewOutput + slop(2, sturn));
-    LB.move_velocity(-slewOutput + slop(2, sturn));
+    LF.move_velocity(-slewOutput + slop(2, sturn));
+    LB.move_velocity(slewOutput + slop(2, sturn));
     RF.move_velocity(-slewOutput - slop(2, sturn));
     RB.move_velocity(slewOutput - slop(2, sturn));
 
@@ -273,8 +273,8 @@ void strafe(double target, int speed, double rate, double sturn) {
 
     LF.move_velocity(-slewOutput + slop(2, -sturn));
     LB.move_velocity(slewOutput + slop(2, -sturn));
-    RF.move_velocity(slewOutput - slop(2, -sturn));
-    RB.move_velocity(-slewOutput - slop(2, -sturn));
+    RF.move_velocity(-slewOutput - slop(2, -sturn));
+    RB.move_velocity(slewOutput - slop(2, -sturn));
 
     if(isSettled(abs(error), 6)) break;
     wait(20);

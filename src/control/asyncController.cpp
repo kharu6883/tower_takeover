@@ -176,8 +176,8 @@ void ControlAsync::run(void* args) {
 
         if(slewOutput > target.speed) slewOutput = target.speed;
 
-        LF.move_velocity(slewOutput + slop(2, sturn));
-        LB.move_velocity(-slewOutput + slop(2, sturn));
+        LF.move_velocity(-slewOutput + slop(2, sturn));
+        LB.move_velocity(slewOutput + slop(2, sturn));
         RF.move_velocity(-slewOutput - slop(2, sturn));
         RB.move_velocity(slewOutput - slop(2, sturn));
 
@@ -204,8 +204,8 @@ void ControlAsync::run(void* args) {
 
         LF.move_velocity(-slewOutput + slop(2, -sturn));
         LB.move_velocity(slewOutput + slop(2, -sturn));
-        RF.move_velocity(slewOutput - slop(2, -sturn));
-        RB.move_velocity(-slewOutput - slop(2, -sturn));
+        RF.move_velocity(-slewOutput - slop(2, -sturn));
+        RB.move_velocity(slewOutput - slop(2, -sturn));
 
         if(isSettled(abs(error), 6)) { reset(); isStrafe = false; }
       }
