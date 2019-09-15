@@ -21,33 +21,13 @@ void start()
 }
 void r_s_8() {
 
-roller(200);
-drive(1000, 200, 9);
-drive(600, 100, 9);
-drive(-200, 100, 9);
-turn(150, 200, 4);
-drive(300, 200, 9);
-drive(300, 200, 9);
-drive(-600, 200, 9);
-turn(1050, 200, 4);
-drive(600, 200, 9);
-
-wait(10000);
-turn(-100, 200, 4);
-generate("1", 4_ft, 2_ft, -1_deg);
-execute("1",false);
-destroy("1");
-turn(-100, 200, 4);
-drive(-200, 200, 9);
-turn(-500, 200, 4);
-drive(100, 200, 9);
-  wait(100000);
-  generate("yoink", 3_ft, 3_ft, 1_deg);
+  roller(-3,200);
   armReset();
 
+  generate("yoink", 3_ft, 3_ft, 1_deg);
   // Pick up 4 cubes
   roller(200);
-  drive(1000, 95, 7);
+  drive(1000, 115, 9);
 
   // Swerve back to the 3 cubes
   execute("yoink", true);
@@ -55,20 +35,20 @@ drive(100, 200, 9);
   align(300, 5);
 
   // Yoink 3 more cubes and turn right facing small red corner
-  drive(1000, 80, 9);
+  drive(1000, 95, 9);
   turn(750, 90, 5);
 
   // Drive to small red corner and place
-  roller(-20);
+  roller(-24);
   Thread.drive(1480, 200, 9);
-  rack(RACK_UP, 100, 9);
-  roller(150);
+  rack(RACK_UP, 100, 11);
+  wait(400);
 
   // Yeet outta there
-  wait(300);
+
   Thread.drive(-300, 200, 9);
   roller(-100);
-  rack(RACK_DOWN, 200, 9);
+  rack(RACK_DOWN, 200, 15);
 }
 
 void skills1() {

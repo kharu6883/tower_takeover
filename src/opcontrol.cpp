@@ -123,7 +123,6 @@ void macroTask(void* ignore) {
 	double armTarget, tolerance = 3;
 	const double kP = 210;
 
-	bool isReturn = false;
 	bool disconnected = false;
 	// 1 = Primed, 2 = Bottom Tower, 3 = Mid Tower, 4 = Descore Bottom Tower, 5 = Finalization
 
@@ -136,25 +135,7 @@ void macroTask(void* ignore) {
 		}
 
 		if(master.get_digital_new_press(DIGITAL_B) && rackPot.get_value() <= 1400) towerMode = 4;
-		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) isReturn = true;
-
-		if(isReturn) {
-			towerMode = 0;
-			disconnected = false;
-			remote.setText("Zero");
-
-			Arm.set_current_limit(4000);
-			Arm.set_brake_mode(MOTOR_BRAKE_COAST);
-
-			armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
-			arm(armTarget);
-
-			if(isSettled(armTarget, tolerance) || armLimit.get_value()) {
-				arm(0);
-				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-				isReturn = false;
-			}
-		}
+		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) towerMode = 0;
 
 		switch(towerMode) {
 			case 1: {
@@ -197,10 +178,13 @@ void macroTask(void* ignore) {
 			}
 
 			default: {
-				if(!isReturn) {
-					Arm.set_current_limit(5000);
-					Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-				}
+				disconnected = false;
+
+				Arm.set_current_limit(4000);
+				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+
+				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
+				arm(armTarget);
 				break;
 			}
 		}
