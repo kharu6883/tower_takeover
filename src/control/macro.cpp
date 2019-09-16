@@ -248,8 +248,13 @@ double slop(int mode, double offset) {
       return ( deltaL - deltaR ) / amp;
   }
 }
-
-
+void autointake(int value) {
+  while(Rackline.get_value()>value)
+  {
+    roller(200);
+    wait(10);
+  }
+}
 
 void wait(int ms) {
   pros::delay(ms);

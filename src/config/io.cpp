@@ -6,7 +6,7 @@ pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::ADIPotentiometer rackPot(RACKPOT);
 pros::ADIPotentiometer armPot(ARMPOT);
 pros::ADIDigitalIn armLimit(ARMLIMIT);
-
+pros::ADILineSensor rackline(RACKLINE);
 // Ultrasonics
 pros::ADIUltrasonic ultraL(ULTRALPING, ULTRALECHO);
 pros::ADIUltrasonic ultraR(ULTRARPING, ULTRARECHO);
