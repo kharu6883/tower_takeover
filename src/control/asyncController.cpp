@@ -8,6 +8,7 @@
 #include "control/macro.h"
 
 bool ControlAsync::isRunning = false;
+bool ControlAsync::isPaused = false;
 
 bool ControlAsync::isDrive = false,
 ControlAsync::isTurn = false,
@@ -15,8 +16,8 @@ ControlAsync::isStrafe = false,
 ControlAsync::isRack = false,
 ControlAsync::isArm = false;
 
-bool ControlAsync::isPause = false;
-int ControlAsync::pause = 0;
+bool ControlAsync::isWait = false;
+int ControlAsync::wait = 0;
 
 double ControlAsync::sturn = 0;
 
@@ -36,6 +37,22 @@ void ControlAsync::run(void *args) {
   that -> update();
 }
 
+void ControlAsync::pause() {
+  isDrive = false;
+  isTurn = false;
+  isStrafe = false;
+  isRack = false;
+  isArm = false;
+  reset_drive();
+  reset_rack();
+  reset_arm();
+  isPaused = true;
+}
+
+void ControlAsync::resume() { isPaused = false; }
+
+void ControlAsync::stop() { isRunning = false; }
+
 void ControlAsync::update() {
 
   isRunning = true;
@@ -47,18 +64,19 @@ void ControlAsync::update() {
   double deltaL, deltaR;
 
   double chassis_kP = 0.6, chassis_kD = 0.6;
-  double rack_kP = 100;
+  double rack_kP = 0.11;
   double arm_kP = 200;
 
+  double tolerance = 3;
+
   while(isRunning) {
+    if(isPaused) { pros::delay(20); continue; }
 
     /*===========================================
       RACK
     ===========================================*/
 
     if(isRack) {
-      double tolerance = 3;
-
       if(rack_target.length > rackPot.get_value()) { // Goin' up
         rackVar.output = pTerm(rack_target.length, rackPot.get_value(), rack_kP);
 
@@ -97,8 +115,6 @@ void ControlAsync::update() {
     ===========================================*/
 
     if(isArm) {
-      double tolerance = 3;
-
       if(arm_target.length > Arm.get_position()) { // Goin' up
         armVar.output = pTerm(arm_target.length, Arm.get_position(), arm_kP);
 
@@ -132,9 +148,9 @@ void ControlAsync::update() {
       }
     }
 
-    if(isPause) {
-      wait(pause);
-      isPause = false;
+    if(isWait) {
+      ::wait(wait);
+      isWait = false;
     }
 
     /*===========================================
@@ -302,8 +318,8 @@ void ControlAsync::update() {
         if(isSettled(abs(chassisVar.error), 6)) { reset_drive(); isStrafe = false; }
       }
     }
-    
-    wait(20);
+
+    ::wait(20);
   }
 
   print("Async Controller Terminated");
@@ -334,10 +350,6 @@ void ControlAsync::reset_arm() {
   armVar = {0, 0, 0, 0, 0};
   ::arm(0);
   arm_target = {0, 0, 0};
-}
-
-void ControlAsync::stop() {
-  isRunning = false;
 }
 
 bool ControlAsync::isDisabled() {
@@ -386,8 +398,8 @@ void ControlAsync::drive(double length, int speed, int rate, int pause) {
   this -> chassis_target.length = length;
   this -> chassis_target.speed = speed;
   this -> chassis_target.rate = rate;
-  this -> pause = pause;
-  isPause = true;
+  this -> wait = pause;
+  isWait = true;
   isDrive = true;
 }
 
@@ -396,8 +408,8 @@ void ControlAsync::turn(double length, int speed, int rate, int pause) {
   this -> chassis_target.length = length;
   this -> chassis_target.speed = speed;
   this -> chassis_target.rate = rate;
-  this -> pause = pause;
-  isPause = true;
+  this -> wait = pause;
+  isWait = true;
   isTurn = true;
 }
 
@@ -406,8 +418,8 @@ void ControlAsync::strafe(double length, int speed, int rate, int pause) {
   this -> chassis_target.length = length;
   this -> chassis_target.speed = speed;
   this -> chassis_target.rate = rate;
-  this -> pause = pause;
-  isPause = true;
+  this -> wait = pause;
+  isWait = true;
   isStrafe = true;
 }
 
@@ -417,8 +429,8 @@ void ControlAsync::strafe(double length, int speed, int rate, double sturn, int 
   this -> chassis_target.speed = speed;
   this -> chassis_target.rate = rate;
   this -> sturn = sturn;
-  this -> pause = pause;
-  isPause = true;
+  this -> wait = pause;
+  isWait = true;
   isStrafe = true;
 }
 

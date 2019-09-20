@@ -7,7 +7,7 @@ using namespace okapi;
 using namespace path;
 using namespace std;
 
-ControlAsync Start;
+static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
 int Autonomous::autonSlot = 0;
@@ -16,7 +16,7 @@ std::map<int, void(*)(void)> Autonomous::AutonArray;
 std::map<int, const char *> Autonomous::SlotName;
 
 void autonomous() {
-  pros::Task asyncDrive(Start.run);
+  Control.resume();
   Autonomous Auton;
   Auton.runAuton();
 }

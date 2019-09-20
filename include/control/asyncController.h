@@ -14,6 +14,8 @@ class ControlAsync {
 
     static void run(void* args);
     void update();
+    void pause();
+    void resume();
     void stop();
 
     // Getters and Setters
@@ -39,6 +41,7 @@ class ControlAsync {
 
   private:
     static bool isRunning;
+    static bool isPaused;
 
     static bool isDrive;
     static bool isTurn;
@@ -46,8 +49,8 @@ class ControlAsync {
     static bool isRack;
     static bool isArm;
 
-    static bool isPause;
-    static int pause;
+    static bool isWait;
+    static int wait;
 
     static double sturn;
 

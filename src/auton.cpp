@@ -6,11 +6,11 @@
 #include "control/path.h"
 using namespace path;
 
-ControlAsync Thread;
+static ControlAsync Thread;
 
 void tester() {
   std::cout << "Testing" << std::endl;
-  Thread.rack(RACK_UP, 100, 9);
+  Thread.arm(ARM_LOW_TOWER_DESCORE, 200, 9);
 }
 
 void start() {

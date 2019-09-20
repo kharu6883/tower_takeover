@@ -10,12 +10,15 @@
 #include "control/macro.h"
 using namespace Display;
 
-ControlAsync Control;
+static ControlAsync Control;
 pros::Task armAsync(macroTask);
 
 void initialize() {
   Autonomous Auton;
   initVision();
+
+  pros::Task asyncController(Control.run);
+  Control.pause();
 
   armAsync.suspend();
 
@@ -40,7 +43,7 @@ void initialize() {
 }
 
 void disabled() {
-  Control.stop();
+  Control.pause();
   armAsync.suspend();
 }
 

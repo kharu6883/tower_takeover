@@ -14,7 +14,7 @@ static double target, clawTarget, slewOutput = 0, accel = 9, decel = 20;
 
 static bool isTrack = false, isReset = false;
 
-Display::RemoteDisplay remote;
+static Display::RemoteDisplay remote;
 
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -125,6 +125,8 @@ void macroTask(void* ignore) {
 
 	bool disconnected = false;
 	// 1 = Primed, 2 = Bottom Tower, 3 = Mid Tower, 4 = Descore Bottom Tower, 5 = Finalization
+
+	towerMode = 0;
 
 	while(true) {
 		if(!master.is_connected()) { disconnected = true; pros::delay(20); continue; }
