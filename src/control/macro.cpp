@@ -122,20 +122,20 @@ void arm(double target, int speed, double rate) {
 void tower(int tower) {
 
   const double kP = 210;
-  double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 0;
+  double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 200;
   double armTarget, tolerance = 3;
 
   if(tower == 1) { // Bottom Tower
     while(true) {
-      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
+      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
       wait(20);
     }
 
-    roller(rollerRot, rollerSpeed);
     wait(rollerWait);
+    roller(rollerRot, rollerSpeed);
 
     while(true) {
       armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
@@ -146,15 +146,15 @@ void tower(int tower) {
     }
   } else if(tower == 2) { // Mid Tower
     while(true) {
-      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
+      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
       wait(20);
     }
 
-    roller(rollerRot, rollerSpeed);
     wait(rollerWait);
+    roller(rollerRot, rollerSpeed);
 
     while(true) {
       armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
@@ -248,13 +248,8 @@ double slop(int mode, double offset) {
       return ( deltaL - deltaR ) / amp;
   }
 }
-void autointake(int value) {
-  while(Rackline.get_value()>value)
-  {
-    roller(200);
-    wait(10);
-  }
-}
+
+
 
 void wait(int ms) {
   pros::delay(ms);

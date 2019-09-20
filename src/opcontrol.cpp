@@ -145,7 +145,7 @@ void macroTask(void* ignore) {
 			}
 
 			case 2: {
-				Arm.set_current_limit(8000);
+				Arm.set_current_limit(10000);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(1);
 				towerMode = 5;
@@ -154,7 +154,7 @@ void macroTask(void* ignore) {
 			}
 
 			case 3: {
-				Arm.set_current_limit(8000);
+				Arm.set_current_limit(10000);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(2);
 				towerMode = 5;
@@ -180,10 +180,10 @@ void macroTask(void* ignore) {
 			default: {
 				disconnected = false;
 
-				Arm.set_current_limit(4000);
+				Arm.set_current_limit(10000);
 				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
-				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP);
+				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
 				arm(armTarget);
 				break;
 			}

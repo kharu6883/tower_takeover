@@ -10,19 +10,20 @@ ControlAsync Thread;
 
 void tester() {
   std::cout << "Testing" << std::endl;
+  Thread.rack(RACK_UP, 100, 9);
 }
-void start()
-{
+
+void start() {
   roller(-2,200);
   rack(2000, 200, 9);
   roller(0);
   rack(950, 200, 9);
   armReset();
 }
+
 void r_s_8() {
-  autointake(1000);
   wait(5000);
-   roller(-3,200);
+  roller(-3,200);
    armReset();
   //
    generate("yoink", 3_ft, 3_ft, 1_deg);
@@ -101,88 +102,6 @@ void r_s_8() {
  roller(-200);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void skills1() {
   roller(-3,200);
   armReset();
@@ -249,75 +168,6 @@ wait(300);
 tower(2);
 roller(-200);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void skills2() {
   // Pick up 4 cubes

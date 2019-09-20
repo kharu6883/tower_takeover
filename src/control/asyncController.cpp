@@ -1,101 +1,193 @@
 #include "main.h"
 
 #include "config/motor.h"
+#include "config/io.h"
+
 #include "control/asyncController.h"
 #include "control/drive.h"
 #include "control/macro.h"
 
 bool ControlAsync::isRunning = false;
 
-bool ControlAsync::isDrive = false;
-bool ControlAsync::isTurn = false;
-bool ControlAsync::isStrafe = false;
+bool ControlAsync::isDrive = false,
+ControlAsync::isTurn = false,
+ControlAsync::isStrafe = false,
+ControlAsync::isRack = false,
+ControlAsync::isArm = false;
+
 bool ControlAsync::isPause = false;
+int ControlAsync::pause = 0;
 
 double ControlAsync::sturn = 0;
 
-double ControlAsync::current = 0,
-ControlAsync::error = 0,
-ControlAsync::last = 0,
-ControlAsync::derivative = 0,
-ControlAsync::output = 0,
-ControlAsync::slewOutput = 0;
+PID ControlAsync::chassisVar = {0, 0, 0, 0, 0};
+PID ControlAsync::rackVar = {0, 0, 0, 0, 0};
+PID ControlAsync::armVar = {0, 0, 0, 0, 0};
 
-int ControlAsync::pause = 0;
-
-Vector2 ControlAsync::target = {0, 0, 0};
+Vector2 ControlAsync::chassis_target = {0, 0, 0};
+Vector2 ControlAsync::rack_target = {0, 0, 0};
+Vector2 ControlAsync::arm_target = {0, 0, 0};
 
 ControlAsync::ControlAsync() {}
 
-void ControlAsync::run(void* args) {
+void ControlAsync::run(void *args) {
+  pros::delay(500);
+  ControlAsync* that = static_cast<ControlAsync*>(args);
+  that -> update();
+}
+
+void ControlAsync::update() {
 
   isRunning = true;
 
-  reset();
-
-  const double kP = 0.6;
-  const double kD = 0.6;
+  reset_drive();
+  reset_rack();
+  reset_arm();
 
   double deltaL, deltaR;
+
+  double chassis_kP = 0.6, chassis_kD = 0.6;
+  double rack_kP = 100;
+  double arm_kP = 200;
 
   while(isRunning) {
 
     /*===========================================
-      DRIVING
+      RACK
     ===========================================*/
+
+    if(isRack) {
+      double tolerance = 3;
+
+      if(rack_target.length > rackPot.get_value()) { // Goin' up
+        rackVar.output = pTerm(rack_target.length, rackPot.get_value(), rack_kP);
+
+        if(rackVar.output > rackVar.slewOutput + rack_target.rate) {
+          rackVar.slewOutput += rack_target.rate;
+        } else {
+          rackVar.slewOutput = rackVar.output;
+        }
+
+        if(rackVar.slewOutput > rack_target.speed) rackVar.slewOutput = rack_target.speed;
+
+        ::rack(rackVar.slewOutput);
+
+        if(isSettled(rackVar.output, tolerance)) { reset_rack(); isRack = false; }
+      }
+
+      if(rack_target.length < rackPot.get_value()) { // Goin' down
+        rackVar.output = pTerm(rack_target.length, rackPot.get_value(), rack_kP);
+
+        if(abs(rackVar.output) > rackVar.slewOutput + rack_target.rate) {
+          rackVar.slewOutput += rack_target.rate;
+        } else {
+          rackVar.slewOutput = abs(rackVar.output);
+        }
+
+        if(rackVar.slewOutput > rack_target.speed) rackVar.slewOutput = rack_target.speed;
+
+        ::rack(-rackVar.slewOutput);
+
+        if(isSettled(rackVar.output, tolerance)) { reset_rack(); isRack = false; }
+      }
+    }
+
+    /*===========================================
+      ARM
+    ===========================================*/
+
+    if(isArm) {
+      double tolerance = 3;
+
+      if(arm_target.length > Arm.get_position()) { // Goin' up
+        armVar.output = pTerm(arm_target.length, Arm.get_position(), arm_kP);
+
+        if(armVar.output > armVar.slewOutput + arm_target.rate) {
+          armVar.slewOutput += arm_target.rate;
+        } else {
+          armVar.slewOutput = armVar.output;
+        }
+
+        if(armVar.slewOutput > arm_target.speed) armVar.slewOutput = arm_target.speed;
+
+        ::arm(armVar.slewOutput);
+
+        if(isSettled(armVar.output, tolerance)) { reset_arm(); isArm = false; }
+      }
+
+      if(arm_target.length < Arm.get_position()) { // Goin' down
+        armVar.output = pTerm(arm_target.length, Arm.get_position(), arm_kP);
+
+        if(abs(armVar.output) > armVar.slewOutput + arm_target.rate) {
+          armVar.slewOutput += arm_target.rate;
+        } else {
+          armVar.slewOutput = abs(armVar.output);
+        }
+
+        if(armVar.slewOutput > arm_target.speed) armVar.slewOutput = arm_target.speed;
+
+        ::arm(-armVar.slewOutput);
+
+        if(isSettled(armVar.output, tolerance)) { reset_arm(); isArm = false; }
+      }
+    }
 
     if(isPause) {
       wait(pause);
       isPause = false;
     }
 
+    /*===========================================
+      DRIVING
+    ===========================================*/
+
     if(isDrive) {
-      if(target.length > 0) {
+      if(chassis_target.length > 0) {
         deltaL = (LF.get_position() + LB.get_position()) / 2;
         deltaR = (RF.get_position() + RB.get_position()) / 2;
-        current = ( deltaL + deltaR ) / 2;
-        error = target.length - current;
+        chassisVar.current = ( deltaL + deltaR ) / 2;
+        chassisVar.error = chassis_target.length - chassisVar.current;
 
-        output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
+        chassisVar.output = pTerm(chassis_target.length, chassisVar.current, chassis_kP) + dTerm(chassisVar.error, chassisVar.last) * chassis_kD;
 
-        last = error;
+        chassisVar.last = chassisVar.error;
 
-        if(output > slewOutput + target.rate) {
-          slewOutput += target.rate;
+        if(chassisVar.output > chassisVar.slewOutput + chassis_target.rate) {
+          chassisVar.slewOutput += chassis_target.rate;
         } else {
-          slewOutput = output;
+          chassisVar.slewOutput = chassisVar.output;
         }
 
-        if(slewOutput > target.speed) slewOutput = target.speed;
+        if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        left(slewOutput - slop());
-        right(slewOutput + slop());
+        left(chassisVar.slewOutput - slop());
+        right(chassisVar.slewOutput + slop());
 
-        if(isSettled(error, 9)) { reset(); isDrive = false; }
+        if(isSettled(chassisVar.error, 9)) { reset_drive(); isDrive = false; }
       }
 
-      if(target.length < 0) {
+      if(chassis_target.length < 0) {
         deltaL = (LF.get_position() + LB.get_position()) / 2;
         deltaR = (RF.get_position() + RB.get_position()) / 2;
-        current = ( deltaL + deltaR ) / 2;
-        error = target.length - current;
+        chassisVar.current = ( deltaL + deltaR ) / 2;
+        chassisVar.error = chassis_target.length - chassisVar.current;
 
-        output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
+        chassisVar.output = pTerm(chassis_target.length, chassisVar.current, chassis_kP) + dTerm(chassisVar.error, chassisVar.last) * chassis_kD;
 
-        last = error;
+        chassisVar.last = chassisVar.error;
 
-        if(abs(output) > slewOutput + target.rate) {
-          slewOutput += target.rate;
+        if(abs(chassisVar.output) > chassisVar.slewOutput + chassis_target.rate) {
+          chassisVar.slewOutput += chassis_target.rate;
         } else {
-          slewOutput = abs(output);
+          chassisVar.slewOutput = abs(chassisVar.output);
         }
 
-        if(slewOutput > target.speed) slewOutput = target.speed;
+        if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        left(-slewOutput - slop());
-        right(-slewOutput + slop());
+        left(-chassisVar.slewOutput - slop());
+        right(-chassisVar.slewOutput + slop());
 
-        if(isSettled(abs(error), 9)) { reset(); isDrive = false; }
+        if(isSettled(abs(chassisVar.error), 9)) { reset_drive(); isDrive = false; }
       }
     }
 
@@ -104,52 +196,52 @@ void ControlAsync::run(void* args) {
     ===========================================*/
 
     if(isTurn) {
-      if(target.length > 0) { // Turn Right
+      if(chassis_target.length > 0) { // Turn Right
         deltaL = (LF.get_position() + LB.get_position()) / 2;
         deltaR = (RF.get_position() + RB.get_position()) / 2;
-        current = ( deltaL + abs(deltaR) ) / 2;
-        error = target.length - current;
+        chassisVar.current = ( deltaL + abs(deltaR) ) / 2;
+        chassisVar.error = chassis_target.length - chassisVar.current;
 
-        output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
+        chassisVar.output = pTerm(chassis_target.length, chassisVar.current, chassis_kP) + dTerm(chassisVar.error, chassisVar.last) * chassis_kD;
 
-        last = error;
+        chassisVar.last = chassisVar.error;
 
-        if(output > slewOutput + target.rate) {
-          slewOutput += target.rate;
+        if(chassisVar.output > chassisVar.slewOutput + chassis_target.rate) {
+          chassisVar.slewOutput += chassis_target.rate;
         } else {
-          slewOutput = output;
+          chassisVar.slewOutput = chassisVar.output;
         }
 
-        if(slewOutput > target.speed) slewOutput = target.speed;
+        if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        left(slewOutput);
-        right(-slewOutput);
+        left(chassisVar.slewOutput);
+        right(-chassisVar.slewOutput);
 
-        if(isSettled(error, 6)) { reset(); isTurn = false; }
+        if(isSettled(chassisVar.error, 6)) { reset_drive(); isTurn = false; }
       }
 
-      if(target.length < 0) { // Turn Left
+      if(chassis_target.length < 0) { // Turn Left
         deltaL = (LF.get_position() + LB.get_position()) / 2;
         deltaR = (RF.get_position() + RB.get_position()) / 2;
-        current = ( abs(deltaL) + deltaR ) / 2;
-        error = target.length + current;
+        chassisVar.current = ( abs(deltaL) + deltaR ) / 2;
+        chassisVar.error = chassis_target.length + chassisVar.current;
 
-        output = pTerm(target.length, -current, kP) + dTerm(error, last) * kD;
+        chassisVar.output = pTerm(chassis_target.length, -chassisVar.current, chassis_kP) + dTerm(chassisVar.error, chassisVar.last) * chassis_kD;
 
-        last = error;
+        chassisVar.last = chassisVar.error;
 
-        if(abs(output) > slewOutput + target.rate) {
-          slewOutput += target.rate;
+        if(abs(chassisVar.output) > chassisVar.slewOutput + chassis_target.rate) {
+          chassisVar.slewOutput += chassis_target.rate;
         } else {
-          slewOutput = abs(output);
+          chassisVar.slewOutput = abs(chassisVar.output);
         }
 
-        if(slewOutput > target.speed) slewOutput = target.speed;
+        if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        left(-slewOutput);
-        right(slewOutput);
+        left(-chassisVar.slewOutput);
+        right(chassisVar.slewOutput);
 
-        if(isSettled(error, 6)) { reset(); isTurn = false; }
+        if(isSettled(chassisVar.error, 6)) { reset_drive(); isTurn = false; }
       }
     }
 
@@ -158,67 +250,67 @@ void ControlAsync::run(void* args) {
     ===========================================*/
 
     if(isStrafe) {
-      if(target.length > 0) {
+      if(chassis_target.length > 0) {
         deltaL = (LF.get_position() - LB.get_position()) / 2;
         deltaR = (RB.get_position() - RF.get_position()) / 2;
-        current = (deltaL + deltaR) / 2;
-        error = target.length - current;
+        chassisVar.current = (deltaL + deltaR) / 2;
+        chassisVar.error = chassis_target.length - chassisVar.current;
 
-        output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
+        chassisVar.output = pTerm(chassis_target.length, chassisVar.current, chassis_kP) + dTerm(chassisVar.error, chassisVar.last) * chassis_kD;
 
-        last = error;
+        chassisVar.last = chassisVar.error;
 
-        if(output > slewOutput + target.rate) {
-          slewOutput += target.rate;
+        if(chassisVar.output > chassisVar.slewOutput + chassis_target.rate) {
+          chassisVar.slewOutput += chassis_target.rate;
         } else {
-          slewOutput = output;
+          chassisVar.slewOutput = chassisVar.output;
         }
 
-        if(slewOutput > target.speed) slewOutput = target.speed;
+        if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        LF.move_velocity(-slewOutput + slop(2, sturn));
-        LB.move_velocity(slewOutput + slop(2, sturn));
-        RF.move_velocity(-slewOutput - slop(2, sturn));
-        RB.move_velocity(slewOutput - slop(2, sturn));
+        LF.move_velocity(-chassisVar.slewOutput - slop(2, sturn));
+        LB.move_velocity(chassisVar.slewOutput + slop(2, sturn));
+        RF.move_velocity(-chassisVar.slewOutput - slop(2, sturn));
+        RB.move_velocity(chassisVar.slewOutput + slop(2, sturn));
 
-        if(isSettled(error, 6)) { reset(); isStrafe = false; }
+        if(isSettled(chassisVar.error, 6)) { reset_drive(); isStrafe = false; }
       }
 
-      if(target.length < 0) {
+      if(chassis_target.length < 0) {
         deltaL = (LF.get_position() - LB.get_position()) / 2;
         deltaR = (RB.get_position() - RF.get_position()) / 2;
-        current = (deltaL + deltaR) / 2;
-        error = target.length - current;
+        chassisVar.current = (deltaL + deltaR) / 2;
+        chassisVar.error = chassis_target.length - chassisVar.current;
 
-        output = pTerm(target.length, current, kP) + dTerm(error, last) * kD;
+        chassisVar.output = pTerm(chassis_target.length, chassisVar.current, chassis_kP) + dTerm(chassisVar.error, chassisVar.last) * chassis_kD;
 
-        last = error;
+        chassisVar.last = chassisVar.error;
 
-        if(abs(output) > slewOutput + target.rate) {
-          slewOutput += target.rate;
+        if(abs(chassisVar.output) > chassisVar.slewOutput + chassis_target.rate) {
+          chassisVar.slewOutput += chassis_target.rate;
         } else {
-          slewOutput = abs(output);
+          chassisVar.slewOutput = abs(chassisVar.output);
         }
 
-        if(slewOutput > target.speed) slewOutput = target.speed;
+        if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        LF.move_velocity(-slewOutput + slop(2, -sturn));
-        LB.move_velocity(slewOutput + slop(2, -sturn));
-        RF.move_velocity(-slewOutput - slop(2, -sturn));
-        RB.move_velocity(slewOutput - slop(2, -sturn));
+        LF.move_velocity(-chassisVar.slewOutput - slop(2, -sturn));
+        LB.move_velocity(chassisVar.slewOutput + slop(2, -sturn));
+        RF.move_velocity(-chassisVar.slewOutput - slop(2, -sturn));
+        RB.move_velocity(chassisVar.slewOutput + slop(2, -sturn));
 
-        if(isSettled(abs(error), 6)) { reset(); isStrafe = false; }
+        if(isSettled(abs(chassisVar.error), 6)) { reset_drive(); isStrafe = false; }
       }
     }
-
+    
     wait(20);
   }
 
   print("Async Controller Terminated");
 }
 
-void ControlAsync::reset() {
-  current = 0; error = 0; last = 0; derivative = 0; output = 0; slewOutput = 0;
+void ControlAsync::reset_drive() {
+  chassisVar = {0, 0, 0, 0, 0};
 
   LF.tare_position();
   LB.tare_position();
@@ -228,8 +320,20 @@ void ControlAsync::reset() {
   left(0);
   right(0);
 
-  ControlAsync::target = {0, 0, 0};
+  chassis_target = {0, 0, 0};
   sturn = 0;
+}
+
+void ControlAsync::reset_rack() {
+  rackVar = {0, 0, 0, 0, 0};
+  ::rack(0);
+  rack_target = {0, 0, 0};
+}
+
+void ControlAsync::reset_arm() {
+  armVar = {0, 0, 0, 0, 0};
+  ::arm(0);
+  arm_target = {0, 0, 0};
 }
 
 void ControlAsync::stop() {
@@ -245,75 +349,91 @@ bool ControlAsync::isDisabled() {
 }
 
 void ControlAsync::drive(double length, int speed, int rate) {
-  reset();
-  this -> target.length = length;
-  this -> target.speed = speed;
-  this -> target.rate = rate;
+  reset_drive();
+  this -> chassis_target.length = length;
+  this -> chassis_target.speed = speed;
+  this -> chassis_target.rate = rate;
   isDrive = true;
 }
 
 void ControlAsync::turn(double length, int speed, int rate) {
-  reset();
-  this -> target.length = length;
-  this -> target.speed = speed;
-  this -> target.rate = rate;
+  reset_drive();
+  this -> chassis_target.length = length;
+  this -> chassis_target.speed = speed;
+  this -> chassis_target.rate = rate;
   isTurn = true;
 }
 
 void ControlAsync::strafe(double length, int speed, int rate) {
-  reset();
-  this -> target.length = length;
-  this -> target.speed = speed;
-  this -> target.rate = rate;
+  reset_drive();
+  this -> chassis_target.length = length;
+  this -> chassis_target.speed = speed;
+  this -> chassis_target.rate = rate;
   isStrafe = true;
 }
 
 void ControlAsync::strafe(double length, int speed, int rate, double sturn) {
-  reset();
-  this -> target.length = length;
-  this -> target.speed = speed;
-  this -> target.rate = rate;
+  reset_drive();
+  this -> chassis_target.length = length;
+  this -> chassis_target.speed = speed;
+  this -> chassis_target.rate = rate;
   this -> sturn = sturn;
   isStrafe = true;
 }
 
 void ControlAsync::drive(double length, int speed, int rate, int pause) {
-  reset();
-  this -> target.length = length;
-  this -> target.speed = speed;
-  this -> target.rate = rate;
+  reset_drive();
+  this -> chassis_target.length = length;
+  this -> chassis_target.speed = speed;
+  this -> chassis_target.rate = rate;
   this -> pause = pause;
   isPause = true;
   isDrive = true;
 }
 
 void ControlAsync::turn(double length, int speed, int rate, int pause) {
-  reset();
-  this -> target.length = length;
-  this -> target.speed = speed;
-  this -> target.rate = rate;
+  reset_drive();
+  this -> chassis_target.length = length;
+  this -> chassis_target.speed = speed;
+  this -> chassis_target.rate = rate;
   this -> pause = pause;
   isPause = true;
   isTurn = true;
 }
 
 void ControlAsync::strafe(double length, int speed, int rate, int pause) {
-  reset();
-  this -> target.length = length;
-  this -> target.speed = speed;
-  this -> target.rate = rate;
+  reset_drive();
+  this -> chassis_target.length = length;
+  this -> chassis_target.speed = speed;
+  this -> chassis_target.rate = rate;
   this -> pause = pause;
   isPause = true;
   isStrafe = true;
 }
 
 void ControlAsync::strafe(double length, int speed, int rate, double sturn, int pause) {
-  reset();
-  this -> target.length = length;
-  this -> target.speed = speed;
-  this -> target.rate = rate;
+  reset_drive();
+  this -> chassis_target.length = length;
+  this -> chassis_target.speed = speed;
+  this -> chassis_target.rate = rate;
   this -> sturn = sturn;
   this -> pause = pause;
   isPause = true;
   isStrafe = true;
+}
+
+void ControlAsync::rack(double length, int speed, int rate) {
+  reset_rack();
+  this -> rack_target.length = length;
+  this -> rack_target.speed = speed;
+  this -> rack_target.rate = rate;
+  isRack = true;
+}
+
+void ControlAsync::arm(double length, int speed, int rate) {
+  reset_arm();
+  this -> arm_target.length = length;
+  this -> arm_target.speed = speed;
+  this -> arm_target.rate = rate;
+  isArm = true;
 }

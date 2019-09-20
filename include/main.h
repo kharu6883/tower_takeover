@@ -43,7 +43,6 @@ LV_IMG_DECLARE(michael2);
 #define RACKPOT 1
 #define ARMPOT 7
 #define ARMLIMIT 2
-#define RACKLINE 8
 
 #define ULTRALPING 5
 #define ULTRALECHO 6

@@ -35,8 +35,6 @@ void tower(int tower);
 // Resets the arm using the limit switch.
 void armReset();
 
-// Automotatic cube intaking using the line tracker.
-void autointake(int value);
 
 /*--------------------------------
     VISION FEED
@@ -44,6 +42,7 @@ void autointake(int value);
 
 // Gets information from the selected signature.
 pros::vision_object_s_t getVisionSig(int id, int size);
+
 
 
 /*--------------------------------
