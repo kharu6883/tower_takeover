@@ -109,11 +109,11 @@ void opcontrol() {
 
 			lastR = 1;
 			if(rollerVar.output > rollerVar.slewOutput + rollerAccel) {
-				rollerVar.slewOutput -= rollerAccel;
+				rollerVar.slewOutput += rollerAccel;
 			} else {
 				rollerVar.slewOutput = rollerVar.output;
 			}
-			roller(-rollerVar.slewOutput);
+			roller(rollerVar.slewOutput);
 
 		} else if(master.get_digital(DIGITAL_R2) && (towerMode == 0 || towerMode == 5)) {
 
@@ -128,14 +128,14 @@ void opcontrol() {
 		} else if((towerMode == 0 || towerMode == 5) && rollerVar.slewOutput > 0) {
 
 			if(lastR == 1) {
-				rollerVar.slewOutput+= rollerDecel;
+				rollerVar.slewOutput -= rollerDecel;
 				roller(rollerVar.slewOutput);
 			} else if(lastR == 2) {
 				rollerVar.slewOutput -= rollerDecel;
 				roller(-slewOutput);
 			}
 
-		} else {
+		} else if(towerMode == 0 || towerMode == 5) {
 
 			rollerVar.slewOutput = 0;
 			roller(0);
