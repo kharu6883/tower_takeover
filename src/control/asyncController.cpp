@@ -19,7 +19,7 @@ ControlAsync::isArm = false;
 bool ControlAsync::isWait = false;
 int ControlAsync::wait = 0;
 
-double ControlAsync::sturn = 0;
+int ControlAsync::sturn = 0;
 
 PID ControlAsync::chassisVar = {0, 0, 0, 0, 0};
 PID ControlAsync::rackVar = {0, 0, 0, 0, 0};
@@ -148,7 +148,7 @@ void ControlAsync::update() {
       }
     }
 
-    if(isWait) {
+    if(isWait && !isDisabled()) {
       ::wait(wait);
       isWait = false;
     }
@@ -384,54 +384,15 @@ void ControlAsync::strafe(double length, int speed, int rate) {
   isStrafe = true;
 }
 
-void ControlAsync::strafe(double length, int speed, int rate, double sturn) {
-  reset_drive();
-  this -> chassis_target.length = length;
-  this -> chassis_target.speed = speed;
-  this -> chassis_target.rate = rate;
+ControlAsync& ControlAsync::withSturn(int sturn) {
   this -> sturn = sturn;
-  isStrafe = true;
+  return *this;
 }
 
-void ControlAsync::drive(double length, int speed, int rate, int pause) {
-  reset_drive();
-  this -> chassis_target.length = length;
-  this -> chassis_target.speed = speed;
-  this -> chassis_target.rate = rate;
-  this -> wait = pause;
+ControlAsync& ControlAsync::withDelay(int ms) {
+  this -> wait = ms;
   isWait = true;
-  isDrive = true;
-}
-
-void ControlAsync::turn(double length, int speed, int rate, int pause) {
-  reset_drive();
-  this -> chassis_target.length = length;
-  this -> chassis_target.speed = speed;
-  this -> chassis_target.rate = rate;
-  this -> wait = pause;
-  isWait = true;
-  isTurn = true;
-}
-
-void ControlAsync::strafe(double length, int speed, int rate, int pause) {
-  reset_drive();
-  this -> chassis_target.length = length;
-  this -> chassis_target.speed = speed;
-  this -> chassis_target.rate = rate;
-  this -> wait = pause;
-  isWait = true;
-  isStrafe = true;
-}
-
-void ControlAsync::strafe(double length, int speed, int rate, double sturn, int pause) {
-  reset_drive();
-  this -> chassis_target.length = length;
-  this -> chassis_target.speed = speed;
-  this -> chassis_target.rate = rate;
-  this -> sturn = sturn;
-  this -> wait = pause;
-  isWait = true;
-  isStrafe = true;
+  return *this;
 }
 
 void ControlAsync::rack(double length, int speed, int rate) {

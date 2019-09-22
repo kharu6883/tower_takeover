@@ -18,12 +18,9 @@ class ControlAsync {
     void drive(double length, int speed, int rate);
     void turn(double length, int speed, int rate);
     void strafe(double length, int speed, int rate);
-    void strafe(double length, int speed, int rate, double sturn);
 
-    void drive(double length, int speed, int rate, int pause);
-    void turn(double length, int speed, int rate, int pause);
-    void strafe(double length, int speed, int rate, int pause);
-    void strafe(double length, int speed, int rate, double sturn, int pause);
+    ControlAsync& withSturn(int sturn);
+    ControlAsync& withDelay(int ms);
 
     void reset_rack();
     void rack(double length, int speed, int rate);
@@ -44,7 +41,7 @@ class ControlAsync {
     static bool isWait;
     static int wait;
 
-    static double sturn;
+    static int sturn;
 
     static Vector2 chassis_target, rack_target, arm_target;
 

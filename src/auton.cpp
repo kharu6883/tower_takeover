@@ -26,27 +26,27 @@ void start() {
 void r_s_8() {
   wait(5000);
   roller(-3,200);
-   armReset();
-  //
-   generate("yoink", 3_ft, 3_ft, 1_deg);
-   // Pick up 4 cubes
-   roller(200);
-   drive(1000, 115, 9);
+  armReset();
+  
+  generate("yoink", 3_ft, 3_ft, 1_deg);
+  // Pick up 4 cubes
+  roller(200);
+  drive(1000, 115, 9);
 
-   // Swerve back to the 3 cubes
-   execute("yoink", true);
-   destroy("yoink");
-   align(300, 5);
+  // Swerve back to the 3 cubes
+  execute("yoink", true);
+  destroy("yoink");
+  align(300, 5);
 
-   // Yoink 3 more cubes and turn right facing small red corner
-   drive(1000, 95, 9);
+  // Yoink 3 more cubes and turn right facing small red corner
+  drive(1000, 95, 9);
   turn(750, 90, 5);
 
-   // Drive to small red corner and place
-   roller(-22);
-   Thread.drive(1480, 160, 9);
-   rack(RACK_UP, 100, 11);
-   wait(400);
+  // Drive to small red corner and place
+  roller(-22);
+  Thread.drive(1480, 160, 9);
+  rack(RACK_UP, 100, 11);
+  wait(400);
 
   // Yeet outta there
 
@@ -88,26 +88,26 @@ void r_s_8() {
   roller(50);
   wait(200);
 
-   // Yeet outta there
- Thread.drive(-300, 200, 9);
- roller(-100);
- rack(RACK_DOWN, 200, 15);
- turn(-720,80,6);
- drive(-200, 115, 9);
+  // Yeet outta there
+  Thread.drive(-300, 200, 9);
+  roller(-100);
+  rack(RACK_DOWN, 200, 15);
+  turn(-720,80,6);
+  drive(-200, 115, 9);
 
- armReset();
- align(300, 5);
- roller(200);
- drive(1000, 200, 5);
- wait(300);
- tower(2);
- roller(-200);
+  armReset();
+  align(300, 5);
+  roller(200);
+  drive(1000, 200, 5);
+  wait(300);
+  tower(2);
+  roller(-200);
 }
 
 void skills1() {
   roller(-3,200);
   armReset();
- //
+  //
   generate("yoink", 3_ft, 3_ft, 1_deg);
   // Pick up 4 cubes
   roller(200);
@@ -120,7 +120,7 @@ void skills1() {
 
   // Yoink 3 more cubes and turn right facing small red corner
   drive(1000, 95, 9);
- turn(750, 90, 5);
+  turn(750, 90, 5);
 
   // Drive to small red corner and place
   roller(-22);
@@ -128,47 +128,47 @@ void skills1() {
   rack(RACK_UP, 100, 11);
   wait(400);
 
- // Yeet outta there
+  // Yeet outta there
 
- Thread.drive(-300, 200, 9);
- roller(-100);
- rack(RACK_DOWN, 200, 15);
- turn(-720,80,6);
- drive(-200, 115, 9);
+  Thread.drive(-300, 200, 9);
+  roller(-100);
+  rack(RACK_DOWN, 200, 15);
+  turn(-720,80,6);
+  drive(-200, 115, 9);
 
- armReset();
+  armReset();
 
- align(300, 5);
- roller(200);
- turn(-190,80,7);
- drive(1200, 200, 9);
- turn(200,80,7);
- drive(1950, 140, 9);
- turn(305,100,9);
- drive(890, 200, 8);
- turn(650,100,9);
- drive(1000, 90, 5);
- turn(-780,200,5);
- roller(-28 );
- Thread.drive(900, 160, 9);
- rack(RACK_UP, 120, 11);
- roller(50);
- wait(200);
+  align(300, 5);
+  roller(200);
+  turn(-190,80,7);
+  drive(1200, 200, 9);
+  turn(200,80,7);
+  drive(1950, 140, 9);
+  turn(305,100,9);
+  drive(890, 200, 8);
+  turn(650,100,9);
+  drive(1000, 90, 5);
+  turn(-780,200,5);
+  roller(-28 );
+  Thread.drive(900, 160, 9);
+  rack(RACK_UP, 120, 11);
+  roller(50);
+  wait(200);
 
   // Yeet outta there
-Thread.drive(-300, 200, 9);
-roller(-100);
-rack(RACK_DOWN, 200, 15);
-turn(-720,80,6);
-drive(-200, 115, 9);
+  Thread.drive(-300, 200, 9);
+  roller(-100);
+  rack(RACK_DOWN, 200, 15);
+  turn(-720,80,6);
+  drive(-200, 115, 9);
 
-armReset();
-align(300, 5);
-roller(200);
-drive(1000, 200, 5);
-wait(300);
-tower(2);
-roller(-200);
+  armReset();
+  align(300, 5);
+  roller(200);
+  drive(1000, 200, 5);
+  wait(300);
+  tower(2);
+  roller(-200);
 }
 
 void skills2() {
