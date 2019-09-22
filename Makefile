@@ -30,6 +30,7 @@ EXCLUDE_SRC_FROM_LIB+=$(foreach file, $(SRCDIR)/opcontrol $(SRCDIR)/initialize $
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/auton.cpp
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/config
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/control
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/vision
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/display/controller
 
 # files that get distributed to every user (beyond your source archive) - add

@@ -2,14 +2,17 @@
 
 #include "config/motor.h"
 #include "config/io.h"
-#include "config/vision.h"
 
 #include "control/displayController.h"
 #include "control/autonController.h"
 #include "control/macro.h"
+#include "control/vision.h"
+
 using namespace Display;
 
 Autonomous Auton;
+Vision CamFront(FRONTVISION);
+Camera Feed(FRONTVISION);
 
 static int screen = 0;
 
@@ -224,9 +227,12 @@ void BrainDisplay::update() {
   const char * c;
 
   lv_color_t fill;
-  lv_obj_t * visor;
-  lv_obj_t * visorInfo;
   lv_obj_t * size;
+
+  lv_obj_t * visor;
+  lv_obj_t * objName;
+  lv_obj_t * objCoord;
+  lv_obj_t * objDim;
 
   const char * sigName;
 
@@ -254,15 +260,27 @@ void BrainDisplay::update() {
         lv_obj_set_pos(btnBack, 5, 190);
         std::string exposure;
         lv_obj_clean(visorCont);
-        for(int i = 0; i < CamFront.get_object_count(); i++) {
-          pros::vision_object_s_t sig = CamFront.get_by_size(i);
-          if(sig.signature == 1) { fill = LV_COLOR_PURPLE; sigName = "Purple Cube"; }
-          else if(sig.signature == 2) { fill = LV_COLOR_ORANGE; sigName = "Orange Cube"; }
-          else if(sig.signature == 3) { fill = LV_COLOR_GREEN; sigName = "Green Cube"; }
+        std::map<int, vision_object_s_t> sig = Feed.getFeed();
+        for(int i = 0; i < sig.size(); i++) {
+          if(sig[i].signature == CUBE_PURPLE) { fill = LV_COLOR_PURPLE; sigName = "Purple Cube"; }
+          else if(sig[i].signature == CUBE_ORANGE) { fill = LV_COLOR_ORANGE; sigName = "Orange Cube"; }
+          else if(sig[i].signature == CUBE_GREEN) { fill = LV_COLOR_GREEN; sigName = "Green Cube"; }
           else { fill = LV_COLOR_WHITE; sigName = "Unknown"; }
 
-          visor = drawRectangle(sig.left_coord, sig.top_coord, sig.width, sig.height, LV_COLOR_WHITE, fill, visorCont);
-          visorInfo = createLabel(sig.left_coord, sig.top_coord - 20, sigName, visorCont);
+          visor = drawRectangle(sig[i].left_coord, sig[i].top_coord, sig[i].width, sig[i].height, LV_COLOR_WHITE, fill, visorCont);
+          objName = createLabel(sig[i].left_coord, sig[i].top_coord - 60, sigName, visorCont);
+          objCoord = createLabel(
+            sig[i].left_coord,
+            sig[i].top_coord - 40,
+            "X:" + std::to_string(sig[i].x_middle_coord) += ", Y:" + std::to_string(sig[i].y_middle_coord),
+            visorCont
+          );
+          objDim = createLabel(
+            sig[i].left_coord,
+            sig[i].top_coord - 20,
+            "Width:" + std::to_string(sig[i].width) += ", Height:" + std::to_string(sig[i].height),
+            visorCont
+          );
         }
 
         exposure += std::to_string(CamFront.get_exposure());
@@ -304,15 +322,17 @@ void BrainDisplay::run(void* ignore) {
 
 // Macros
 
-lv_obj_t * BrainDisplay::createLabel(int x, int y, const char * text, lv_obj_t * parent) {
+lv_obj_t * BrainDisplay::createLabel(int x, int y, std::string text_, lv_obj_t * parent) {
   lv_obj_t * label = lv_label_create(parent, NULL);
   lv_obj_set_pos(label, x, y);
+  const char * text;
+  text = text_.c_str();
   lv_label_set_text(label, text);
 
   return label;
 }
 
-lv_obj_t * BrainDisplay::createButton(int id, int x, int y, int width, int height, const char * text, lv_obj_t * parent, lv_action_t action) {
+lv_obj_t * BrainDisplay::createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action) {
   lv_obj_t * button = lv_btn_create(parent, NULL);
   lv_obj_set_pos(button, x, y);
   lv_obj_set_size(button, width, height);

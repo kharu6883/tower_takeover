@@ -8,9 +8,11 @@
 
 const double kP = 0.11;
 
-static int towerMode = 0, lastBtn = 0;
+static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 5, rollerDecel = 5;
 
-static double target, clawTarget, slewOutput = 0, accel = 9, decel = 20;
+static double target, slewOutput = 0, accel = 9, decel = 20;
+
+static PID rackVar, rollerVar;
 
 static bool isTrack = false, isReset = false;
 
@@ -25,6 +27,8 @@ void opcontrol() {
 	RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
 	armAsync.resume();
+
+	rollerVar.output = 200;
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
@@ -44,71 +48,96 @@ void opcontrol() {
 
 			if(!isTrack) {
 
-				target = pTerm(RACK_UP, rackPot.get_value(), kP);
+				rackVar.output = pTerm(RACK_UP, rackPot.get_value(), kP);
 
-				if(target > slewOutput + accel) {
-			    slewOutput += accel;
+				if(rackVar.output > rackVar.slewOutput + accel) {
+			    rackVar.slewOutput += accel;
 			  } else {
-			    slewOutput = target;
+			    rackVar.slewOutput = rackVar.output;
 			  }
 
-				rack(slewOutput);
+				rack(rackVar.slewOutput);
 
 		  } else {
 
-				target = pTerm(RACK_TOWER, rackPot.get_value(), kP + 1);
+				rackVar.output = pTerm(RACK_TOWER, rackPot.get_value(), kP + 1);
 
-				if(target > slewOutput + accel) {
-			    slewOutput += accel;
+				if(rackVar.output > rackVar.slewOutput + accel) {
+			    rackVar.slewOutput += accel;
 			  } else {
-			    slewOutput = target;
+			    rackVar.slewOutput = rackVar.output;
 			  }
 
-				rack(slewOutput);
+				rack(rackVar.slewOutput);
 			}
 
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
 
 			lastBtn = 2;
-			target = pTerm(RACK_DOWN, rackPot.get_value(), kP + 0.3);
+			rackVar.output = pTerm(RACK_DOWN, rackPot.get_value(), kP + 0.3);
 
-			if(abs(target) > slewOutput + accel) {
-		    slewOutput += accel;
+			if(abs(rackVar.output) > rackVar.slewOutput + accel) {
+		    rackVar.slewOutput += accel;
 		  } else {
-		    slewOutput = abs(target);
+		    rackVar.slewOutput = abs(rackVar.output);
 		  }
 
-			rack(-slewOutput);
+			rack(-rackVar.slewOutput);
 
-		} else if(slewOutput > 0) {
+		} else if(rackVar.slewOutput > 0) {
 			if(lastBtn == 1) {
 
-			  slewOutput -= decel;
-				rack(slewOutput);
+			  rackVar.slewOutput -= decel;
+				rack(rackVar.slewOutput);
 
 			} else if(lastBtn == 2) {
 
-				slewOutput -= decel;
-				rack(-slewOutput);
+				rackVar.slewOutput -= decel;
+				rack(-rackVar.slewOutput);
 
 			}
 		} else {
 
-			slewOutput = 0;
+			rackVar.slewOutput = 0;
 			rack(0);
 
 		}
 
+		// Roller
+
 		if(master.get_digital(DIGITAL_R1) && (towerMode == 0 || towerMode == 5)) {
 
-			roller(200);
+			lastR = 1;
+			if(rollerVar.output > rollerVar.slewOutput + rollerAccel) {
+				rollerVar.slewOutput += rollerAccel;
+			} else {
+				rollerVar.slewOutput = rollerVar.output;
+			}
+			roller(-rollerVar.slewOutput);
 
 		} else if(master.get_digital(DIGITAL_R2) && (towerMode == 0 || towerMode == 5)) {
 
-			roller(-200);
+			lastR = 2;
+			if(rollerVar.output > rollerVar.slewOutput + rollerAccel) {
+				rollerVar.slewOutput += rollerAccel;
+			} else {
+				rollerVar.slewOutput = rollerVar.output;
+			}
+			roller(-rollerVar.slewOutput);
 
-		} else if(towerMode == 0 || towerMode == 5) {
+		} else if((towerMode == 0 || towerMode == 5) && rollerVar.slewOutput > 0) {
 
+			if(lastR == 1) {
+				rollerVar.slewOutput -= rollerDecel;
+				roller(rollerVar.slewOutput);
+			} else if(lastR == 2) {
+				rollerVar.slewOutput -= rollerDecel;
+				roller(-slewOutput);
+			}
+
+		} else {
+
+			rollerVar.slewOutput = 0;
 			roller(0);
 
 		}

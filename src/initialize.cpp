@@ -2,7 +2,6 @@
 
 #include "config/io.h"
 #include "config/motor.h"
-#include "config/vision.h"
 
 #include "control/displayController.h"
 #include "control/autonController.h"
@@ -15,7 +14,6 @@ pros::Task armAsync(macroTask);
 
 void initialize() {
   Autonomous Auton;
-  initVision();
 
   pros::Task asyncController(Control.run);
   Control.pause();

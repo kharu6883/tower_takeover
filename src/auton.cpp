@@ -3,14 +3,16 @@
 #include "control/drive.h"
 #include "control/asyncController.h"
 #include "control/macro.h"
+#include "control/vision.h"
 #include "control/path.h"
 using namespace path;
 
 static ControlAsync Thread;
+static Camera CamFront(FRONTVISION);
 
 void tester() {
   std::cout << "Testing" << std::endl;
-  Thread.arm(ARM_LOW_TOWER_DESCORE, 200, 9);
+  CamFront.target(CUBE_PURPLE, 0, 0, 0, 1);
 }
 
 void start() {

@@ -5,7 +5,7 @@
 
 #define PROS_USE_LITERALS
 
-// Nice things below
+// Nice includes below
 #include "api.h"
 #include "pros/apix.h"
 #include "pros/rtos.h"
@@ -15,6 +15,17 @@ void macroTask(void* ignore);
 
 extern pros::Task controlDrive;
 extern pros::Task armAsync;
+
+// Structures
+struct Vector2 {
+  double length;
+  int speed;
+  int rate;
+};
+
+struct PID {
+  double current, error, last, output, slewOutput;
+};
 
 // It's Everyday Functions Bro
 void wait(int ms);
@@ -51,7 +62,7 @@ LV_IMG_DECLARE(michael2);
 #define ULTRARECHO 4
 
 // Vision Constants
-#define FRONTVISION 13
+#define FRONTVISION 11
 
 #define CUBE_PURPLE 1
 #define CUBE_ORANGE 2

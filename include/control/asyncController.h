@@ -1,12 +1,4 @@
-struct Vector2 {
-  double length;
-  int speed;
-  int rate;
-};
-
-struct PID {
-  double current, error, last, output, slewOutput;
-};
+#include "main.h"
 
 class ControlAsync {
   public:
