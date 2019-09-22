@@ -8,7 +8,7 @@
 
 const double kP = 0.11;
 
-static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 15, rollerDecel = 1;
+static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 28, rollerDecel = 30;
 
 static double target, slewOutput = 0, accel = 9, decel = 20;
 

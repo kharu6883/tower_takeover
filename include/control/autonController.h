@@ -35,6 +35,7 @@ void tester();
 
 // Slot 1
 void r_s_8();
+void b_s_8();
 void skills1();
 void skills2();
 

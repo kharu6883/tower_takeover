@@ -10,7 +10,7 @@ using namespace std;
 static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::autonSlot = 0;
+int Autonomous::autonSlot = 2;
 
 std::map<int, void(*)(void)> Autonomous::AutonArray;
 std::map<int, const char *> Autonomous::SlotName;
@@ -27,6 +27,7 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
 
 
     addAuton("Red Small zone 8 cubes", r_s_8); // Slot 1
+    addAuton("Blue Small zone 8 cubes", b_s_8);
     addAuton("Skills 1", skills1);
     addAuton("Skills 2", skills2);
 
