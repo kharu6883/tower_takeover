@@ -8,7 +8,7 @@
 
 const double kP = 0.11;
 
-static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 5, rollerDecel = 5;
+static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 15, rollerDecel = 1;
 
 static double target, slewOutput = 0, accel = 9, decel = 20;
 
@@ -109,7 +109,7 @@ void opcontrol() {
 
 			lastR = 1;
 			if(rollerVar.output > rollerVar.slewOutput + rollerAccel) {
-				rollerVar.slewOutput += rollerAccel;
+				rollerVar.slewOutput -= rollerAccel;
 			} else {
 				rollerVar.slewOutput = rollerVar.output;
 			}
@@ -128,7 +128,7 @@ void opcontrol() {
 		} else if((towerMode == 0 || towerMode == 5) && rollerVar.slewOutput > 0) {
 
 			if(lastR == 1) {
-				rollerVar.slewOutput -= rollerDecel;
+				rollerVar.slewOutput+= rollerDecel;
 				roller(rollerVar.slewOutput);
 			} else if(lastR == 2) {
 				rollerVar.slewOutput -= rollerDecel;
