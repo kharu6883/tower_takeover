@@ -193,6 +193,52 @@ void armReset() {
   setReset(false);
 }
 
+Slew::Slew(double accel_) : accel(accel_), decel(0) {
+  noDecel = true;
+}
+
+Slew::Slew(double accel_, double decel_) : accel(accel_), decel(decel_) {
+  noDecel = false;
+}
+
+double Slew::calculate(double input) {
+  if(!noDecel) {
+
+    if(input > output + accel) {
+      output += accel;
+    } else if(input < output - decel) {
+      output -= decel;
+    } else {
+      output = input;
+    }
+
+  } else {
+    if(input > 0) {
+      if(input > output + accel) output += accel;
+      else output = input;
+    }
+
+    if(input < 0) {
+      if(input < output - accel) output -= accel;
+      else output = input;
+    }
+  }
+
+  return output;
+}
+
+void Slew::setOutput(double output_) {
+  output = output_;
+}
+
+double Slew::getOutput() {
+  return output;
+}
+
+void Slew::reset() {
+  input = output = 0;
+}
+
 
 
 double pTerm(double target, double sensor, double kP) {

@@ -28,7 +28,7 @@ void opcontrol() {
 
 	armAsync.resume();
 
-	rollerVar.output = 200;
+	Slew roller(28, 30);
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
@@ -104,43 +104,21 @@ void opcontrol() {
 		}
 
 		// Roller
+		if(master.get_digital(DIGITAL_R1)) {
 
-		if(master.get_digital(DIGITAL_R1) && (towerMode == 0 || towerMode == 5)) {
+			roller.calculate(200);
 
-			lastR = 1;
-			if(rollerVar.output > rollerVar.slewOutput + rollerAccel) {
-				rollerVar.slewOutput += rollerAccel;
-			} else {
-				rollerVar.slewOutput = rollerVar.output;
-			}
-			roller(rollerVar.slewOutput);
+		} else if(master.get_digital(DIGITAL_R2)) {
 
-		} else if(master.get_digital(DIGITAL_R2) && (towerMode == 0 || towerMode == 5)) {
+			roller.calculate(-200);
 
-			lastR = 2;
-			if(rollerVar.output > rollerVar.slewOutput + rollerAccel) {
-				rollerVar.slewOutput += rollerAccel;
-			} else {
-				rollerVar.slewOutput = rollerVar.output;
-			}
-			roller(-rollerVar.slewOutput);
+		} else {
 
-		} else if((towerMode == 0 || towerMode == 5) && rollerVar.slewOutput > 0) {
-
-			if(lastR == 1) {
-				rollerVar.slewOutput -= rollerDecel;
-				roller(rollerVar.slewOutput);
-			} else if(lastR == 2) {
-				rollerVar.slewOutput -= rollerDecel;
-				roller(-slewOutput);
-			}
-
-		} else if(towerMode == 0 || towerMode == 5) {
-
-			rollerVar.slewOutput = 0;
-			roller(0);
+			roller.calculate(0);
 
 		}
+
+		if(towerMode == 0 || towerMode == 4 || towerMode == 5) ::roller(roller.getOutput());
 
 		// Yeet
 		pros::delay(20);

@@ -49,6 +49,25 @@ pros::vision_object_s_t getVisionSig(int id, int size);
     CONTROL & PID CALCULATION
 --------------------------------*/
 
+class Slew {
+  public:
+    Slew(double accel_);
+    Slew(double accel_, double decel_);
+
+    double calculate(double input);
+
+    void setOutput(double output_);
+    double getOutput();
+
+    void reset();
+
+  private:
+    const double accel, decel;
+    double input, output;
+    bool noDecel;
+};
+
+
 // Calculates P term with the following equation. (Target - Sensor) * kP
 double pTerm(double target, double sensor, double kP);
 
