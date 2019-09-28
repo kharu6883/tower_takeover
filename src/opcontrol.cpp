@@ -144,6 +144,7 @@ void macroTask(void* ignore) {
 		}
 
 		if(master.get_digital_new_press(DIGITAL_B) && rackPot.get_value() <= 1400) towerMode = 4;
+		if(master.get_digital_new_press(DIGITAL_X) && rackPot.get_value() <= 1400) towerMode = 6;
 		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) towerMode = 0;
 
 		switch(towerMode) {
@@ -154,7 +155,7 @@ void macroTask(void* ignore) {
 			}
 
 			case 2: {
-				Arm.set_current_limit(10000);
+				Arm.set_current_limit(7000);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(1);
 				towerMode = 5;
@@ -163,7 +164,7 @@ void macroTask(void* ignore) {
 			}
 
 			case 3: {
-				Arm.set_current_limit(10000);
+				Arm.set_current_limit(7000);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(2);
 				towerMode = 5;
@@ -172,7 +173,7 @@ void macroTask(void* ignore) {
 			}
 
 			case 4: {
-				Arm.set_current_limit(10000);
+				Arm.set_current_limit(7000);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(3);
 				towerMode = 5;
@@ -186,10 +187,19 @@ void macroTask(void* ignore) {
 				break;
 			}
 
+			case 6: {
+				Arm.set_current_limit(7000);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+				tower(5);
+				towerMode = 5;
+				remote.setText("Descore");
+				break;
+			}
+
 			default: {
 				disconnected = false;
 
-				Arm.set_current_limit(10000);
+				Arm.set_current_limit(7000);
 				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
