@@ -203,7 +203,8 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
-				arm(armTarget);
+
+				if(!armLimit.get_value()) arm(armTarget);
 				break;
 			}
 		}
