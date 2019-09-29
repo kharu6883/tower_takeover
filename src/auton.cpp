@@ -88,34 +88,39 @@ void r_s_8() {
 }
 
 void skills1() {
-  // armReset();
-  // tower(1);
-  // wait(99999999);
   roller(-3,200);
   armReset();
-
   roller(100);
   drive(400, 100, 8);
   roller(0);
-  Thread.arm(ARM_LOW_TOWER, 200, 20);
+  Thread.arm(ARM_LOW_TOWER, 200, 60);
   drive(-30,150,8);
-  turn(300, 150, 5);
+  turn(300, 150, 7);
   roller(-80);
   drive(250,150,8);
   drive(-250,150,8);
-  Thread.arm(ARM_BOTTOM - 0.2, 150, 5);
-  turn(-300, 150, 5);
+  Thread.arm(ARM_BOTTOM - 0.2, 200, 20);
+  turn(-300, 150, 7);
   roller(200);
-  drive(850, 100, 8);
-  roller(100);
+  drive(870, 100, 8);
   Thread.disable_arm();
-  wait(200);
   tower(1);
-  wait(400);
-  roller(0);
-  wait(500);
-  turn(-100,100,5);
+  turn(-150,100,5);
   roller(-200);
+  wait(500);
+  Thread.arm(ARM_BOTTOM - 0.2, 150, 5);
+  turn(140,100,5);
+  roller(200);
+  drive(1800, 130, 5);
+  turn(230,100,5);
+  Thread.disable_arm();
+  roller(-23);
+  Thread.drive(500, 160, 9);
+  rack(RACK_UP, 100, 11);
+  wait(100);
+  Thread.drive(-300, 200, 9);
+  roller(-100);
+  rack(RACK_DOWN, 200, 15);
   wait(4000);
 
 
