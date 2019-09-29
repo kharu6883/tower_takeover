@@ -79,6 +79,11 @@ LV_IMG_DECLARE(michael2);
 #define ARM_MID_TOWER 1.7
 #define ARM_MID_TOWER_DESCORE 1.7
 
+#define MODE_CHASSIS 1
+#define MODE_RACK 2
+#define MODE_ARM 3
+
+
 using namespace okapi;
 
 #ifdef __cplusplus

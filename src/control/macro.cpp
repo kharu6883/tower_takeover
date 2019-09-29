@@ -124,6 +124,12 @@ void tower(int tower) {
   double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 200, rollerpreprime = 100;
   double armTarget, tolerance = 3;
 
+  #if DEBUG
+  std::cout << Arm.get_current_limit() << std::endl;
+  #endif
+
+  Arm.set_current_limit(7000);
+
   if(tower == 1) { // Bottom Tower
     while(true) {
       armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
@@ -152,7 +158,7 @@ void tower(int tower) {
       if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
       wait(20);
     }
-    
+
     roller(rollerpreprime);
     wait(rollerWait);
     roller(rollerRot, rollerSpeed);
@@ -181,8 +187,7 @@ void tower(int tower) {
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
       wait(20);
     }
-  }
-  else if(tower == 6) {
+  } else if(tower == 6) {
     roller(rollerpreprime);
     wait(rollerWait);
     roller(rollerRot, rollerSpeed);
@@ -194,8 +199,6 @@ void tower(int tower) {
       wait(20);
     }
   }
-
-
 }
 
 void armReset() {

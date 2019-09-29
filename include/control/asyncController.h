@@ -21,11 +21,13 @@ class ControlAsync {
 
     ControlAsync& withSturn(int sturn);
     ControlAsync& withDelay(int ms);
+    ControlAsync& withConst(int mode, double kP_, double kD_);
 
     void reset_rack();
     void rack(double length, int speed, int rate);
 
     void reset_arm();
+    void disable_arm();
     void arm(double length, int speed, int rate);
 
   private:
@@ -46,4 +48,8 @@ class ControlAsync {
     static Vector2 chassis_target, rack_target, arm_target;
 
     static PID chassisVar, rackVar, armVar;
+
+    static double chassis_kP, chassis_kD;
+    static double rack_kP;
+    static double arm_kP;
 };

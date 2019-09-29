@@ -88,9 +88,12 @@ void r_s_8() {
 }
 
 void skills1() {
+  // armReset();
+  // tower(1);
+  // wait(99999999);
   roller(-3,200);
   armReset();
-  // Pick up 1 cube
+
   roller(100);
   drive(400, 100, 8);
   roller(0);
@@ -100,30 +103,27 @@ void skills1() {
   roller(-80);
   drive(250,150,8);
   drive(-250,150,8);
-  Thread.arm(ARM_BOTTOM-0.2, 150, 5);
+  Thread.arm(ARM_BOTTOM - 0.2, 150, 5);
   turn(-300, 150, 5);
   roller(200);
   drive(850, 100, 8);
   roller(100);
+  Thread.disable_arm();
   wait(200);
-  roller(-200);
-  Thread.arm(ARM_LOW_TOWER, 200, 20);
+  tower(1);
   wait(400);
   roller(0);
   wait(500);
   turn(-100,100,5);
   roller(-200);
   wait(4000);
-  // Swerve back to the 3 cubes
-  execute("yoink", true);
-  destroy("yoink");
+
+
   align(300, 5);
 
-  // Yoink 3 more cubes and turn right facing small red corner
   drive(1000, 95, 9);
   turn(750, 90, 5);
 
-  // Drive to small red corner and place
   roller(-22);
   Thread.drive(1480, 160, 9);
   rack(RACK_UP, 100, 11);

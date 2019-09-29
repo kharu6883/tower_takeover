@@ -29,6 +29,10 @@ Vector2 ControlAsync::chassis_target = {0, 0, 0};
 Vector2 ControlAsync::rack_target = {0, 0, 0};
 Vector2 ControlAsync::arm_target = {0, 0, 0};
 
+double ControlAsync::chassis_kP = 0.6, ControlAsync::chassis_kD = 0.6;
+double ControlAsync::rack_kP = 0.11;
+double ControlAsync::arm_kP = 210;
+
 ControlAsync::ControlAsync() {}
 
 void ControlAsync::run(void *args) {
@@ -62,10 +66,6 @@ void ControlAsync::update() {
   reset_arm();
 
   double deltaL, deltaR;
-
-  double chassis_kP = 0.6, chassis_kD = 0.6;
-  double rack_kP = 0.11;
-  double arm_kP = 200;
 
   double tolerance = 3;
 
@@ -360,6 +360,10 @@ bool ControlAsync::isDisabled() {
   }
 }
 
+void ControlAsync::disable_arm() {
+  isArm = false;
+}
+
 void ControlAsync::drive(double length, int speed, int rate) {
   reset_drive();
   this -> chassis_target.length = length;
@@ -392,6 +396,29 @@ ControlAsync& ControlAsync::withSturn(int sturn) {
 ControlAsync& ControlAsync::withDelay(int ms) {
   this -> wait = ms;
   isWait = true;
+  return *this;
+}
+
+ControlAsync& ControlAsync::withConst(int mode, double kP_, double kD_) {
+  switch(mode) {
+    case MODE_CHASSIS: {
+      chassis_kP = kP_;
+      chassis_kD = kD_;
+    }
+
+    case MODE_RACK: {
+      rack_kP = kP_;
+    }
+
+    case MODE_ARM: {
+      arm_kP = kP_;
+    }
+
+    default: {
+      print("Error while setting kP for thread");
+    }
+  }
+
   return *this;
 }
 
