@@ -10,7 +10,7 @@ using namespace std;
 static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::autonSlot = 2;
+int Autonomous::autonSlot = 3;
 
 std::map<int, void(*)(void)> Autonomous::AutonArray;
 std::map<int, const char *> Autonomous::SlotName;

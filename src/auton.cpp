@@ -90,12 +90,30 @@ void r_s_8() {
 void skills1() {
   roller(-3,200);
   armReset();
-  //
-  generate("yoink", 3_ft, 3_ft, 1_deg);
-  // Pick up 4 cubes
+  // Pick up 1 cube
+  roller(100);
+  drive(400, 100, 8);
+  roller(0);
+  Thread.arm(ARM_LOW_TOWER, 200, 20);
+  drive(-30,150,8);
+  turn(300, 150, 5);
+  roller(-80);
+  drive(250,150,8);
+  drive(-250,150,8);
+  Thread.arm(ARM_BOTTOM-0.2, 150, 5);
+  turn(-300, 150, 5);
   roller(200);
-  drive(1000, 115, 9);
-
+  drive(850, 100, 8);
+  roller(100);
+  wait(200);
+  roller(-200);
+  Thread.arm(ARM_LOW_TOWER, 200, 20);
+  wait(400);
+  roller(0);
+  wait(500);
+  turn(-100,100,5);
+  roller(-200);
+  wait(4000);
   // Swerve back to the 3 cubes
   execute("yoink", true);
   destroy("yoink");
