@@ -118,7 +118,7 @@ void opcontrol() {
 
 		}
 
-		if(towerMode == 0 || towerMode == 4 || towerMode == 5) ::roller(roller.getOutput());
+		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6) ::roller(roller.getOutput());
 
 		// Yeet
 		pros::delay(20);
