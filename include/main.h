@@ -68,6 +68,7 @@ LV_IMG_DECLARE(michael2);
 #define CUBE_ORANGE 2
 #define CUBE_GREEN 3
 #define BLUE_ZONE 4
+#define RED_ZONE 5
 
 // Constants
 #define RACK_DOWN 900

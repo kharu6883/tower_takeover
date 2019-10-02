@@ -98,7 +98,7 @@ void b_b_8() { // blue big 8 cube
 void skills1() { // official skills
   roller(-3,200);
   armReset();
-  //primerobot
+  //prime robot
   roller(100);
   drive(350, 100, 8);
   roller(0);
@@ -113,13 +113,13 @@ void skills1() { // official skills
   turn(-270, 150, 7);
   roller(200);
   //return to primary position to grab three more cubes
-  drive(920, 100, 8);
+  drive(920, 130, 8);
   Thread.disable_arm();
   tower(1);
   //arm up with macro to score mid tower
   turn(-150,100,5);
   roller(-200);
-  wait(300);
+  wait(200);
   Thread.arm(ARM_BOTTOM - 0.2, 150, 5);
   turn(140,100,5);
   //return to primary positiono to grab 5 more cubes
@@ -155,25 +155,8 @@ void skills1() { // official skills
   align(300, 2);
   //prime for stage 2 by alligning to first mid tower
   roller(0);
-  drive(750,200,6);
-  CamFront.target(CUBE_PURPLE, 0, 0, 0, 1);
-  //align to mid tower using purple cube at bottom of tower
-  roller(2.5,200);
-  drive(400,100,6);
-  roller(0);
-  Thread.drive(-160,150,5);
-  arm(ARM_MID_TOWER, 100, 8);
-  drive(200,150,5);
-  roller(-130);
-  wait(500);
-  drive(-160,150,5);
-  //spit cube into tower
-  Thread.disable_arm();
-  turn(-470, 150, 7);
-  align(300, 3);
-  //align to prime 3 stage of auton// drive and grab 6-8 cubes
-  armReset();
-  CamFront.target(CUBE_PURPLE, 0, 0, 0, 1);
+  drive(850,200,6);
+
   roller(200);
   align(300, 3);
   drive(2800,130,6);
@@ -197,6 +180,5 @@ void skills1() { // official skills
   roller(-100);
   Thread.rack(RACK_DOWN, 200, 15);
   drive(-300, 200, 9);
-  turn(-700, 150, 7);
-  align(300, 2);
+
 }
