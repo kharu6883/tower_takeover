@@ -25,7 +25,7 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
   if(!isInitialized) {
     addAuton("Test Auton", tester);
     addAuton("Red Small zone 8 cubes", r_s_8); // Slot 1
-  //  addAuton("Red Big zone 7 cubes", r_b_8);   // Slot 2
+    //addAuton("Red Big zone 7 cubes", r_b_8);   // Slot 2
     addAuton("Blue Small zone 8 cubes", b_s_8);// Slot 3
     addAuton("Red Big zone 7 cubes", b_b_8);   // Slot 4
     addAuton("Skills 1", skills1);             // Slot 5

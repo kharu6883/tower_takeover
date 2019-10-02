@@ -87,7 +87,7 @@ void r_s_8() { //red small 8 cube
   rack(RACK_DOWN, 200, 15);
 }
 
-void r_b_8_() { // red big 8 cube
+void R_b_8_() { // red big 8 cube
 
 }
 

@@ -38,4 +38,4 @@ void r_s_8();
 void b_s_8();
 void skills1();
 void b_b_8();
-void r_b_8();
+//void R_b_8();

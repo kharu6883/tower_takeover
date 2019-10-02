@@ -266,6 +266,7 @@ void BrainDisplay::update() {
           else if(sig[i].signature == CUBE_ORANGE) { fill = LV_COLOR_ORANGE; sigName = "Orange Cube"; }
           else if(sig[i].signature == CUBE_GREEN) { fill = LV_COLOR_GREEN; sigName = "Green Cube"; }
           else if(sig[i].signature == BLUE_ZONE) { fill = LV_COLOR_BLUE; sigName = "Blue Zone"; }
+          else if(sig[i].signature == RED_ZONE) { fill = LV_COLOR_RED; sigName = "Red Zone"; }
           else { fill = LV_COLOR_WHITE; sigName = "Unknown"; }
 
           visor = drawRectangle(sig[i].left_coord, sig[i].top_coord, sig[i].width, sig[i].height, LV_COLOR_WHITE, fill, visorCont);
