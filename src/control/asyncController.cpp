@@ -14,7 +14,9 @@ bool ControlAsync::isDrive = false,
 ControlAsync::isTurn = false,
 ControlAsync::isStrafe = false,
 ControlAsync::isRack = false,
-ControlAsync::isArm = false;
+ControlAsync::isArm = false,
+ControlAsync::isZeroing = false,
+ControlAsync::isDown = false;
 
 bool ControlAsync::isWait = false;
 int ControlAsync::wait = 0;
@@ -147,6 +149,22 @@ void ControlAsync::update() {
         if(isSettled(armVar.output, tolerance)) { reset_arm(); isArm = false; }
       }
     }
+
+    /*===========================================
+      ZEROING ARM
+    ===========================================*/
+
+    if(isZeroing) {
+      Arm.set_current_limit(10000);
+      ::arm(-200);
+
+      if(armLimit.get_new_press()) {
+        ::arm(0);
+        Arm.tare_position();
+        isZeroing = false;
+      } else if(isDown) { ::arm(0); isZeroing = false; }
+    }
+
 
     if(isWait && !isDisabled()) {
       ::wait(wait);
@@ -362,6 +380,13 @@ bool ControlAsync::isDisabled() {
 
 void ControlAsync::disable_arm() {
   isArm = false;
+}
+
+void ControlAsync::zero_arm() {
+  isArm = false;
+  reset_arm();
+  isDown = armLimit.get_value();
+  isZeroing = true;
 }
 
 void ControlAsync::drive(double length, int speed, int rate) {

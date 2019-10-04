@@ -9,20 +9,78 @@ using namespace path;
 
 static ControlAsync Thread;
 static Camera CamFront(FRONTVISION);
-//begining of function library
-void start() {  //prime robot for beginning
-  roller(-3,200);
-  armReset();
-}
-//end of functionlibrary
 
-//match autonomaus library
-void tester() {            //auton building
+// Ignore below. Just for testing stuff.
+void tester() {
   std::cout << "Testing" << std::endl;
   CamFront.target(CUBE_PURPLE, 0, 0, 0, 1);
 }
 
-void b_s_8() {          //blue small 8 cube
+/*===========================================
+  PREMADE FUNCTIONS
+===========================================*/
+void start() {            // Deploy and zero arm
+  roller(-200);
+  armReset();
+  wait(500);
+  roller(0);
+}
+
+
+/*===========================================
+  RED MATCH AUTONOMOUSES
+===========================================*/
+void r_s_8() {            // red small 8 cube
+  roller(-3,200);
+  armReset();
+
+  generate("yoink", 3.8_ft, 3_ft, 1_deg);
+  // Pick up 4 cubes
+  roller(200);
+  wait(100);
+  drive(1200, 140, 6);
+
+  // Swerve back to the 3 cubes
+  execute("yoink", true);
+  destroy("yoink");
+  align(300, 5);
+
+  // Yoink 3 more cubes and turn right facing small red corner
+  drive(1000, 130, 6);
+  turn(750, 200, 5);
+
+  // Drive to small red corner and place
+  drive(1180, 200, 9);
+  wait(400);
+  Thread.drive(250,130,5);
+  roller(-34);
+  rack(RACK_UP, 150, 11);
+  wait(100);
+  roller(-70);
+  Thread.rack(RACK_DOWN, 200, 15);
+  drive(-300, 200, 9);
+}
+void r_b_8() {            // red big 8 cube
+  start();
+  // Yoink cubes
+  roller(200);
+  drive(1600, 200, 7);
+
+  // Back up, turn to cubes and yoink
+  drive(-1050, 200, 7);
+  turn(250, 150, 7);
+  drive(1000, 160, 7);
+  turn(-250, 100, 7);
+  drive(100, 160, 7);
+  turn(-700, 100, 7);
+
+}
+
+
+/*===========================================
+  BLUE MATCH AUTONOMOUSES
+===========================================*/
+void b_s_8() {            // blue small 8 cube
   roller(-3,200);
   armReset();
 
@@ -53,51 +111,17 @@ void b_s_8() {          //blue small 8 cube
   roller(-100);
   rack(RACK_DOWN, 200, 15);
 }
-
-void r_s_8() {           //red small 8 cube
-  roller(-3,200);
-  armReset();
-
-  generate("yoink", 3_ft, 3_ft, 1_deg);
-  // Pick up 4 cubes
-  roller(200);
-  wait(100);
-  drive(1000, 110, 9);
-
-  // Swerve back to the 3 cubes
-  execute("yoink", true);
-  destroy("yoink");
-  align(300, 5);
-
-  // Yoink 3 more cubes and turn right facing small red corner
-  drive(1000, 100, 9);
-  turn(750, 95, 5);
-
-  // Drive to small red corner and place
-  roller(-24);
-  Thread.drive(1480, 160, 9);
-  rack(RACK_UP, 100, 11);
-  wait(200);
-
-  // Yeet outta there
-
-  Thread.drive(-300, 200, 9);
-  roller(-100);
-  rack(RACK_DOWN, 200, 15);
-}
-
-void R_b_8_() {           // red big 8 cube
+void b_b_8() {            // blue big 8 cube
 
 }
 
-void b_b_8() {           // blue big 8 cube
 
-}
-//end of match autonomaus library
-
-//skills autonomaus library
-void skills1() {         // official skills
+/*===========================================
+  SKILLS AUTONOMOUSES
+===========================================*/
+void skills1() {          // official skills
   start();
+  wait(1000);
   //prime robot
   roller(100);
   drive(350, 100, 8);
@@ -118,7 +142,7 @@ void skills1() {         // official skills
   tower(1);
   //arm up with macro to score mid tower
   turn(-150,100,5);
-  roller(-100);
+  roller(-160);
   wait(200);
   Thread.arm(ARM_BOTTOM - 0.3, 150, 5);
   turn(140,100,5);
@@ -127,11 +151,11 @@ void skills1() {         // official skills
 
   //turn(20,100,5);
   drive(1100, 120, 5);
-  wait(1000);
+  wait(600);
   Thread.disable_arm();
   Thread.turn(300, 150, 7);
   tower(1);
-  roller(-100);
+  roller(-70);
   drive(300,150,8);
   //drive to blue tower and drop out cube
   drive(-280,150,8);
@@ -162,7 +186,7 @@ void skills1() {         // official skills
   turn(-500, 150, 7);
   Thread.arm(ARM_BOTTOM-0.2, 200, 20);
   align(300, 2);
-  drive(2800,100,6);
+  drive(2800,90,6);
   wait(1000);
   Thread.disable_arm();
   tower(2);
@@ -188,4 +212,3 @@ void skills1() {         // official skills
   Thread.rack(RACK_DOWN, 200, 15);
   drive(-300, 200, 9);
 }
-//end of skills autonomaus library
