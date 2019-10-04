@@ -147,7 +147,7 @@ void tower(int tower) {
       armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
       arm(armTarget);
 
-      if(isSettled(armTarget, tolerance + 1)) { arm(0); break; }
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
       wait(20);
     }
   } else if(tower == 2) { // Mid Tower
@@ -167,10 +167,18 @@ void tower(int tower) {
       armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
       arm(armTarget);
 
-      if(isSettled(armTarget, tolerance + 8)) { arm(0); break; }
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
       wait(20);
     }
   } else if(tower == 3) {
+    while(true) {
+      armTarget = pTerm(ARM_LOW_TOWER_MANUAL, Arm.get_position(), kP + 10);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
+  } else if(tower == 4) {
     while(true) {
       armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP + 10);
       arm(armTarget);
@@ -178,8 +186,7 @@ void tower(int tower) {
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
       wait(20);
     }
-  }
-  else if(tower == 5) {
+  } else if(tower == 5) {
     while(true) {
       armTarget = pTerm(ARM_MID_TOWER_DESCORE, Arm.get_position(), kP + 10);
       arm(armTarget);
@@ -193,6 +200,85 @@ void tower(int tower) {
     roller(rollerRot, rollerSpeed);
     while(true) {
       armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP + 10);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
+  }
+}
+
+void tower(int tower, double tolerance) {
+
+  const double kP = 210;
+  double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 200, rollerpreprime = 100;
+  double armTarget;
+
+  #if DEBUG
+  std::cout << Arm.get_current_limit() << std::endl;
+  #endif
+
+  Arm.set_current_limit(7000);
+
+  if(tower == 1) { // Bottom Tower
+    while(true) {
+      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
+      wait(20);
+    }
+
+    roller(rollerpreprime);
+    wait(rollerWait);
+    roller(rollerRot, rollerSpeed);
+
+    while(true) {
+      armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
+  } else if(tower == 2) { // Mid Tower
+    while(true) {
+      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
+      wait(20);
+    }
+
+    roller(rollerpreprime);
+    wait(rollerWait);
+    roller(rollerRot, rollerSpeed);
+
+    while(true) {
+      armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
+  } else if(tower == 3) {
+    while(true) {
+      armTarget = pTerm(ARM_LOW_TOWER_MANUAL, Arm.get_position(), kP + 10);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
+  } else if(tower == 4) {
+    while(true) {
+      armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP + 10);
+      arm(armTarget);
+
+      if(isSettled(armTarget, tolerance)) { arm(0); break; }
+      wait(20);
+    }
+  } else if(tower == 5) {
+    while(true) {
+      armTarget = pTerm(ARM_MID_TOWER_DESCORE, Arm.get_position(), kP + 10);
       arm(armTarget);
 
       if(isSettled(armTarget, tolerance)) { arm(0); break; }
