@@ -10,7 +10,7 @@ using namespace std;
 static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::autonSlot = 1;
+int Autonomous::autonSlot = 4;
 
 std::map<int, void(*)(void)> Autonomous::AutonArray;
 std::map<int, const char *> Autonomous::SlotName;
@@ -23,16 +23,12 @@ void autonomous() {
 
 Autonomous::Autonomous() { // The autons will be stored in this order, starting from 0.
   if(!isInitialized) {
-    addAuton("Test Auton", tester); // Slot 0
-
-    // Slot 1
-    addAuton("Red Small zone 8 cubes", r_s_8);
-    addAuton("Red Big zone 8 cubes", r_b_8);
-    addAuton("Blue Small zone 8 cubes", b_s_8);
-    addAuton("Blue Big zone 8 cubes", b_b_8);
-    addAuton("Skills 1", skills1);
-
-    // Slot 5
+    addAuton("Test Auton", tester);
+    addAuton("Red Small zone 8 cubes", r_s_8); // Slot 1
+    //addAuton("Red Big zone 7 cubes", r_b_8);   // Slot 2
+    addAuton("Blue Small zone 8 cubes", b_s_8);// Slot 3
+    addAuton("Red Big zone 7 cubes", b_b_8);   // Slot 4
+    addAuton("Skills 1", skills1);             // Slot 5
 
     isInitialized = true;
   }

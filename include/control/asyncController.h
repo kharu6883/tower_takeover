@@ -30,8 +30,6 @@ class ControlAsync {
     void disable_arm();
     void arm(double length, int speed, int rate);
 
-    void zero_arm();
-
   private:
     static bool isRunning;
     static bool isPaused;
@@ -41,8 +39,6 @@ class ControlAsync {
     static bool isStrafe;
     static bool isRack;
     static bool isArm;
-    static bool isZeroing;
-    static bool isDown;
 
     static bool isWait;
     static int wait;
