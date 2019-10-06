@@ -86,6 +86,9 @@ LV_IMG_DECLARE(michael2);
 #define MODE_RACK 2
 #define MODE_ARM 3
 
+#define SLOT_RED 1
+#define SLOT_BLUE 2
+#define SLOT_SKILLS 3
 
 using namespace okapi;
 

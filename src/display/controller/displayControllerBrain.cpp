@@ -174,17 +174,15 @@ void BrainDisplay::auton() {
   isMain = false;
   screen = 1;
 
-  // This needs to happen because it does not return a proper integer
-  // It is a way to explicitly cast the variable type which works
   int size = Auton.getSize();
 
   // Making buttons on autonomouses on a selected order from 0 ~ yeet
-  lv_obj_t * btnAutonm[] = {};
+  lv_obj_t * redBtnm[] = {};
   for(int i = 0; i < size; i++) {
     if(i == 0) {
-      btnAutonm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(i), scr, auton_click_action);
+      redBtnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(i), scr, auton_click_action);
     } else {
-      btnAutonm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(i), scr, auton_click_action);
+      redBtnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(i), scr, auton_click_action);
     }
   }
 }

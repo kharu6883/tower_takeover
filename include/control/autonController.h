@@ -2,32 +2,35 @@
 #include <iostream>
 #include <map>
 
+struct typeName {
+  const char * red;
+  const char * blue;
+  const char * skills;
+};
+
 class Autonomous {
   public:
     Autonomous();
 
-    // Runs the selected auton.
     void runAuton();
-    void addAuton(const char * autonName, void(*function)());
+    void addAuton(int type, const char * autonName, void(*function)());
 
-    // Gets the current slot selected.
     int getSlot();
+    void setSlot(int slot_);
+    int getType();
+    void setType(int type_);
 
-    // Sets an auton slot.
-    void setSlot(int slot);
-
-    // Gets the size of the SlotName array.
     int getSize();
-
-    // Gets the name of a slot.
-    const char * getName(int slot);
+    const char * getName(int type, int slot);
 
   private:
     static bool isInitialized;
-    static int autonSlot;
+    static int slot, type;
 
-    static std::map<int, void(*)(void)> AutonArray;
-    static std::map<int, const char *> SlotName;
+    static std::map<int, void(*)()> redAuton;
+    static std::map<int, void(*)()> blueAuton;
+    static std::map<int, void(*)()> skillsAuton;
+    static std::map<int, typeName> slotName;
 };
 
 void tester();
