@@ -39,6 +39,7 @@ static lv_obj_t * loadText;
 static bool initialized = false;
 
 static lv_obj_t * autonStat;
+static lv_obj_t * status;
 static lv_obj_t * btnBack;
 
 static lv_obj_t * btnRed;
@@ -119,12 +120,13 @@ BrainDisplay::BrainDisplay() {
     lv_theme_t * th = lv_theme_alien_init(120, NULL);
     lv_theme_set_current(th);
 
+    lv_style_plain.body.radius = 5;
+
     lv_style_copy(&overlay, &lv_style_plain);
     overlay.body.main_color = LV_COLOR_RED;
     overlay.body.grad_color = LV_COLOR_RED;
     overlay.body.border.color = LV_COLOR_BLACK;
     overlay.body.border.width = 2;
-
     overlay.text.color = LV_COLOR_WHITE;
 
     lv_style_copy(&mainScr, &lv_style_plain);
@@ -134,36 +136,49 @@ BrainDisplay::BrainDisplay() {
     mainScr.body.padding.ver = 1;
     mainScr.body.border.width = 0;
 
+    // Auton Btn Style
     lv_style_copy(&style_red, &lv_style_plain);
     style_red.body.main_color = LV_COLOR_RED;
     style_red.body.grad_color = LV_COLOR_RED;
-    style_red.body.border.color = LV_COLOR_RED;
+    style_red.body.border.color = LV_COLOR_WHITE;
+    style_red.body.border.width = 2;
+    style_red.text.color = LV_COLOR_WHITE;
 
     lv_style_copy(&style_blue, &lv_style_plain);
     style_blue.body.main_color = LV_COLOR_BLUE;
     style_blue.body.grad_color = LV_COLOR_BLUE;
-    style_blue.body.border.color = LV_COLOR_BLUE;
+    style_blue.body.border.color = LV_COLOR_WHITE;
+    style_blue.body.border.width = 2;
+    style_blue.text.color = LV_COLOR_WHITE;
 
     lv_style_copy(&style_skills, &lv_style_plain);
     style_skills.body.main_color = LV_COLOR_GRAY;
     style_skills.body.grad_color = LV_COLOR_GRAY;
-    style_skills.body.border.color = LV_COLOR_GRAY;
+    style_skills.body.border.color = LV_COLOR_WHITE;
+    style_skills.body.border.width = 2;
+    style_skills.text.color = LV_COLOR_WHITE;
 
     // Released
     lv_style_copy(&style_red_released, &lv_style_plain);
     style_red_released.body.main_color = LV_COLOR_MAKE(48, 48, 48);
     style_red_released.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
     style_red_released.body.border.color = LV_COLOR_RED;
+    style_red_released.body.border.width = 2;
+    style_red_released.text.color = LV_COLOR_WHITE;
 
     lv_style_copy(&style_blue_released, &lv_style_plain);
     style_blue_released.body.main_color = LV_COLOR_MAKE(48, 48, 48);
     style_blue_released.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
     style_blue_released.body.border.color = LV_COLOR_BLUE;
+    style_blue_released.body.border.width = 2;
+    style_blue_released.text.color = LV_COLOR_WHITE;
 
     lv_style_copy(&style_skills_released, &lv_style_plain);
     style_skills_released.body.main_color = LV_COLOR_MAKE(48, 48, 48);
     style_skills_released.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
     style_skills_released.body.border.color = LV_COLOR_GRAY;
+    style_skills_released.body.border.width = 2;
+    style_skills_released.text.color = LV_COLOR_WHITE;
 
     // Loading Screen
     loading = lv_img_create(lv_layer_sys(), NULL);
@@ -184,7 +199,7 @@ BrainDisplay::BrainDisplay() {
     lv_label_set_text(loadText, "Now Loading");
 
     // Overlay & Screen setup
-    lv_obj_t * status = lv_cont_create(lv_layer_top(), NULL);
+    status = lv_cont_create(lv_layer_top(), NULL);
     lv_obj_set_style(status, &overlay);
     lv_obj_set_pos(status, 2, 2);
     lv_obj_set_size(status, 476, 20);
@@ -199,9 +214,11 @@ BrainDisplay::BrainDisplay() {
     btnRed = createButton(1, 5, 35, 80, 40, "Red", lv_layer_top(), system_action);
     lv_btn_set_style(btnRed, LV_BTN_STYLE_PR, &style_red);
     lv_btn_set_style(btnRed, LV_BTN_STYLE_REL, &style_red_released);
+
     btnBlue = createButton(2, 5, 80, 80, 40, "Blue", lv_layer_top(), system_action);
     lv_btn_set_style(btnBlue, LV_BTN_STYLE_PR, &style_blue);
     lv_btn_set_style(btnBlue, LV_BTN_STYLE_REL, &style_blue_released);
+
     btnSkills = createButton(3, 5, 125, 80, 40, "Skills", lv_layer_top(), system_action);
     lv_btn_set_style(btnSkills, LV_BTN_STYLE_PR, &style_skills);
     lv_btn_set_style(btnSkills, LV_BTN_STYLE_REL, &style_skills_released);
