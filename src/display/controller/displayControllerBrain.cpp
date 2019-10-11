@@ -197,15 +197,14 @@ BrainDisplay::BrainDisplay() {
     btnBack = createButton(420, 5, 190, 100, 40, SYMBOL_HOME" Home", lv_layer_top(), main_click_action);
 
     btnRed = createButton(1, 5, 35, 80, 40, "Red", lv_layer_top(), system_action);
-    lv_obj_set_style(btnRed, LV_BTN_STYLE_PR, &style_red);
-    lv_obj_set_style(btnRed, LV_BTN_STYLE_REL, &style_red_released);
+    lv_btn_set_style(btnRed, LV_BTN_STYLE_PR, &style_red);
+    lv_btn_set_style(btnRed, LV_BTN_STYLE_REL, &style_red_released);
     btnBlue = createButton(2, 5, 80, 80, 40, "Blue", lv_layer_top(), system_action);
-    lv_obj_set_style(btnBlue, LV_BTN_STYLE_PR, &style_blue);
-    lv_obj_set_style(btnBlue, LV_BTN_STYLE_REL, &style_blue_released);
+    lv_btn_set_style(btnBlue, LV_BTN_STYLE_PR, &style_blue);
+    lv_btn_set_style(btnBlue, LV_BTN_STYLE_REL, &style_blue_released);
     btnSkills = createButton(3, 5, 125, 80, 40, "Skills", lv_layer_top(), system_action);
-    lv_obj_set_style(btnSkills, &style_skills);
-    lv_obj_set_style(btnSkills, LV_BTN_STYLE_PR, &style_skills);
-    lv_obj_set_style(btnSkills, LV_BTN_STYLE_REL, &style_skills_released);
+    lv_btn_set_style(btnSkills, LV_BTN_STYLE_PR, &style_skills);
+    lv_btn_set_style(btnSkills, LV_BTN_STYLE_REL, &style_skills_released);
 
     initialized = true;
   }
@@ -459,10 +458,9 @@ void BrainDisplay::update() {
           break;
         }
       }
-
-      last = now;
     }
 
+    last = now;
     pros::delay(20);
   }
 }
