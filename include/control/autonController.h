@@ -3,9 +3,9 @@
 #include <map>
 
 struct typeName {
-  const char * red;
-  const char * blue;
-  const char * skills;
+  std::string red;
+  std::string blue;
+  std::string skills;
 };
 
 class Autonomous {
@@ -13,19 +13,19 @@ class Autonomous {
     Autonomous();
 
     void runAuton();
-    void addAuton(int type, const char * autonName, void(*function)());
+    void addAuton(int type_, std::string autonName, void(*function)());
 
     int getSlot();
     void setSlot(int slot_);
     int getType();
     void setType(int type_);
 
-    int getSize();
-    const char * getName(int type, int slot);
+    int getSize(int type_);
+    std::string getName(int type_, int slot_);
 
   private:
     static bool isInitialized;
-    static int slot, type;
+    static int type, slot;
 
     static std::map<int, void(*)()> redAuton;
     static std::map<int, void(*)()> blueAuton;
