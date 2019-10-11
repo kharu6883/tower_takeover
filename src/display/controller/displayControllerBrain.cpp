@@ -15,11 +15,21 @@ Vision CamFront(FRONTVISION);
 Camera Feed(FRONTVISION);
 
 static int screen = 0;
+static int auton_type = 1;
 
 static bool isVision;
 
 static lv_style_t overlay;
 static lv_style_t mainScr;
+
+static lv_style_t style_red;
+static lv_style_t style_blue;
+static lv_style_t style_skills;
+
+static lv_style_t style_red_released;
+static lv_style_t style_blue_released;
+static lv_style_t style_skills_released;
+
 static lv_obj_t * scr;
 
 static lv_obj_t * loading;
@@ -27,10 +37,14 @@ static lv_obj_t * loader;
 static lv_obj_t * loadText;
 
 static bool initialized = false;
-static bool isMain = true;
 
 static lv_obj_t * autonStat;
+static lv_obj_t * status;
 static lv_obj_t * btnBack;
+
+static lv_obj_t * btnRed;
+static lv_obj_t * btnBlue;
+static lv_obj_t * btnSkills;
 
 static lv_obj_t * expVal;
 
@@ -41,7 +55,7 @@ static lv_res_t main_click_action(lv_obj_t * btn) {
 
   lv_obj_del(scr);
 
-  Display::BrainDisplay display;
+  BrainDisplay display;
 
   if(id == 1) { display.auton(); }
   if(id == 2) { display.sensor(); }
@@ -56,6 +70,8 @@ static lv_res_t main_click_action(lv_obj_t * btn) {
 
 static lv_res_t auton_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
+
+  Auton.setType(auton_type);
   Auton.setSlot(id);
 
   return LV_RES_OK;
@@ -82,18 +98,35 @@ static lv_res_t settings_click_action(lv_obj_t * btn) {
   return LV_RES_OK;
 }
 
+static lv_res_t system_action(lv_obj_t * btn) {
+  int id = lv_obj_get_free_num(btn);
+
+  BrainDisplay display;
+
+  switch(id) {
+    case 1: auton_type = 1; display.auton(); break;
+    case 2: auton_type = 2; display.auton(); break;
+    case 3: auton_type = 3; display.auton(); break;
+
+    default: auton_type = 1; display.auton(); break;
+  }
+
+  return LV_RES_OK;
+}
+
 BrainDisplay::BrainDisplay() {
   if(!initialized) {
     // Theme & Style init
     lv_theme_t * th = lv_theme_alien_init(120, NULL);
     lv_theme_set_current(th);
 
-    lv_style_copy(&overlay, &lv_style_plain);
-    overlay.body.main_color = LV_COLOR_MAKE(48, 48, 48);
-    overlay.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
-    overlay.body.border.color = LV_COLOR_GREEN;
-    overlay.body.border.width = 2;
+    lv_style_plain.body.radius = 5;
 
+    lv_style_copy(&overlay, &lv_style_plain);
+    overlay.body.main_color = LV_COLOR_RED;
+    overlay.body.grad_color = LV_COLOR_RED;
+    overlay.body.border.color = LV_COLOR_BLACK;
+    overlay.body.border.width = 2;
     overlay.text.color = LV_COLOR_WHITE;
 
     lv_style_copy(&mainScr, &lv_style_plain);
@@ -102,6 +135,50 @@ BrainDisplay::BrainDisplay() {
     mainScr.body.padding.inner = 3;
     mainScr.body.padding.ver = 1;
     mainScr.body.border.width = 0;
+
+    // Auton Btn Style
+    lv_style_copy(&style_red, &lv_style_plain);
+    style_red.body.main_color = LV_COLOR_RED;
+    style_red.body.grad_color = LV_COLOR_RED;
+    style_red.body.border.color = LV_COLOR_WHITE;
+    style_red.body.border.width = 2;
+    style_red.text.color = LV_COLOR_WHITE;
+
+    lv_style_copy(&style_blue, &lv_style_plain);
+    style_blue.body.main_color = LV_COLOR_BLUE;
+    style_blue.body.grad_color = LV_COLOR_BLUE;
+    style_blue.body.border.color = LV_COLOR_WHITE;
+    style_blue.body.border.width = 2;
+    style_blue.text.color = LV_COLOR_WHITE;
+
+    lv_style_copy(&style_skills, &lv_style_plain);
+    style_skills.body.main_color = LV_COLOR_GRAY;
+    style_skills.body.grad_color = LV_COLOR_GRAY;
+    style_skills.body.border.color = LV_COLOR_WHITE;
+    style_skills.body.border.width = 2;
+    style_skills.text.color = LV_COLOR_WHITE;
+
+    // Released
+    lv_style_copy(&style_red_released, &lv_style_plain);
+    style_red_released.body.main_color = LV_COLOR_MAKE(48, 48, 48);
+    style_red_released.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
+    style_red_released.body.border.color = LV_COLOR_RED;
+    style_red_released.body.border.width = 2;
+    style_red_released.text.color = LV_COLOR_WHITE;
+
+    lv_style_copy(&style_blue_released, &lv_style_plain);
+    style_blue_released.body.main_color = LV_COLOR_MAKE(48, 48, 48);
+    style_blue_released.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
+    style_blue_released.body.border.color = LV_COLOR_BLUE;
+    style_blue_released.body.border.width = 2;
+    style_blue_released.text.color = LV_COLOR_WHITE;
+
+    lv_style_copy(&style_skills_released, &lv_style_plain);
+    style_skills_released.body.main_color = LV_COLOR_MAKE(48, 48, 48);
+    style_skills_released.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
+    style_skills_released.body.border.color = LV_COLOR_GRAY;
+    style_skills_released.body.border.width = 2;
+    style_skills_released.text.color = LV_COLOR_WHITE;
 
     // Loading Screen
     loading = lv_img_create(lv_layer_sys(), NULL);
@@ -122,7 +199,7 @@ BrainDisplay::BrainDisplay() {
     lv_label_set_text(loadText, "Now Loading");
 
     // Overlay & Screen setup
-    lv_obj_t * status = lv_cont_create(lv_layer_top(), NULL);
+    status = lv_cont_create(lv_layer_top(), NULL);
     lv_obj_set_style(status, &overlay);
     lv_obj_set_pos(status, 2, 2);
     lv_obj_set_size(status, 476, 20);
@@ -134,7 +211,18 @@ BrainDisplay::BrainDisplay() {
 
     btnBack = createButton(420, 5, 190, 100, 40, SYMBOL_HOME" Home", lv_layer_top(), main_click_action);
 
-    print("Display initialized!");
+    btnRed = createButton(1, 5, 35, 80, 40, "Red", lv_layer_top(), system_action);
+    lv_btn_set_style(btnRed, LV_BTN_STYLE_PR, &style_red);
+    lv_btn_set_style(btnRed, LV_BTN_STYLE_REL, &style_red_released);
+
+    btnBlue = createButton(2, 5, 80, 80, 40, "Blue", lv_layer_top(), system_action);
+    lv_btn_set_style(btnBlue, LV_BTN_STYLE_PR, &style_blue);
+    lv_btn_set_style(btnBlue, LV_BTN_STYLE_REL, &style_blue_released);
+
+    btnSkills = createButton(3, 5, 125, 80, 40, "Skills", lv_layer_top(), system_action);
+    lv_btn_set_style(btnSkills, LV_BTN_STYLE_PR, &style_skills);
+    lv_btn_set_style(btnSkills, LV_BTN_STYLE_REL, &style_skills_released);
+
     initialized = true;
   }
 
@@ -150,8 +238,12 @@ void BrainDisplay::cleanup() {
 }
 
 void BrainDisplay::main() {
-  isMain = true;
   screen = 0;
+
+  lv_obj_set_x(btnBack, -100);
+  lv_obj_set_x(btnRed, -100);
+  lv_obj_set_x(btnBlue, -100);
+  lv_obj_set_x(btnSkills, -100);
 
   lv_obj_t * mainImg = lv_img_create(scr, NULL);
   lv_obj_set_size(mainImg, 240, 240);
@@ -171,27 +263,76 @@ void BrainDisplay::main() {
 }
 
 void BrainDisplay::auton() {
-  isMain = false;
   screen = 1;
 
-  // This needs to happen because it does not return a proper integer
-  // It is a way to explicitly cast the variable type which works
-  int size = Auton.getSize();
+  lv_obj_set_x(btnBack, 5);
+  lv_obj_set_x(btnRed, 5);
+  lv_obj_set_x(btnBlue, 5);
+  lv_obj_set_x(btnSkills, 5);
 
-  // Making buttons on autonomouses on a selected order from 0 ~ yeet
-  lv_obj_t * btnAutonm[] = {};
-  for(int i = 0; i < size; i++) {
-    if(i == 0) {
-      btnAutonm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(i), scr, auton_click_action);
-    } else {
-      btnAutonm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(i), scr, auton_click_action);
+  switch(auton_type) {
+    case SLOT_RED: {
+      int size = Auton.getSize(SLOT_RED);
+      lv_obj_t * btnm[] = {};
+      for(int i = 0; i < size; i++) {
+        if(i == 0) {
+          btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+        } else {
+          btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+        }
+      }
+
+      break;
+    }
+
+    case SLOT_BLUE: {
+      int size = Auton.getSize(SLOT_BLUE);
+      lv_obj_t * btnm[] = {};
+      for(int i = 0; i < size; i++) {
+        if(i == 0) {
+          btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+        } else {
+          btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+        }
+      }
+
+      break;
+    }
+
+    case SLOT_SKILLS: {
+      int size = Auton.getSize(SLOT_SKILLS);
+      lv_obj_t * btnm[] = {};
+      for(int i = 0; i < size; i++) {
+        if(i == 0) {
+          btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+        } else {
+          btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+        }
+      }
+
+      break;
+    }
+
+    default: {
+      lv_obj_t * btnm[] = {};
+      int size = Auton.getSize(SLOT_RED);
+      for(int i = 0; i < size; i++) {
+        if(i == 0) {
+          btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+        } else {
+          btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+        }
+      }
+
+      break;
     }
   }
 }
 
 void BrainDisplay::sensor() {
-  isMain = false;
   screen = 2;
+
+  lv_obj_set_x(btnBack, 5);
 
   lv_obj_t * placeholder = lv_label_create(scr, NULL);
   lv_label_set_text(placeholder, "Hello, World!");
@@ -202,8 +343,9 @@ void BrainDisplay::sensor() {
 }
 
 void BrainDisplay::camera() {
-  isMain = false;
   screen = 3;
+
+  lv_obj_set_x(btnBack, 5);
 
   visorCont = lv_cont_create(scr, NULL);
   lv_obj_set_pos(visorCont, 134, 22);
@@ -216,8 +358,9 @@ void BrainDisplay::camera() {
 }
 
 void BrainDisplay::setting() {
-  isMain = false;
   screen = 4;
+
+  lv_obj_set_x(btnBack, 5);
 
   lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
 }
@@ -242,21 +385,20 @@ void BrainDisplay::update() {
 
     switch(screen) {
       case 0: {
-        lv_obj_set_pos(btnBack, -100, 190);
         break;
       }
 
-      case 1: {
+      case 1: { // Auton
         lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
 
-      case 2: {
+      case 2: { // Sensor
         lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
 
-      case 3: {
+      case 3: { // Camera
         lv_obj_set_pos(btnBack, 5, 190);
         std::string exposure;
         lv_obj_clean(visorCont);
@@ -291,24 +433,48 @@ void BrainDisplay::update() {
         break;
       }
 
-      case 4: {
+      case 4: { // Settings
         lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
 
       default: {
-        lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
     }
 
     // Auton name display
-    now = Auton.getName(Auton.getSlot());
+    now = Auton.getName(Auton.getType(), Auton.getSlot());
     if(last != now) {
       name.erase(name.begin() + 16, name.end());
       name.append(now);
       c = name.c_str();
       lv_label_set_text(autonStat, c);
+
+      switch(Auton.getType()) {
+        case SLOT_RED: {
+          overlay.body.main_color = LV_COLOR_RED;
+          overlay.body.grad_color = LV_COLOR_RED;
+          break;
+        }
+
+        case SLOT_BLUE: {
+          overlay.body.main_color = LV_COLOR_BLUE;
+          overlay.body.grad_color = LV_COLOR_BLUE;
+          break;
+        }
+
+        case SLOT_SKILLS: {
+          overlay.body.main_color = LV_COLOR_GRAY;
+          overlay.body.grad_color = LV_COLOR_GRAY;
+          break;
+        }
+
+        default: {
+          print("Error while displaying auton name color");
+          break;
+        }
+      }
     }
 
     last = now;

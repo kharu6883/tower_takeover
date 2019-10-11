@@ -10,10 +10,13 @@ using namespace std;
 static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::autonSlot = 1;
+int Autonomous::type = SLOT_RED,
+Autonomous::slot = 0;
 
-std::map<int, void(*)(void)> Autonomous::AutonArray;
-std::map<int, const char *> Autonomous::SlotName;
+std::map<int, void(*)()> Autonomous::redAuton;
+std::map<int, void(*)()> Autonomous::blueAuton;
+std::map<int, void(*)()> Autonomous::skillsAuton;
+std::map<int, typeName> Autonomous::slotName;
 
 void autonomous() {
   Control.resume();
@@ -23,42 +26,107 @@ void autonomous() {
 
 Autonomous::Autonomous() { // The autons will be stored in this order, starting from 0.
   if(!isInitialized) {
-    addAuton("Test Auton", tester); // Slot 0
 
-    // Slot 1
-    addAuton("Red Small zone 8 cubes", r_s_8);
-    addAuton("Red Big zone 8 cubes", r_b_8);
-    addAuton("Blue Small zone 8 cubes", b_s_8);
-    addAuton("Blue Big zone 8 cubes", b_b_8);
-    addAuton("Skills 1", skills1);
+    // Red
+    addAuton(SLOT_RED, "Red Small zone 8 cubes", r_s_8); // Slot 0
+    addAuton(SLOT_RED, "Red Big zone 8 cubes", r_b_8);
 
-    // Slot 5
+    // Blue
+    addAuton(SLOT_BLUE, "Blue Small zone 8 cubes", b_s_8); // Slot 0
+    addAuton(SLOT_BLUE, "Blue Big zone 8 cubes", b_b_8);
+
+    // Skills
+    addAuton(SLOT_SKILLS, "Tester", tester); // Slot 0
+    addAuton(SLOT_SKILLS, "Skills 1", skills1);
 
     isInitialized = true;
   }
 }
 
 void Autonomous::runAuton() {
-  Autonomous::AutonArray[autonSlot]();
+  switch(type) {
+    case SLOT_RED: redAuton[slot]();
+    case SLOT_BLUE: blueAuton[slot]();
+    case SLOT_SKILLS: skillsAuton[slot]();
+
+    default: print("Slot Not Selected");
+  }
 }
 
-void Autonomous::addAuton(const char * autonName, void(*function)()) {
-  AutonArray.insert(make_pair(AutonArray.size(), function));
-  SlotName.insert(make_pair(SlotName.size(), autonName));
+void Autonomous::addAuton(int type_, std::string autonName, void(*function)()) {
+  switch(type_) {
+    case SLOT_RED: {
+      redAuton.insert(make_pair(redAuton.size(), function));
+      slotName[redAuton.size() - 1].red = autonName;
+      break;
+    }
+
+    case SLOT_BLUE: {
+      blueAuton.insert(make_pair(blueAuton.size(), function));
+      slotName[blueAuton.size() - 1].blue = autonName;
+      break;
+    }
+
+    case SLOT_SKILLS: {
+      skillsAuton.insert(make_pair(skillsAuton.size(), function));
+      slotName[skillsAuton.size() - 1].skills = autonName;
+      break;
+    }
+
+    default: {
+      cout << "Auton name " << autonName << " not registered" << endl;
+      break;
+    }
+  }
 }
 
 int Autonomous::getSlot() {
-  return autonSlot;
+  return slot;
 }
 
-void Autonomous::setSlot(int slot) {
-  autonSlot = slot;
+void Autonomous::setSlot(int slot_) {
+  slot = slot_;
 }
 
-int Autonomous::getSize() {
-  return SlotName.size();
+int Autonomous::getType() {
+  return type;
 }
 
-const char * Autonomous::getName(int slot) {
-  return SlotName[slot];
+void Autonomous::setType(int type_) {
+  type = type_;
+}
+
+int Autonomous::getSize(int type_) {
+  switch(type_) {
+    case 1: { return redAuton.size(); break; }
+    case 2: { return blueAuton.size(); break; }
+    case 3: { return skillsAuton.size(); break; }
+    case 4: { return slotName.size(); break; }
+
+    default: { return slotName.size(); break; }
+  }
+}
+
+std::string Autonomous::getName(int type_, int slot_) {
+  switch(type_) {
+    case SLOT_RED: {
+      return slotName[slot_].red;
+      break;
+    }
+
+    case SLOT_BLUE: {
+      return slotName[slot_].blue;
+      break;
+    }
+
+    case SLOT_SKILLS: {
+      return slotName[slot_].skills;
+      break;
+    }
+
+    default: {
+      return "Incorrect Type";
+      break;
+    }
+  }
 }
