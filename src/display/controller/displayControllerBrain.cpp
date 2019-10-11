@@ -27,7 +27,6 @@ static lv_obj_t * loader;
 static lv_obj_t * loadText;
 
 static bool initialized = false;
-static bool isMain = true;
 
 static lv_obj_t * autonStat;
 static lv_obj_t * btnBack;
@@ -150,7 +149,6 @@ void BrainDisplay::cleanup() {
 }
 
 void BrainDisplay::main() {
-  isMain = true;
   screen = 0;
 
   lv_obj_t * mainImg = lv_img_create(scr, NULL);
@@ -171,12 +169,10 @@ void BrainDisplay::main() {
 }
 
 void BrainDisplay::auton() {
-  isMain = false;
   screen = 1;
 
   int size = Auton.getSize();
 
-  // Making buttons on autonomouses on a selected order from 0 ~ yeet
   lv_obj_t * redBtnm[] = {};
   for(int i = 0; i < size; i++) {
     if(i == 0) {
@@ -188,7 +184,6 @@ void BrainDisplay::auton() {
 }
 
 void BrainDisplay::sensor() {
-  isMain = false;
   screen = 2;
 
   lv_obj_t * placeholder = lv_label_create(scr, NULL);
@@ -200,7 +195,6 @@ void BrainDisplay::sensor() {
 }
 
 void BrainDisplay::camera() {
-  isMain = false;
   screen = 3;
 
   visorCont = lv_cont_create(scr, NULL);
@@ -214,7 +208,6 @@ void BrainDisplay::camera() {
 }
 
 void BrainDisplay::setting() {
-  isMain = false;
   screen = 4;
 
   lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
@@ -244,17 +237,17 @@ void BrainDisplay::update() {
         break;
       }
 
-      case 1: {
+      case 1: { // Auton
         lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
 
-      case 2: {
+      case 2: { // Sensor
         lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
 
-      case 3: {
+      case 3: { // Camera
         lv_obj_set_pos(btnBack, 5, 190);
         std::string exposure;
         lv_obj_clean(visorCont);
@@ -289,7 +282,7 @@ void BrainDisplay::update() {
         break;
       }
 
-      case 4: {
+      case 4: { // Settings
         lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
