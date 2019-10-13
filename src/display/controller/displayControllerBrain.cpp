@@ -117,9 +117,11 @@ static lv_res_t system_action(lv_obj_t * btn) {
 BrainDisplay::BrainDisplay() {
   if(!initialized) {
     // Theme & Style init
-    lv_theme_t * th = lv_theme_alien_init(120, NULL);
+    lv_theme_t *th = lv_theme_alien_init(120, NULL);
     lv_theme_set_current(th);
 
+    th -> btn.rel -> body.radius = 5;
+    th -> btn.pr -> body.radius = 5;
     lv_style_plain.body.radius = 5;
 
     lv_style_copy(&overlay, &lv_style_plain);
@@ -270,16 +272,20 @@ void BrainDisplay::auton() {
   lv_obj_set_x(btnBlue, 5);
   lv_obj_set_x(btnSkills, 5);
 
+  lv_obj_t * btnm[50];
+
   switch(auton_type) {
     case SLOT_RED: {
       int size = Auton.getSize(SLOT_RED);
-      lv_obj_t * btnm[] = {};
       for(int i = 0; i < size; i++) {
         if(i == 0) {
           btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
         } else {
           btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
         }
+
+        lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_red);
+        lv_btn_set_style(btnm[i], LV_BTN_STYLE_REL, &style_red_released);
       }
 
       break;
@@ -287,13 +293,15 @@ void BrainDisplay::auton() {
 
     case SLOT_BLUE: {
       int size = Auton.getSize(SLOT_BLUE);
-      lv_obj_t * btnm[] = {};
       for(int i = 0; i < size; i++) {
         if(i == 0) {
           btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
         } else {
           btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
         }
+
+        lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_blue);
+        lv_btn_set_style(btnm[i], LV_BTN_STYLE_REL, &style_blue_released);
       }
 
       break;
@@ -301,20 +309,21 @@ void BrainDisplay::auton() {
 
     case SLOT_SKILLS: {
       int size = Auton.getSize(SLOT_SKILLS);
-      lv_obj_t * btnm[] = {};
       for(int i = 0; i < size; i++) {
         if(i == 0) {
           btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
         } else {
           btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
         }
+
+        lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_skills);
+        lv_btn_set_style(btnm[i], LV_BTN_STYLE_REL, &style_skills_released);
       }
 
       break;
     }
 
     default: {
-      lv_obj_t * btnm[] = {};
       int size = Auton.getSize(SLOT_RED);
       for(int i = 0; i < size; i++) {
         if(i == 0) {
@@ -322,6 +331,9 @@ void BrainDisplay::auton() {
         } else {
           btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
         }
+
+        lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_red);
+        lv_btn_set_style(btnm[i], LV_BTN_STYLE_REL, &style_red_released);
       }
 
       break;

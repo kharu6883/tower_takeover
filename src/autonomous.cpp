@@ -28,16 +28,16 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
   if(!isInitialized) {
 
     // Red
-    addAuton(SLOT_RED, "Red Small zone 8 cubes", r_s_8); // Slot 0
-    addAuton(SLOT_RED, "Red Big zone 8 cubes", r_b_8);
+    addAuton(SLOT_RED, "Small zone 8 cubes", r_s_8); // Slot 0
+    addAuton(SLOT_RED, "Big zone 8 cubes", r_b_8);
 
     // Blue
-    addAuton(SLOT_BLUE, "Blue Small zone 8 cubes", b_s_8); // Slot 0
-    addAuton(SLOT_BLUE, "Blue Big zone 8 cubes", b_b_8);
+    addAuton(SLOT_BLUE, "Small zone 8 cubes", b_s_8); // Slot 0
+    addAuton(SLOT_BLUE, "Big zone 8 cubes", b_b_8);
 
     // Skills
     addAuton(SLOT_SKILLS, "Tester", tester); // Slot 0
-    addAuton(SLOT_SKILLS, "Skills 1", skills1);
+    addAuton(SLOT_SKILLS, "Official Skills 1", skills1);
 
     isInitialized = true;
   }
