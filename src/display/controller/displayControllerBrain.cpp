@@ -378,7 +378,8 @@ void BrainDisplay::setting() {
 }
 
 void BrainDisplay::update() {
-  std::string name, now, last;
+  int nowType, lastType, nowSlot, lastSlot;
+  std::string name;
   const char * c;
 
   lv_color_t fill;
@@ -456,10 +457,11 @@ void BrainDisplay::update() {
     }
 
     // Auton name display
-    now = Auton.getName(Auton.getType(), Auton.getSlot());
-    if(last != now) {
+    nowType = Auton.getType();
+    nowSlot = Auton.getSlot();
+    if(lastType != nowType || lastSlot != nowSlot) {
       name.erase(name.begin() + 16, name.end());
-      name.append(now);
+      name.append(Auton.getName(Auton.getType(), Auton.getSlot()));
       c = name.c_str();
       lv_label_set_text(autonStat, c);
 
@@ -483,13 +485,15 @@ void BrainDisplay::update() {
         }
 
         default: {
-          print("Error while displaying auton name color");
+          overlay.body.main_color = LV_COLOR_BLACK;
+          overlay.body.grad_color = LV_COLOR_BLACK;
           break;
         }
       }
     }
 
-    last = now;
+    lastType = nowType;
+    lastSlot = nowSlot;
     pros::delay(20);
   }
 }
