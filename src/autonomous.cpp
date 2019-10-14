@@ -46,11 +46,11 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
 
 void Autonomous::runAuton() {
   switch(type) {
-    case SLOT_RED: redAuton[slot]();
-    case SLOT_BLUE: blueAuton[slot]();
-    case SLOT_SKILLS: skillsAuton[slot]();
+    case SLOT_RED: redAuton[slot](); break;
+    case SLOT_BLUE: blueAuton[slot](); break;
+    case SLOT_SKILLS: skillsAuton[slot](); break;
 
-    default: print("Slot Not Selected");
+    default: print("Slot Not Selected"); break;
   }
 }
 
