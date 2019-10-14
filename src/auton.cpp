@@ -22,8 +22,10 @@ void tester() {
 void start() {            // Deploy and zero arm
   roller(-200);
   armReset();
+  roller(-200);
   wait(500);
   roller(0);
+  wait(500);
 }
 
 
@@ -75,10 +77,25 @@ void r_b_8() {            // red big 8 cube
   turn(-700, 100, 7);
 
 }
+void r_b_orange() {       // red big orange cube
+     start();
+     roller(100);
+     drive(200,100,50);
+     roller(0);
+     turn(-150,100,8);
+     Thread.arm(ARM_LOW_TOWER, 200, 60);
+     drive(1200,200,3);
+     turn(300,100,8);
+     drive(200,200,3);
+     roller(-200);
+     drive(-250,200,6);
+     Thread.arm(ARM_BOTTOM-0.2, 200, 20);
+     turn(320,50,6);
+     wait(500);
+     Thread.disable_arm();
+     roller(0);
+   }
 
-void r_b_orange() {
-  
-}
 /*===========================================
   BLUE MATCH AUTONOMOUSES
 ===========================================*/
@@ -116,7 +133,25 @@ void b_s_8() {            // blue small 8 cube
 void b_b_8() {            // blue big 8 cube
 
 }
-
+void b_b_green() {        // blue big green cube
+  start();
+  roller(100);
+  drive(200,100,50);
+  roller(0);
+  turn(150,100,8);
+  Thread.arm(ARM_LOW_TOWER, 200, 60);
+  drive(1200,200,3);
+  turn(-300,100,8);
+  drive(200,200,3);
+  roller(-200);
+  drive(-250,200,6);
+  Thread.arm(ARM_BOTTOM-0.2, 200, 20);
+  turn(-320,50,6);
+  Thread.disable_arm();
+  roller(200);
+  drive(500,200,9);
+  drive(800,100,9);
+}
 
 /*===========================================
   SKILLS AUTONOMOUSES
