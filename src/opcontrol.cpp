@@ -23,8 +23,8 @@ void opcontrol() {
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_current_limit(8000);
 
-	RollerL.set_brake_mode(MOTOR_BRAKE_BRAKE);
-	RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
+	RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
+	RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	armAsync.resume();
 
@@ -60,7 +60,7 @@ void opcontrol() {
 
 		  } else {
 
-				rackVar.output = pTerm(RACK_TOWER, rackPot.get_value(), kP + 1);
+				rackVar.output = pTerm(RACK_TOWER+150, rackPot.get_value(), kP+0.6);
 
 				if(rackVar.output > rackVar.slewOutput + accel) {
 			    rackVar.slewOutput += accel;

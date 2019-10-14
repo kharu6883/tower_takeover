@@ -121,7 +121,7 @@ void arm(double target, int speed, double rate) {
 void tower(int tower) {
 
   const double kP = 210;
-  double rollerRot = -0.8, rollerSpeed = 150, rollerWait = 200, rollerpreprime = 100;
+  double rollerRot = -0.6, rollerSpeed = 80,rollerwait2=100, rollerWait = 250, rollerpreprime = 200;
   double armTarget, tolerance = 3;
 
   #if DEBUG
@@ -142,6 +142,7 @@ void tower(int tower) {
     roller(rollerpreprime);
     wait(rollerWait);
     roller(rollerRot, rollerSpeed);
+    wait(rollerWait2);
 
     while(true) {
       armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
@@ -162,7 +163,7 @@ void tower(int tower) {
     roller(rollerpreprime);
     wait(rollerWait);
     roller(rollerRot, rollerSpeed);
-
+    wait(rollerWait2);
     while(true) {
       armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
       arm(armTarget);
@@ -198,6 +199,7 @@ void tower(int tower) {
     roller(rollerpreprime);
     wait(rollerWait);
     roller(rollerRot, rollerSpeed);
+    wait(rollerWait2);
     while(true) {
       armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP + 10);
       arm(armTarget);
@@ -232,7 +234,7 @@ void tower(int tower, double tolerance) {
     roller(rollerpreprime);
     wait(rollerWait);
     roller(rollerRot, rollerSpeed);
-
+    wait(rollerWait2);
     while(true) {
       armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
       arm(armTarget);
@@ -252,7 +254,7 @@ void tower(int tower, double tolerance) {
     roller(rollerpreprime);
     wait(rollerWait);
     roller(rollerRot, rollerSpeed);
-
+    wait(rollerWait2);
     while(true) {
       armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
       arm(armTarget);

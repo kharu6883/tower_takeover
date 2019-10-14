@@ -30,7 +30,7 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
     // Red
     addAuton(SLOT_RED, "Small zone 8 cubes", r_s_8); // Slot 0
     addAuton(SLOT_RED, "Big zone 8 cubes", r_b_8);
-
+    addAuton(SLOT_RED, "Big zone orange tower", r_b_orange);
     // Blue
     addAuton(SLOT_BLUE, "Small zone 8 cubes", b_s_8); // Slot 0
     addAuton(SLOT_BLUE, "Big zone 8 cubes", b_b_8);

@@ -42,7 +42,7 @@ void tester();
 // Red
 void r_s_8();
 void r_b_8();
-
+void r_b_orange();
 // Blue
 void b_s_8();
 void b_b_8();
