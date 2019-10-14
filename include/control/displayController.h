@@ -6,8 +6,6 @@ namespace Display {
     public:
       BrainDisplay();
 
-      void cleanup();
-
       void main();
       void auton();
       void sensor();
