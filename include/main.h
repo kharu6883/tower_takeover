@@ -33,8 +33,8 @@ void print(const char * text);
 void setReset(bool set);
 
 // Image declaration
-LV_IMG_DECLARE(title);
 LV_IMG_DECLARE(intro);
+LV_IMG_DECLARE(logo);
 
 LV_IMG_DECLARE(michael1);
 LV_IMG_DECLARE(michael2);

@@ -34,7 +34,6 @@ static lv_obj_t * scr;
 
 static lv_obj_t * loading;
 static lv_obj_t * loader;
-static lv_obj_t * loadText;
 
 static bool initialized = false;
 
@@ -117,12 +116,10 @@ static lv_res_t system_action(lv_obj_t * btn) {
 BrainDisplay::BrainDisplay() {
   if(!initialized) {
     // Theme & Style init
-    lv_theme_t *th = lv_theme_alien_init(120, NULL);
+    lv_theme_t *th = lv_theme_night_init(120, NULL);
     lv_theme_set_current(th);
 
-    th -> btn.rel -> body.radius = 5;
-    th -> btn.pr -> body.radius = 5;
-    lv_style_plain.body.radius = 5;
+    lv_style_plain.body.radius = 1;
 
     lv_style_copy(&overlay, &lv_style_plain);
     overlay.body.main_color = LV_COLOR_RED;
@@ -184,21 +181,16 @@ BrainDisplay::BrainDisplay() {
 
     // Loading Screen
     loading = lv_img_create(lv_layer_sys(), NULL);
-    lv_obj_set_size(loading, 480, 240);
-    lv_obj_set_pos(loading, 0, 0);
     lv_img_set_src(loading, &intro);
+    lv_obj_set_pos(loading, 0, 0);
+
+    pros::delay(500);
 
     loader = lv_bar_create(lv_layer_sys(), NULL);
     lv_obj_set_size(loader, 400, 4);
     lv_obj_align(loader, lv_layer_sys(), LV_ALIGN_CENTER, 0, 70);
     lv_bar_set_value_anim(loader, 100, 1500);
     lv_bar_set_value(loader, 1);
-
-    loadText = lv_label_create(lv_layer_sys(), NULL);
-    lv_obj_set_style(loadText, &overlay);
-    lv_obj_set_size(loadText, 80, 40);
-    lv_obj_align(loadText, lv_layer_sys(), LV_ALIGN_CENTER, -25, 100);
-    lv_label_set_text(loadText, "Now Loading");
 
     // Overlay & Screen setup
     status = lv_cont_create(lv_layer_top(), NULL);
@@ -226,6 +218,11 @@ BrainDisplay::BrainDisplay() {
     lv_btn_set_style(btnSkills, LV_BTN_STYLE_REL, &style_skills_released);
 
     initialized = true;
+
+    pros::delay(2000);
+
+    lv_obj_del(loading);
+    lv_obj_del(loader);
   }
 
   screen = 0;
@@ -233,35 +230,21 @@ BrainDisplay::BrainDisplay() {
   lv_scr_load(scr);
 }
 
-void BrainDisplay::cleanup() {
-  lv_obj_del(loading);
-  lv_obj_del(loader);
-  lv_obj_del(loadText);
-}
-
 void BrainDisplay::main() {
   screen = 0;
+
+  lv_obj_t *img = lv_img_create(scr, NULL);
+  lv_img_set_src(img, &logo);
 
   lv_obj_set_x(btnBack, -100);
   lv_obj_set_x(btnRed, -100);
   lv_obj_set_x(btnBlue, -100);
   lv_obj_set_x(btnSkills, -100);
 
-  lv_obj_t * mainImg = lv_img_create(scr, NULL);
-  lv_obj_set_size(mainImg, 240, 240);
-  lv_obj_set_pos(mainImg, 0, -5);
-  lv_img_set_src(mainImg, &title);
-
-  lv_obj_t * container_main = lv_cont_create(scr, NULL);
-  lv_obj_set_style(container_main, &mainScr);
-  lv_cont_set_layout(container_main, LV_LAYOUT_CENTER);
-  lv_obj_set_pos(container_main, 250, 55);
-  lv_obj_set_size(container_main, 200, 170);
-
-  lv_obj_t * btnAuton = createButton(1, 250, 0, 200, 40, SYMBOL_LIST" Autonomous", container_main, main_click_action);
-  lv_obj_t * btnSensor = createButton(2, 250, 65, 200, 40, SYMBOL_GPS" Sensors", container_main, main_click_action);
-  lv_obj_t * btnCamera = createButton(3, 250, 110, 200, 40, SYMBOL_IMAGE" Camera", container_main, main_click_action);
-  lv_obj_t * btnSetting = createButton(4, 250, 155, 200, 40, SYMBOL_SETTINGS" Settings", container_main, main_click_action);
+  lv_obj_t * btnAuton = createButton(1, 250, 0, 200, 40, SYMBOL_LIST" Autonomous", lv_scr_act(), main_click_action);
+  lv_obj_t * btnSensor = createButton(2, 250, 65, 200, 40, SYMBOL_GPS" Sensors", lv_scr_act(), main_click_action);
+  lv_obj_t * btnCamera = createButton(3, 250, 110, 200, 40, SYMBOL_IMAGE" Camera", lv_scr_act(), main_click_action);
+  lv_obj_t * btnSetting = createButton(4, 250, 155, 200, 40, SYMBOL_SETTINGS" Settings", lv_scr_act(), main_click_action);
 }
 
 void BrainDisplay::auton() {
@@ -343,15 +326,7 @@ void BrainDisplay::auton() {
 
 void BrainDisplay::sensor() {
   screen = 2;
-
   lv_obj_set_x(btnBack, 5);
-
-  lv_obj_t * placeholder = lv_label_create(scr, NULL);
-  lv_label_set_text(placeholder, "Hello, World!");
-  lv_obj_t * mainImg = lv_img_create(scr, NULL);
-  lv_obj_set_size(mainImg, 240, 240);
-  lv_obj_set_pos(mainImg, 0, -5);
-  lv_img_set_src(mainImg, &michael1);
 }
 
 void BrainDisplay::camera() {
@@ -375,6 +350,11 @@ void BrainDisplay::setting() {
   lv_obj_set_x(btnBack, 5);
 
   lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
+
+  lv_obj_t * hotSauce = lv_img_create(scr, NULL);
+  lv_img_set_src(hotSauce, &michael1);
+  lv_obj_set_size(hotSauce, 240, 240);
+  lv_obj_set_pos(hotSauce, 240, 0);
 }
 
 void BrainDisplay::update() {

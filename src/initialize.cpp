@@ -10,15 +10,15 @@
 using namespace Display;
 
 static ControlAsync Control;
-pros::Task armAsync(macroTask);
+pros::Task armAsync(macroTask, NULL, "Opcontrol Arm Task");
 
 void initialize() {
   Autonomous Auton;
-  print("Auton Set");
+  print("Auton Set!");
 
-  pros::Task asyncController(Control.run);
+  pros::Task asyncController(Control.run, NULL, "Async Controller");
   Control.pause();
-  print("Task Controller Done");
+  print("Task Controller Done!");
 
   armAsync.suspend();
 
@@ -27,22 +27,20 @@ void initialize() {
 
   Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
   Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-  print("Motor Set");
+  print("Motor Set!");
 
   BrainDisplay Brain;
   Brain.main();
-  pros::Task b_display(Brain.run);
+  pros::Task b_display(Brain.run, NULL, "Brain Display");
   b_display.set_priority(TASK_PRIORITY_MIN);
-  print("Display Done");
+  print("Display Done!");
 
   RemoteDisplay Remote;
-  pros::Task r_display(Remote.run);
+  pros::Task r_display(Remote.run, NULL, "Remote Display");
   r_display.set_priority(TASK_PRIORITY_MIN);
-  print("Remote Done");
+  print("Remote Done!");
 
-  wait(2000);
-  Brain.cleanup();
-  std::cout << "Done!" << std::endl;
+  std::cout << "Initialization Done!" << std::endl;
 }
 
 void disabled() {
