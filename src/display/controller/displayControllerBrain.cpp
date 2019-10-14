@@ -116,7 +116,7 @@ static lv_res_t system_action(lv_obj_t * btn) {
 BrainDisplay::BrainDisplay() {
   if(!initialized) {
     // Theme & Style init
-    lv_theme_t *th = lv_theme_night_init(120, NULL);
+    lv_theme_t *th = lv_theme_alien_init(120, NULL);
     lv_theme_set_current(th);
 
     lv_style_plain.body.radius = 1;
