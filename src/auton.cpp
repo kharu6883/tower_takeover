@@ -23,9 +23,8 @@ void start() {            // Deploy and zero arm
   roller(-200);
   armReset();
   roller(-200);
-  wait(500);
-  roller(0);
-  wait(500);
+  wait(1000);
+
 }
 
 
@@ -33,8 +32,7 @@ void start() {            // Deploy and zero arm
   RED MATCH AUTONOMOUSES
 ===========================================*/
 void r_s_8() {            // red small 8 cube
-  roller(-3,200);
-  armReset();
+  start();
 
   generate("yoink", 3_ft, 3_ft, 1_deg);
   // Pick up 4 cubes
@@ -89,9 +87,7 @@ void r_b_orange() {       // red big orange cube
      drive(200,200,3);
      roller(-200);
      drive(-250,200,6);
-     Thread.arm(ARM_BOTTOM-0.2, 200, 20);
      turn(320,50,6);
-     wait(500);
      Thread.disable_arm();
      roller(0);
    }
@@ -100,8 +96,7 @@ void r_b_orange() {       // red big orange cube
   BLUE MATCH AUTONOMOUSES
 ===========================================*/
 void b_s_8() {            // blue small 8 cube
-  roller(-3,200);
-  armReset();
+  start();
 
   generate("yoink", -3.3_ft, 3_ft, 1_deg);
   // Pick up 4 cubes
@@ -145,12 +140,9 @@ void b_b_green() {        // blue big green cube
   drive(200,200,3);
   roller(-200);
   drive(-250,200,6);
-  Thread.arm(ARM_BOTTOM-0.2, 200, 20);
   turn(-320,50,6);
   Thread.disable_arm();
-  roller(200);
-  drive(500,200,9);
-  drive(800,100,9);
+  roller(0);
 }
 
 /*===========================================

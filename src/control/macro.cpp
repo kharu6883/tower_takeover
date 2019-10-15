@@ -121,8 +121,8 @@ void arm(double target, int speed, double rate) {
 void tower(int tower) {
 
   const double kP = 210;
-  double rollerRot = -0.6, rollerSpeed = 80,rollerwaitprime=100, rollerWait = 250, rollerpreprime = 200;
-  double armTarget, tolerance = 3;
+  double rollerRot = -0.6, rollerSpeed = 80,rollerwaitprime=50, rollerWait = 500, rollerpreprime = 200;
+  double armTarget, tolerance = 6;
 
   #if DEBUG
   std::cout << Arm.get_current_limit() << std::endl;
