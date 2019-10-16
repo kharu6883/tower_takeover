@@ -19,11 +19,13 @@ void tester() {
 /*===========================================
   PREMADE FUNCTIONS
 ===========================================*/
-void start() {            // Deploy and zero arm
+void start() {
+          // Deploy and zero arm
   roller(-200);
-  armReset();
+  arm(0.4, 100, 60);
   roller(-200);
-  wait(1000);
+
+
 
 }
 
@@ -33,25 +35,26 @@ void start() {            // Deploy and zero arm
 ===========================================*/
 void r_s_8() {            // red small 8 cube
   start();
-
-  generate("yoink", 3_ft, 3_ft, 1_deg);
+  generate("1", 3.3_ft, 3_ft, -1_deg);
+  armReset();
   // Pick up 4 cubes
   roller(200);
-  wait(100);
-  drive(1000, 110, 9);
+  drive(1000, 140, 6);
 
   // Swerve back to the 3 cubes
-  execute("yoink", true);
-  destroy("yoink");
-  align(300, 5);
+  wait(50);
+  execute("1", true);
+  destroy("1");
+  align(300,4);
 
   // Yoink 3 more cubes and turn right facing small red corner
-  drive(1000, 100, 9);
-  turn(750, 95, 5);
+  drive(1000, 150, 7);
+    Thread.disable_arm();
+  turn(750, 115, 5);
 
   // Drive to small red corner and place
   roller(-24);
-  Thread.drive(1480, 160, 9);
+  Thread.drive(1500, 160, 9);
   rack(RACK_UP, 100, 11);
   wait(200);
 
