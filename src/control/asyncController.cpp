@@ -194,8 +194,8 @@ void ControlAsync::update() {
 
         if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        left(chassisVar.slewOutput - slop());
-        right(chassisVar.slewOutput + slop());
+        left(chassisVar.slewOutput - slop(0));
+        right(chassisVar.slewOutput + slop(0));
 
         if(isSettled(chassisVar.error, 9)) { reset_drive(); isDrive = false; }
       }
@@ -218,8 +218,8 @@ void ControlAsync::update() {
 
         if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        left(-chassisVar.slewOutput - slop());
-        right(-chassisVar.slewOutput + slop());
+        left(-chassisVar.slewOutput - slop(0));
+        right(-chassisVar.slewOutput + slop(0));
 
         if(isSettled(abs(chassisVar.error), 9)) { reset_drive(); isDrive = false; }
       }
@@ -302,10 +302,10 @@ void ControlAsync::update() {
 
         if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        LF.move_velocity(-chassisVar.slewOutput - slop(2, sturn));
-        LB.move_velocity(chassisVar.slewOutput + slop(2, sturn));
-        RF.move_velocity(-chassisVar.slewOutput - slop(2, sturn));
-        RB.move_velocity(chassisVar.slewOutput + slop(2, sturn));
+        LF.move_velocity(-chassisVar.slewOutput - slop(2, sturn, 0));
+        LB.move_velocity(chassisVar.slewOutput + slop(2, sturn, 0));
+        RF.move_velocity(-chassisVar.slewOutput - slop(2, sturn, 0));
+        RB.move_velocity(chassisVar.slewOutput + slop(2, sturn, 0));
 
         if(isSettled(chassisVar.error, 6)) { reset_drive(); isStrafe = false; }
       }
@@ -328,10 +328,10 @@ void ControlAsync::update() {
 
         if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
-        LF.move_velocity(-chassisVar.slewOutput - slop(2, -sturn));
-        LB.move_velocity(chassisVar.slewOutput + slop(2, -sturn));
-        RF.move_velocity(-chassisVar.slewOutput - slop(2, -sturn));
-        RB.move_velocity(chassisVar.slewOutput + slop(2, -sturn));
+        LF.move_velocity(-chassisVar.slewOutput - slop(2, -sturn, 0));
+        LB.move_velocity(chassisVar.slewOutput + slop(2, -sturn, 0));
+        RF.move_velocity(-chassisVar.slewOutput - slop(2, -sturn, 0));
+        RB.move_velocity(chassisVar.slewOutput + slop(2, -sturn, 0));
 
         if(isSettled(abs(chassisVar.error), 6)) { reset_drive(); isStrafe = false; }
       }

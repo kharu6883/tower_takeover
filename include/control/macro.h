@@ -81,9 +81,9 @@ double dTerm(double now, double last);
 bool isSettled(double error, double tolerance);
 
 // Calculates slop, utilizing all four motors.
-double slop();
+double slop(double amp_);
 
 // Calculates slop. If set to 1, will return turning slop calculation. If set to 2, strafe calculation.
-double slop(int mode, double offset);
+double slop(int mode, double offset, double amp_);
 
 // Note - functions like 'wait' and 'print' have been moved to main.h

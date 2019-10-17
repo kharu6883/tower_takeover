@@ -121,7 +121,7 @@ void arm(double target, int speed, double rate) {
 void tower(int tower) {
 
   const double kP = 210;
-  double rollerRot = -0.6, rollerSpeed = 80,rollerwaitprime=50, rollerWait = 500, rollerpreprime = 200;
+  double rollerRot = -0.6, rollerSpeed = 80,rollerwaitprime=25, rollerWait = 500, rollerpreprime = 200;
   double armTarget, tolerance = 6;
 
   #if DEBUG
@@ -373,16 +373,16 @@ bool isSettled(double error, double tolerance) {
   return settled;
 }
 
-double slop() {
+double slop(double amp_) {
   const double amp = 8;
 
   double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
   double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
 
-  return ( deltaL - deltaR ) / amp;
+  return ( deltaL - deltaR ) / (amp + amp_);
 }
 
-double slop(int mode, double offset) {
+double slop(int mode, double offset, double amp_) {
   const double amp = 8;
 
   double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
@@ -390,7 +390,7 @@ double slop(int mode, double offset) {
 
   switch(mode) {
     case 1:
-      return (deltaL + deltaR) * amp;
+      return (deltaL - deltaR + offset) / (amp + amp_);
       break;
 
     case 2:
@@ -401,6 +401,7 @@ double slop(int mode, double offset) {
 
     default:
       return ( deltaL - deltaR ) / amp;
+      break;
   }
 }
 

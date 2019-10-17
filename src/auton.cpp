@@ -13,20 +13,21 @@ static Camera CamFront(FRONTVISION);
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  CamFront.target(CUBE_PURPLE, 0, 0, 0, 1);
+  generate("yeet", {3_ft, 3_ft, 0_deg}, {6_ft, 1.5_ft, 0_deg});
+  execute("yeet", false);
+  destroy("yeet");
 }
 
 /*===========================================
   PREMADE FUNCTIONS
 ===========================================*/
-void start() {
-          // Deploy and zero arm
+void start() {// Deploy and zero arm
+  lockChassis();
   roller(-200);
   arm(0.4, 100, 60);
   roller(-200);
-
-
-
+  armReset();
+  unlockChassis();
 }
 
 
@@ -35,32 +36,29 @@ void start() {
 ===========================================*/
 void r_s_8() {            // red small 8 cube
   start();
-  generate("1", 3.3_ft, 3_ft, -1_deg);
-  armReset();
   // Pick up 4 cubes
   roller(200);
-  drive(1000, 140, 6);
+  drive(1000, 110, 6, 10000, 0);
+  execute("yeety", true);
+  destroy("yeety");
 
   // Swerve back to the 3 cubes
-  wait(50);
-  execute("1", true);
-  destroy("1");
-  align(300,4);
+
 
   // Yoink 3 more cubes and turn right facing small red corner
-  drive(1000, 150, 7);
-    Thread.disable_arm();
+  drive(1200, 160, 7);
+  Thread.disable_arm();
   turn(750, 115, 5);
 
   // Drive to small red corner and place
-  roller(-24);
-  Thread.drive(1500, 160, 9);
-  rack(RACK_UP, 100, 11);
-  wait(200);
+  roller(-20);
+  Thread.drive(1400, 150, 9);
+  rack(RACK_UP, 100, 8);
+  wait(100);
 
   // Yeet outta there
-  Thread.drive(-300, 200, 9);
-  roller(-100);
+  Thread.drive(-300, 180, 6);
+  roller(-200);
   rack(RACK_DOWN, 200, 15);
 }
 void r_b_8() {            // red big 8 cube
@@ -101,7 +99,7 @@ void r_b_orange() {       // red big orange cube
 void b_s_8() {            // blue small 8 cube
   start();
 
-  generate("yoink", -3.3_ft, 3_ft, 1_deg);
+  // generate("yoink", -3.3_ft, 3_ft, 1_deg);
   // Pick up 4 cubes
   roller(200);
   wait(100);
@@ -153,7 +151,7 @@ void b_b_green() {        // blue big green cube
 ===========================================*/
 void skills1() {          // official skills
   start();
-  wait(1000);
+  wait(500);
   //prime robot
   roller(100);
   drive(350, 100, 8);
@@ -185,7 +183,7 @@ void skills1() {          // official skills
   drive(1100, 120, 5);
   wait(600);
   Thread.disable_arm();
-  Thread.turn(270, 150, 7);
+  Thread.turn(270, 150, 2);
   tower(1);
   roller(-70);
   drive(300,150,8);

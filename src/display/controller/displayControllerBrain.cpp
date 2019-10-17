@@ -180,17 +180,17 @@ BrainDisplay::BrainDisplay() {
     style_skills_released.text.color = LV_COLOR_WHITE;
 
     // Loading Screen
-    loading = lv_img_create(lv_layer_sys(), NULL);
-    lv_img_set_src(loading, &intro);
-    lv_obj_set_pos(loading, 0, 0);
-
-    pros::delay(500);
-
-    loader = lv_bar_create(lv_layer_sys(), NULL);
-    lv_obj_set_size(loader, 400, 4);
-    lv_obj_align(loader, lv_layer_sys(), LV_ALIGN_CENTER, 0, 70);
-    lv_bar_set_value_anim(loader, 100, 1500);
-    lv_bar_set_value(loader, 1);
+    // loading = lv_img_create(lv_layer_sys(), NULL);
+    // lv_img_set_src(loading, &intro);
+    // lv_obj_set_pos(loading, 0, 0);
+    //
+    // pros::delay(500);
+    //
+    // loader = lv_bar_create(lv_layer_sys(), NULL);
+    // lv_obj_set_size(loader, 400, 4);
+    // lv_obj_align(loader, lv_layer_sys(), LV_ALIGN_CENTER, 0, 70);
+    // lv_bar_set_value_anim(loader, 100, 1500);
+    // lv_bar_set_value(loader, 1);
 
     // Overlay & Screen setup
     status = lv_cont_create(lv_layer_top(), NULL);
@@ -219,10 +219,7 @@ BrainDisplay::BrainDisplay() {
 
     initialized = true;
 
-    pros::delay(2000);
-
-    lv_obj_del(loading);
-    lv_obj_del(loader);
+    pros::delay(500);
   }
 
   screen = 0;
@@ -241,10 +238,10 @@ void BrainDisplay::main() {
   lv_obj_set_x(btnBlue, -100);
   lv_obj_set_x(btnSkills, -100);
 
-  lv_obj_t * btnAuton = createButton(1, 250, 0, 200, 40, SYMBOL_LIST" Autonomous", lv_scr_act(), main_click_action);
-  lv_obj_t * btnSensor = createButton(2, 250, 65, 200, 40, SYMBOL_GPS" Sensors", lv_scr_act(), main_click_action);
-  lv_obj_t * btnCamera = createButton(3, 250, 110, 200, 40, SYMBOL_IMAGE" Camera", lv_scr_act(), main_click_action);
-  lv_obj_t * btnSetting = createButton(4, 250, 155, 200, 40, SYMBOL_SETTINGS" Settings", lv_scr_act(), main_click_action);
+  lv_obj_t * btnAuton = createButton(1, 250, 30, 200, 40, SYMBOL_LIST" Autonomous", lv_scr_act(), main_click_action);
+  lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_GPS" Sensors", lv_scr_act(), main_click_action);
+  lv_obj_t * btnCamera = createButton(3, 250, 140, 200, 40, SYMBOL_IMAGE" Camera", lv_scr_act(), main_click_action);
+  lv_obj_t * btnSetting = createButton(4, 250, 185, 200, 40, SYMBOL_SETTINGS" Settings", lv_scr_act(), main_click_action);
 }
 
 void BrainDisplay::auton() {

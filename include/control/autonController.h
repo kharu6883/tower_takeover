@@ -13,7 +13,7 @@ class Autonomous {
     Autonomous();
 
     void runAuton();
-    void addAuton(int type_, std::string autonName, void(*function)());
+    void addAuton(int type_, std::string autonName, std::string autonAbbv, void(*function)());
 
     int getSlot();
     void setSlot(int slot_);
@@ -22,6 +22,7 @@ class Autonomous {
 
     int getSize(int type_);
     std::string getName(int type_, int slot_);
+    std::string getAbbv(int type_, int slot_);
 
   private:
     static bool isInitialized;
@@ -31,6 +32,7 @@ class Autonomous {
     static std::map<int, void(*)()> blueAuton;
     static std::map<int, void(*)()> skillsAuton;
     static std::map<int, typeName> slotName;
+    static std::map<int, typeName> slotAbbv;
 };
 
 void tester();

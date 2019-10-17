@@ -160,7 +160,6 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(1);
 				towerMode = 420;
-				remote.setText("Low Tower");
 				break;
 			}
 
@@ -169,7 +168,6 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(2);
 				towerMode = 420;
-				remote.setText("Mid Tower");
 				break;
 			}
 
@@ -178,7 +176,6 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(3);
 				towerMode = 420;
-				remote.setText("Descore");
 				break;
 			}
 
@@ -187,7 +184,6 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(4);
 				towerMode = 420;
-				remote.setText("Descore");
 				break;
 			}
 
@@ -196,7 +192,6 @@ void macroTask(void* ignore) {
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				tower(5);
 				towerMode = 420;
-				remote.setText("Descore");
 				break;
 			}
 

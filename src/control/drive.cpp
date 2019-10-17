@@ -46,8 +46,8 @@ void drive(double target, int speed, double rate) {
 
     if(isSettled(error, 9)) break;
 
-    left(slewOutput - slop());
-    right(slewOutput + slop());
+    left(slewOutput - slop(0));
+    right(slewOutput + slop(0));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -73,8 +73,76 @@ void drive(double target, int speed, double rate) {
 
     if(isSettled(abs(error), 9)) break;
 
-    left(-slewOutput - slop());
-    right(-slewOutput + slop());
+    left(-slewOutput - slop(0));
+    right(-slewOutput + slop(0));
+
+    std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
+    wait(20);
+  }
+
+  reset();
+}
+
+void drive(double target, int speed, double rate, double amp, double offset) {
+  double current, error, last, derivative, output;
+
+  const double kP = 0.6;
+  const double kD = 0.6;
+
+  double deltaL, deltaR;
+  double slewOutput = 0;
+
+  reset();
+
+  while(target > 0) {
+    deltaL = (LF.get_position() + LB.get_position()) / 2;
+    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    current = ( deltaL + deltaR ) / 2;
+    error = target - current;
+
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(output > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = output;
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(error, 9)) break;
+
+    left(slewOutput - slop(1, offset, amp));
+    right(slewOutput + slop(1, offset, amp));
+
+    std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
+    wait(20);
+  }
+
+  while(target < 0) {
+    deltaL = (LF.get_position() + LB.get_position()) / 2;
+    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    current = ( deltaL + deltaR ) / 2;
+    error = target - current;
+
+    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
+
+    last = error;
+
+    if(abs(output) > slewOutput + rate) {
+      slewOutput += rate;
+    } else {
+      slewOutput = abs(output);
+    }
+
+    if(slewOutput > speed) slewOutput = speed;
+
+    if(isSettled(abs(error), 9)) break;
+
+    left(-slewOutput - slop(1, offset, amp));
+    right(-slewOutput + slop(1, offset, amp));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -92,6 +160,8 @@ void turn(double target, int speed, double rate) {
   double deltaL, deltaR;
   double lastSlew = 0, nowSlew = 0, slewOutput = 0;
 
+  Slew slew(rate);
+
   reset();
 
   while(target > 0) { // Turn Right
@@ -104,18 +174,14 @@ void turn(double target, int speed, double rate) {
 
     last = error;
 
-    if(output > slewOutput + rate) {
-      slewOutput += rate;
-    } else {
-      slewOutput = output;
-    }
+    slew.calculate(output);
 
-    if(slewOutput > speed) slewOutput = speed;
+    if(slew.getOutput() > speed) slew.setOutput(speed);
 
     if(isSettled(error, 6)) break;
 
-    left(slewOutput);
-    right(-slewOutput);
+    left(slew.getOutput());
+    right(-slew.getOutput());
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -131,18 +197,14 @@ void turn(double target, int speed, double rate) {
 
     last = error;
 
-    if(abs(output) > slewOutput + rate) {
-      slewOutput += rate;
-    } else {
-      slewOutput = abs(output);
-    }
+    slew.calculate(abs(output));
 
-    if(slewOutput > speed) slewOutput = speed;
+    if(slew.getOutput() > speed) slew.setOutput(speed);
 
     if(isSettled(error, 6)) break;
 
-    left(-slewOutput);
-    right(slewOutput);
+    left(-slew.getOutput());
+    right(slew.getOutput());
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -178,10 +240,10 @@ void strafe(double target, int speed, double rate) {
 
     if(slewOutput > speed) slewOutput = speed;
 
-    LF.move_velocity(-slewOutput + slop(2, 0));
-    LB.move_velocity(slewOutput + slop(2, 0));
-    RF.move_velocity(-slewOutput - slop(2, 0));
-    RB.move_velocity(slewOutput - slop(2, 0));
+    LF.move_velocity(-slewOutput + slop(2, 0, 0));
+    LB.move_velocity(slewOutput + slop(2, 0, 0));
+    RF.move_velocity(-slewOutput - slop(2, 0, 0));
+    RB.move_velocity(slewOutput - slop(2, 0, 0));
 
     if(isSettled(error, 6)) break;
     wait(20);
@@ -205,10 +267,10 @@ void strafe(double target, int speed, double rate) {
 
     if(slewOutput > speed) slewOutput = speed;
 
-    LF.move_velocity(-slewOutput + slop(2, 0));
-    LB.move_velocity(slewOutput + slop(2, 0));
-    RF.move_velocity(-slewOutput - slop(2, 0));
-    RB.move_velocity(slewOutput - slop(2, 0));
+    LF.move_velocity(-slewOutput + slop(2, 0, 0));
+    LB.move_velocity(slewOutput + slop(2, 0, 0));
+    RF.move_velocity(-slewOutput - slop(2, 0, 0));
+    RB.move_velocity(slewOutput - slop(2, 0, 0));
 
     if(isSettled(abs(error), 6)) break;
     wait(20);
@@ -244,10 +306,10 @@ void strafe(double target, int speed, double rate, double sturn) {
 
     if(slewOutput > speed) slewOutput = speed;
 
-    LF.move_velocity(-slewOutput + slop(2, sturn));
-    LB.move_velocity(slewOutput + slop(2, sturn));
-    RF.move_velocity(-slewOutput - slop(2, sturn));
-    RB.move_velocity(slewOutput - slop(2, sturn));
+    LF.move_velocity(-slewOutput + slop(2, sturn, 0));
+    LB.move_velocity(slewOutput + slop(2, sturn, 0));
+    RF.move_velocity(-slewOutput - slop(2, sturn, 0));
+    RB.move_velocity(slewOutput - slop(2, sturn, 0));
 
     if(isSettled(error, 6)) break;
     wait(20);
@@ -271,10 +333,10 @@ void strafe(double target, int speed, double rate, double sturn) {
 
     if(slewOutput > speed) slewOutput = speed;
 
-    LF.move_velocity(-slewOutput + slop(2, -sturn));
-    LB.move_velocity(slewOutput + slop(2, -sturn));
-    RF.move_velocity(-slewOutput - slop(2, -sturn));
-    RB.move_velocity(slewOutput - slop(2, -sturn));
+    LF.move_velocity(-slewOutput + slop(2, -sturn, 0));
+    LB.move_velocity(slewOutput + slop(2, -sturn, 0));
+    RF.move_velocity(-slewOutput - slop(2, -sturn, 0));
+    RB.move_velocity(slewOutput - slop(2, -sturn, 0));
 
     if(isSettled(abs(error), 6)) break;
     wait(20);
@@ -315,6 +377,20 @@ void align(double target, double tolerance) {
   }
 
   reset();
+}
+
+void lockChassis() {
+  LF.set_brake_mode(MOTOR_BRAKE_HOLD);
+  LB.set_brake_mode(MOTOR_BRAKE_HOLD);
+  RF.set_brake_mode(MOTOR_BRAKE_HOLD);
+  RB.set_brake_mode(MOTOR_BRAKE_HOLD);
+}
+
+void unlockChassis() {
+  LF.set_brake_mode(MOTOR_BRAKE_COAST);
+  LB.set_brake_mode(MOTOR_BRAKE_COAST);
+  RF.set_brake_mode(MOTOR_BRAKE_COAST);
+  RB.set_brake_mode(MOTOR_BRAKE_COAST);
 }
 
 void left(int speed) {
