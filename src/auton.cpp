@@ -24,6 +24,8 @@ void tester() {
 void start() {// Deploy and zero arm
   lockChassis();
   roller(-200);
+  roller(-200);
+  roller(-200);
   arm(0.4, 100, 60);
   roller(-200);
   armReset();
@@ -143,8 +145,8 @@ void b_b_green() {        // blue big green cube
 ===========================================*/
 void skills1() {          // official skills
   start();
-
-  wait(500);
+  unlockChassis();
+wait(300);
   //prime robot
   roller(100);
   drive(330, 100, 8);
@@ -166,7 +168,7 @@ void skills1() {          // official skills
   //turn(20,100,5);
   drive(1950, 125, 6);
   roller(100);
-  wait(1000);
+  wait(700);
   Thread.disable_arm();
   Thread.turn(270, 150, 2);
   tower(1);
@@ -179,26 +181,25 @@ void skills1() {          // official skills
   //drive to blue tower and drop out cube
   drive(-250,150,8);
   Thread.arm(ARM_BOTTOM - 0.2, 200, 20);
-  wait(100);
+  wait(50);
 
   turn(-270, 150, 7);
   roller(200);
   drive(650,120,5);
-  turn(150,150,9);
+  turn(200,150,9);
 
   CamFront.target(BLUE_ZONE, 0, 0, 0, 1);
   Thread.disable_arm();
-  roller(-23);
-  Thread.drive(700, 60, 9);
+  roller(-25);
+  Thread.drive(670, 60, 9);
   rack(RACK_UP, 100, 11);
   Thread.disable_drive();
-  wait(1000);
+  wait(600);
   //score 7 cubes in small blue zone
-  wait(100);
   roller(-100);
   Thread.rack(RACK_DOWN, 200, 15);
   drive(-300, 200, 9);
-  wait(200);
+  wait(100);
   turn(-700, 150, 7);
   align(300, 2);
 
@@ -213,7 +214,7 @@ void skills1() {          // official skills
   roller(200);
   drive(1200,90,6);
   roller(100);
-  wait(300);
+  wait(400);
   tower(1);
   turn(-240, 150, 4);
   roller(-80);
@@ -235,14 +236,14 @@ void skills1() {          // official skills
   drive(180,150,5);
   roller(-160);
   //spit cube into the mid tower
-  wait(900);
+  wait(500);
   drive(-600,200,5);
   Thread.disable_arm();
   armReset();
   roller(200);
   turn(-580, 150, 7);
-  Thread.drive(1000,100,5);
-  roller(-24);
+  Thread.drive(1070,100,5);
+  roller(-26);
   rack(RACK_UP, 110, 11);
   Thread.disable_drive();
   wait(100);
