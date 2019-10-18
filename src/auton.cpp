@@ -152,23 +152,26 @@ void skills1() {          // official skills
   Thread.arm(ARM_LOW_TOWER, 200, 60);
 
   //pick up one cube for small red tower
-  turn(290, 150, 7);
+  turn(290, 150, 5);
   roller(-80);
   drive(290,150,8);
 
   //drive to red tower and drop out cube
-  drive(-250,150,8);
+  drive(-250,150,6);
   Thread.arm(ARM_BOTTOM - 0.2, 200, 20);
-  turn(-290, 150, 7);
+  turn(-290, 150, 5);
   roller(200);
 
 
   //turn(20,100,5);
   drive(1950, 125, 6);
-  wait(1500);
+  roller(100);
+  wait(1000);
   Thread.disable_arm();
-  turn(270, 150, 2);
+  Thread.turn(270, 150, 2);
   tower(1);
+  wait(300);
+  Thread.disable_drive();
   roller(-100);
   drive(250,150,8);
   wait(200);
@@ -181,12 +184,14 @@ void skills1() {          // official skills
   turn(-270, 150, 7);
   roller(200);
   drive(650,120,5);
-  turn(250,150,9);
+  turn(150,150,9);
+
   CamFront.target(BLUE_ZONE, 0, 0, 0, 1);
   Thread.disable_arm();
   roller(-23);
-  Thread.rack(RACK_UP, 100, 11);
-  drive(700, 60, 9);
+  Thread.drive(700, 60, 9);
+  rack(RACK_UP, 100, 11);
+  Thread.disable_drive();
   wait(1000);
   //score 7 cubes in small blue zone
   wait(100);
@@ -201,27 +206,28 @@ void skills1() {          // official skills
   roller(0);
   Thread.arm(1, 100, 20);
   drive(1050,200,6);
-  Thread.disable_arm();
-  roller(200);
   turn(-500, 150, 7);
   align(300, 2);
+  Thread.disable_arm();
   armReset();
+  roller(200);
   drive(1200,90,6);
   roller(100);
   wait(300);
   tower(1);
-  turn(-290, 150, 4);
+  turn(-240, 150, 4);
   roller(-80);
-  drive(290,150,8);
+  drive(150,150,8);
 
   //drive to red tower and drop out cube
-  drive(-290,150,4);
+  drive(-150,150,4);
   Thread.arm(ARM_BOTTOM - 0.2, 200, 20);
-  turn(290, 150, 4);
+  turn(240, 150, 4);
   roller(200);
   drive(1600,90,6);
+  Thread.disable_arm();
 
-  wait(1000);
+  wait(500);
   tower(2);
 
   //lift arm to mid tower height
@@ -234,10 +240,11 @@ void skills1() {          // official skills
   Thread.disable_arm();
   armReset();
   roller(200);
-  turn(-600, 150, 7);
+  turn(-580, 150, 7);
   Thread.drive(1000,100,5);
   roller(-24);
   rack(RACK_UP, 110, 11);
+  Thread.disable_drive();
   wait(100);
   roller(-100);
   Thread.rack(RACK_DOWN, 200, 15);
