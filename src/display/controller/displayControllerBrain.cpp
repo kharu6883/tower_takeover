@@ -128,13 +128,6 @@ BrainDisplay::BrainDisplay() {
     overlay.body.border.width = 2;
     overlay.text.color = LV_COLOR_WHITE;
 
-    lv_style_copy(&mainScr, &lv_style_plain);
-    mainScr.body.main_color = LV_COLOR_MAKE(48, 48, 48);
-    mainScr.body.grad_color = LV_COLOR_MAKE(48, 48, 48);
-    mainScr.body.padding.inner = 3;
-    mainScr.body.padding.ver = 1;
-    mainScr.body.border.width = 0;
-
     // Auton Btn Style
     lv_style_copy(&style_red, &lv_style_plain);
     style_red.body.main_color = LV_COLOR_RED;
