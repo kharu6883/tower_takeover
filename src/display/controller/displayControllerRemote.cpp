@@ -22,37 +22,32 @@ void RemoteDisplay::update() {
   int lastType, lastSlot;
 
   while(true) {
-    if(pros::competition::is_disabled()) {
-      if(master.get_digital_new_press(DIGITAL_B)) {
-        if(type > 3) type = 0;
-        else type++;
-      }
+    if(master.get_digital_new_press(DIGITAL_B)) type++;
+    if(type > 3) type = 0;
 
-      limit = Auton.getSize(type);
+    limit = Auton.getSize(type);
 
-      if(master.get_digital_new_press(DIGITAL_LEFT)) {
-        if(slot < 0) slot = limit - 1;
-        else slot--;
-      } else if(master.get_digital_new_press(DIGITAL_RIGHT)) {
-        if(slot >= limit) slot = 0;
-        else slot++;
-      }
+    if(master.get_digital_new_press(DIGITAL_Y)) slot++;
+    if(slot > limit) slot = 0;
 
-      if(type != lastType || slot != lastSlot) {
-        setText(Auton.getAbbv(type, slot).c_str());
-      }
-
-      if(master.get_digital_new_press(DIGITAL_A)) {
-        Auton.setType(type);
-        Auton.setSlot(slot);
-      }
-
-      lastType = type;
-      lastSlot = slot;
+    if(type != lastType || slot != lastSlot) {
+      setText(Auton.getAbbv(type, slot).c_str());
     }
 
-    master.set_text(0, 0, text);
-    pros::delay(2000);
+    if(master.get_digital_new_press(DIGITAL_A)) {
+      Auton.setType(type);
+      Auton.setSlot(slot);
+    }
+
+    lastType = type;
+    lastSlot = slot;
+
+    if(isSetting) {
+      master.set_text(0, 0, text);
+      isSetting = false;
+    }
+
+    pros::delay(1000);
   }
 }
 

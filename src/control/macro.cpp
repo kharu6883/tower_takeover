@@ -121,7 +121,7 @@ void arm(double target, int speed, double rate) {
 void tower(int tower) {
 
   const double kP = 210;
-  double rollerRot = -0.6, rollerSpeed = 80,rollerwaitprime=25, rollerWait = 500, rollerpreprime = 200;
+  double rollerRot = -0.6, rollerSpeed = 70,rollerwaitprime=25, rollerWait = 300, rollerpreprime = 150;
   double armTarget, tolerance = 6;
 
   #if DEBUG

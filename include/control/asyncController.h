@@ -27,8 +27,11 @@ class ControlAsync {
     void rack(double length, int speed, int rate);
 
     void reset_arm();
-    void disable_arm();
     void arm(double length, int speed, int rate);
+
+    void disable_drive();
+    void disable_rack();
+    void disable_arm();
 
     void zero_arm();
 

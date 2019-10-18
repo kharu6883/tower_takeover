@@ -1,10 +1,22 @@
 #include "okapi/api.hpp"
 
-namespace path {
-  void generate(std::string name, okapi::Point pointI);
-  void generate(std::string name, okapi::Point pointI, okapi::Point pointII);
-  void execute(std::string name, bool reverse);
-  void destroy(std::string name);
+class Path {
+  public:
+    static void start(void* args);
+    void update();
+    void stopThread();
 
-  void wait();
-}
+    Path& withPoint(okapi::Point point_);
+
+    void gen(std::string name);
+    void run(std::string name, bool reverse);
+    void del(std::string name);
+
+  private:
+    static bool isRunning;
+
+    static okapi::ChassisControllerIntegrated driver;
+    static okapi::AsyncMotionProfileController profile;
+
+    static std::vector<okapi::Point> waypoints;
+};

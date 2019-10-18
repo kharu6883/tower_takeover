@@ -378,6 +378,16 @@ bool ControlAsync::isDisabled() {
   }
 }
 
+void ControlAsync::disable_drive() {
+  isDrive = false;
+  isTurn = false;
+  isStrafe = false;
+}
+
+void ControlAsync::disable_rack() {
+  isRack = false;
+}
+
 void ControlAsync::disable_arm() {
   isArm = false;
 }

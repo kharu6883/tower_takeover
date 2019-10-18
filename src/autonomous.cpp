@@ -2,9 +2,7 @@
 
 #include "control/asyncController.h"
 #include "control/autonController.h"
-#include "control/path.h"
 using namespace okapi;
-using namespace path;
 using namespace std;
 
 static ControlAsync Control;

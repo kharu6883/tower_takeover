@@ -41,10 +41,12 @@ void initialize() {
   r_display.set_priority(TASK_PRIORITY_MIN);
   print("Remote Done!");
 
-  path::generate("yeety", {-3_ft, -6_ft, 0_deg});
+  Path path;
+  pros::Task pathMaker(path.start, NULL, "Path Maker");
+  pathMaker.set_priority(TASK_PRIORITY_MIN);
+  print("Pathmaker Done!");
 
   std::cout << "Initialization Done!" << std::endl;
-  master.rumble(" . ");
 }
 
 void disabled() {

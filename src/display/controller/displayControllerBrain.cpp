@@ -179,19 +179,6 @@ BrainDisplay::BrainDisplay() {
     style_skills_released.body.border.width = 2;
     style_skills_released.text.color = LV_COLOR_WHITE;
 
-    // Loading Screen
-    // loading = lv_img_create(lv_layer_sys(), NULL);
-    // lv_img_set_src(loading, &intro);
-    // lv_obj_set_pos(loading, 0, 0);
-    //
-    // pros::delay(500);
-    //
-    // loader = lv_bar_create(lv_layer_sys(), NULL);
-    // lv_obj_set_size(loader, 400, 4);
-    // lv_obj_align(loader, lv_layer_sys(), LV_ALIGN_CENTER, 0, 70);
-    // lv_bar_set_value_anim(loader, 100, 1500);
-    // lv_bar_set_value(loader, 1);
-
     // Overlay & Screen setup
     status = lv_cont_create(lv_layer_top(), NULL);
     lv_obj_set_style(status, &overlay);
@@ -219,7 +206,7 @@ BrainDisplay::BrainDisplay() {
 
     initialized = true;
 
-    pros::delay(500);
+    pros::delay(200);
   }
 
   screen = 0;
@@ -379,17 +366,14 @@ void BrainDisplay::update() {
       }
 
       case 1: { // Auton
-        lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
 
       case 2: { // Sensor
-        lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
 
       case 3: { // Camera
-        lv_obj_set_pos(btnBack, 5, 190);
         std::string exposure;
         lv_obj_clean(visorCont);
         std::map<int, vision_object_s_t> sig = Feed.getFeed();
@@ -424,7 +408,6 @@ void BrainDisplay::update() {
       }
 
       case 4: { // Settings
-        lv_obj_set_pos(btnBack, 5, 190);
         break;
       }
 
