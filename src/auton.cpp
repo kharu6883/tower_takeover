@@ -146,43 +146,27 @@ void b_b_green() {        // blue big green cube
 void skills1() {          // official skills
   start();
   unlockChassis();
-wait(300);
+  wait(100);
   //prime robot
-  roller(100);
-  drive(330, 100, 8);
-  roller(0);
-  Thread.arm(ARM_LOW_TOWER, 200, 60);
-
-  //pick up one cube for small red tower
-  turn(290, 150, 5);
-  roller(-80);
-  drive(290,150,8);
-
-  //drive to red tower and drop out cube
-  drive(-250,150,6);
-  Thread.arm(ARM_BOTTOM - 0.2, 200, 20);
-  turn(-290, 150, 5);
   roller(200);
-
-
+  drive(2380, 125, 5);
   //turn(20,100,5);
-  drive(1950, 125, 6);
   roller(100);
-  wait(700);
+  wait(200);
+  roller(50);
+  wait(200);
   Thread.disable_arm();
   Thread.turn(270, 150, 2);
   tower(1);
   wait(300);
   Thread.disable_drive();
-  roller(-100);
-  drive(250,150,8);
-  wait(200);
+  drive(300,190,10);
+    roller(-180);
+  wait(300);
 
   //drive to blue tower and drop out cube
-  drive(-250,150,8);
+  drive(-300,150,8);
   Thread.arm(ARM_BOTTOM - 0.2, 200, 20);
-  wait(50);
-
   turn(-270, 150, 7);
   roller(200);
   drive(650,120,5);
@@ -191,22 +175,22 @@ wait(300);
   CamFront.target(BLUE_ZONE, 0, 0, 0, 1);
   Thread.disable_arm();
   roller(-25);
-  Thread.drive(670, 60, 9);
+  Thread.drive(700, 60, 9);
   rack(RACK_UP, 100, 11);
   Thread.disable_drive();
   wait(600);
   //score 7 cubes in small blue zone
   roller(-100);
   Thread.rack(RACK_DOWN, 200, 15);
-  drive(-300, 200, 9);
+  drive(-270, 200, 9);
   wait(100);
   turn(-700, 150, 7);
-  align(300, 2);
+  align(300, 3);
 
   //prime for stage 2 by alligning to first mid tower
   roller(0);
   Thread.arm(1, 100, 20);
-  drive(1050,200,6);
+  drive(1000,200,6);
   turn(-500, 150, 7);
   align(300, 2);
   Thread.disable_arm();
@@ -250,5 +234,4 @@ wait(300);
   roller(-100);
   Thread.rack(RACK_DOWN, 200, 15);
   drive(-300, 200, 9);
-
 }
