@@ -144,19 +144,32 @@ void b_b_green() {        // blue big green cube
   SKILLS AUTONOMOUSES
 ===========================================*/
 void skills1() {          // official skills
+
   start();
   unlockChassis();
+  Thread.drive(-90,100,10);
+  wait(300);
+  Thread.disable_drive();
   wait(100);
+
   //prime robot
   roller(200);
-  drive(2380, 125, 5);
+  drive(1300,125,5);
+  turn(140,100,5);
+  drive(300,125,5);
+  turn(-140,80,5);
+  drive(400,100,6);
+  turn(-140,80,5);
+  drive(200,100,6);
+  turn(140,80,5);
+  drive(200, 125, 5);
   //turn(20,100,5);
   roller(100);
   wait(200);
   roller(50);
-  wait(200);
+  wait(400);
   Thread.disable_arm();
-  Thread.turn(270, 150, 2);
+  Thread.turn(290, 150, 2);
   tower(1);
   wait(300);
   Thread.disable_drive();
@@ -167,7 +180,7 @@ void skills1() {          // official skills
   //drive to blue tower and drop out cube
   drive(-300,150,8);
   Thread.arm(ARM_BOTTOM - 0.2, 200, 20);
-  turn(-270, 150, 7);
+  turn(-290, 150, 7);
   roller(200);
   drive(650,120,5);
   turn(200,150,9);
@@ -207,7 +220,7 @@ void skills1() {          // official skills
   //drive to red tower and drop out cube
   drive(-150,150,4);
   Thread.arm(ARM_BOTTOM - 0.2, 200, 20);
-  turn(240, 150, 4);
+  turn(250, 150, 4);
   roller(200);
   drive(1600,90,6);
   Thread.disable_arm();
@@ -217,11 +230,11 @@ void skills1() {          // official skills
 
   //lift arm to mid tower height
   turn(350,80,7);
-  drive(180,150,5);
+  drive(220,150,5);
   roller(-160);
   //spit cube into the mid tower
   wait(500);
-  drive(-600,200,5);
+  drive(-640,200,5);
   Thread.disable_arm();
   armReset();
   roller(200);
