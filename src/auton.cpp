@@ -37,19 +37,24 @@ void start() {// Deploy and zero arm
 /*===========================================
   RED MATCH AUTONOMOUSES
 ===========================================*/
-void r_s_8() {            // red small 8 cube
+void r_s_8() {
+
+  drive(220,200,10);
+  Thread.drive(-260,200,10);         // red small 8 cube
   start();
+  Thread.disable_drive();
+  roller(250);
   // Pick up 4 cubes
-  roller(200);
-  drive(1000, 100, 9, 10000, 0);
+
+  drive(1000, 95, 9, 10000, 0);
 
   // Yoink 3 more cubes and turn right facing small red corner
   path.run("yeety", true);
   path.del("yeety");
 
-  drive(1200, 140, 9, 10000, 0);
+  drive(1200, 150, 9, 10000, 0);
   Thread.disable_arm();
-  turn(750, 160, 7);
+  turn(770, 160, 7);
 
   // Drive to small red corner and place
   roller(-25);
