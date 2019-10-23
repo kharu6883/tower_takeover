@@ -335,7 +335,7 @@ void BrainDisplay::setting() {
 }
 
 void BrainDisplay::update() {
-  int lastType, lastSlot;
+  int nowType, lastType, nowSlot, lastSlot;
   std::string name;
   const char * c;
 
@@ -410,7 +410,9 @@ void BrainDisplay::update() {
     }
 
     // Auton name display
-    if(lastType != Auton.getType() || lastSlot != Auton.getSlot()) {
+    nowType = Auton.getType();
+    nowSlot = Auton.getSlot();
+    if(lastType != nowType || lastSlot != nowSlot) {
       name.erase(name.begin() + 16, name.end());
       name.append(Auton.getName(Auton.getType(), Auton.getSlot()));
       c = name.c_str();
@@ -443,8 +445,8 @@ void BrainDisplay::update() {
       }
     }
 
-    lastType = Auton.getType();
-    lastSlot = Auton.getSlot();
+    lastType = nowType;
+    lastSlot = nowSlot;
     pros::delay(20);
   }
 }

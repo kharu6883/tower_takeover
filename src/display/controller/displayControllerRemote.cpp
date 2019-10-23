@@ -30,7 +30,7 @@ void RemoteDisplay::update() {
     if(master.get_digital_new_press(DIGITAL_Y)) slot++;
     if(slot > limit) slot = 0;
 
-    if(lastType != type || lastSlot != slot) {
+    if(type != lastType || slot != lastSlot) {
       setText(Auton.getAbbv(type, slot).c_str());
     }
 
