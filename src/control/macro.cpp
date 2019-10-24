@@ -14,14 +14,14 @@ void arm(int speed) {
   Arm.move_velocity(speed);
 }
 
-int roller(int speed) {
-  if(RollerL.move_velocity(speed) == EACCES || RollerR.move_velocity(speed) == EACCES) return EACCES;
-  else return 1;
+void roller(int speed) {
+  RollerL.move_velocity(speed);
+  RollerR.move_velocity(speed);
 }
 
-int roller(double rot, int speed) {
-  if(RollerL.move_relative(rot, speed) == EACCES || RollerR.move_relative(rot, speed) == EACCES) return EACCES;
-  else return 1;
+void roller(double rot, int speed) {
+  RollerL.move_relative(rot, speed);
+  RollerR.move_relative(rot, speed);
 }
 
 

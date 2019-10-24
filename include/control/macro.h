@@ -13,10 +13,10 @@ void rack(int speed);
 void arm(int speed);
 
 // Rotates the rollers in a given speed. Use negative values for going down. Uses RPM for speed.
-int roller(int speed);
+void roller(int speed);
 
 // Rotates the rollers in a given speed to a given point. Use negative values for going down. Uses RPM for speed.
-int roller(double rot, int speed);
+void roller(double rot, int speed);
 
 
 /*--------------------------------
