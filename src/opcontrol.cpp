@@ -16,8 +16,6 @@ static PID rackVar, rollerVar;
 
 static bool isTrack = false, isReset = false;
 
-static Display::RemoteDisplay remote;
-
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -134,7 +132,7 @@ void macroTask(void* ignore) {
 
 	towerMode = 0;
 
-	while(true) {
+	while (true) {
 		if(!master.is_connected()) { disconnected = true; pros::delay(20); continue; }
 		if(isReset) { towerMode = 0; isReset = false; disconnected = false; armReset(); pros::delay(20); continue; }
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400 && !disconnected) {

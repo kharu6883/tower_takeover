@@ -1,6 +1,6 @@
 #include "main.h"
 
-pros::Controller master(pros::E_CONTROLLER_MASTER);
+pros::Controller master(CONTROLLER_MASTER);
 
 // Sensors
 pros::ADIPotentiometer rackPot(RACKPOT);
