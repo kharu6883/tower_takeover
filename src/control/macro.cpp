@@ -390,13 +390,13 @@ double slop(int mode, double offset, double amp_) {
 
   switch(mode) {
     case 1:
-      return (deltaL - deltaR + offset) / (amp + amp_);
+      return (deltaL - deltaR + offset) / ( amp + amp_ );
       break;
 
     case 2:
       deltaL = ( LF.get_position() - LB.get_position() ) / 2;
-      deltaR = ( RB.get_position() - RF.get_position() ) / 2;
-      return ( deltaL - deltaR ) / amp + offset;
+      deltaR = ( RF.get_position() - RB.get_position() ) / 2;
+      return ( deltaL - deltaR ) / ( amp + amp_ ) + offset;
       break;
 
     default:

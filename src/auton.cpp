@@ -13,9 +13,9 @@ static Camera CamFront(FRONTVISION);
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  path.withPoint({3_ft, 3_ft, 0_deg}).withPoint({6_ft, 1.5_ft, 0_deg}).gen("yeet");
-  path.run("yeet", false);
-  path.del("yeet");
+  drive(1000, 200, 9);
+  strafe(1000, 200, 9);
+  strafe(-1000, 200, 9);
 }
 
 /*===========================================
