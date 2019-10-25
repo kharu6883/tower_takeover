@@ -39,7 +39,7 @@ LV_IMG_DECLARE(logo);
 LV_IMG_DECLARE(michael1);
 LV_IMG_DECLARE(michael2);
 
-// Motor ports & ADI
+// Motor ports
 #define RFPORT 1
 #define RBPORT 2
 #define LFPORT 9
@@ -51,15 +51,19 @@ LV_IMG_DECLARE(michael2);
 #define FLAPL 8
 #define FLAPR 3
 
+// ADI
 #define RACKPOT 1
-#define ARMPOT 7
 #define ARMLIMIT 2
+
+#define ULTRARPING 3
+#define ULTRARECHO 4
 
 #define ULTRALPING 5
 #define ULTRALECHO 6
 
-#define ULTRARPING 3
-#define ULTRARECHO 4
+#define ARMPOT 7
+
+#define GYRO 8
 
 // Vision Constants
 #define FRONTVISION 11

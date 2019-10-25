@@ -49,6 +49,8 @@ static lv_obj_t * expVal;
 
 static lv_obj_t * visorCont;
 
+static lv_obj_t * gyroVal;
+
 static lv_res_t main_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
@@ -92,6 +94,7 @@ static lv_res_t settings_click_action(lv_obj_t * btn) {
 
   switch(id) {
     case 1: setReset(true); break;
+    case 2: Gyro.reset(); break;
   }
 
   return LV_RES_OK;
@@ -304,6 +307,8 @@ void BrainDisplay::auton() {
 void BrainDisplay::sensor() {
   screen = 2;
   lv_obj_set_x(btnBack, 5);
+
+  gyroVal = createLabel(50, 50, "Gyro", lv_scr_act());
 }
 
 void BrainDisplay::camera() {
@@ -327,6 +332,7 @@ void BrainDisplay::setting() {
   lv_obj_set_x(btnBack, 5);
 
   lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
+  lv_obj_t * gyro_reset = createButton(2, 0, 80, 200, 50, "Calibrate Gyro", scr, settings_click_action);
 
   lv_obj_t * hotSauce = lv_img_create(scr, NULL);
   lv_img_set_src(hotSauce, &michael1);
@@ -363,6 +369,9 @@ void BrainDisplay::update() {
       }
 
       case 2: { // Sensor
+        std::string gyro;
+        gyro = "Gyro: " + std::to_string(Gyro.get_value() / 10);
+        lv_label_set_text(gyroVal, gyro.c_str());
         break;
       }
 

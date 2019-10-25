@@ -17,18 +17,22 @@ void initialize() {
   Autonomous Auton;
   print("Auton Set!");
 
-  pros::Task asyncController(Control.run, NULL, "Async Controller");
-  Control.pause();
-  print("Task Controller Done!");
-
   armAsync.suspend();
 
-  // Reset Motor Positions. Note - Rack has its own potentiometer
+  // Reset Sensors
   Arm.tare_position();
 
+  Gyro.reset();
+
+  // Motor Settings
   Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
   Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
   print("Motor Set!");
+
+  // Threads
+  pros::Task asyncController(Control.run, NULL, "Async Controller");
+  Control.pause();
+  print("Task Controller Done!");
 
   BrainDisplay Brain;
   Brain.main();

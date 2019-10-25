@@ -6,7 +6,7 @@ extern pros::Controller master;
 extern pros::ADIPotentiometer rackPot;
 extern pros::ADIPotentiometer armPot;
 extern pros::ADIDigitalIn armLimit;
-extern pros::ADILineSensor Rackline;
+extern pros::ADIGyro Gyro;
 
 // Ultrasonics
 extern pros::ADIUltrasonic ultraL;

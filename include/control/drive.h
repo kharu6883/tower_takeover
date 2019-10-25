@@ -15,6 +15,9 @@ void drive(double target, int speed, double rate, double amp, double offset);
 // Turns the robot to the target in rotations, in a given speed(rpm). Uses PD looop. Rate controls the slew constant.
 void turn(double target, int speed, double rate);
 
+// Turns the robot to the target in rotations, in a given speed(rpm). Uses PD looop. Rate controls the slew constant. Uses Gyro.
+void turnG(double target, int speed, double rate);
+
 // Strafes the robot to the target in ticks, in a given speed(rpm).
 void strafe(double target, int speed, double rate);
 
