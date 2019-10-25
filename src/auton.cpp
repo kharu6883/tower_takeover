@@ -19,17 +19,17 @@ void tester() {
 /*===========================================
   PREMADE FUNCTIONS
 ===========================================*/
-void start() {// Deploy and zero arm
+void start() {            // Deploy and zero arm
 
   roller(-200);
   wait(50);
   roller(-200);
   arm(0.4, 100, 60);
   wait(50);
-  Thread.drive(-90,170,5);
+  Thread.drive(-70,100,9);
   roller(-200);
   armReset();
-  wait(300);
+  wait(200);
   Thread.disable_drive();
 }
 
@@ -37,9 +37,8 @@ void start() {// Deploy and zero arm
 /*===========================================
   RED MATCH AUTONOMOUSES
 ===========================================*/
-void r_s_8() {
+void r_s_8() {            // red small 8 cube
 
-             // red small 8 cube
   start();
   roller(200);
   // Pick up 4 cubes
@@ -64,19 +63,32 @@ void r_s_8() {
   roller(-200);
   rack(RACK_DOWN, 200, 15);
 }
-void r_b_8() {            // red big 8 cube
+void r_n_9() {            // Red No Score 9 Cube
   start();
-  // Yoink cubes
   roller(200);
-  drive(1600, 200, 7);
+  // Pick up 4 cubes
 
-  // Back up, turn to cubes and yoink
-  drive(-1050, 200, 7);
-  turn(250, 150, 7);
-  drive(1000, 160, 7);
-  turn(-250, 100, 7);
-  drive(100, 160, 7);
-  turn(-700, 100, 7);
+  drive(1100, 105, 9, 10000, 0);
+
+
+  // Yoink 3 more cubes and turn right facing small red corner
+  path.run("yeety", true);
+  path.del("yeety");
+
+  drive(1200, 140, 9, 10000, 0);
+  Thread.disable_arm();
+  turn(750, 160, 7);
+
+  // Drive to small red corner and place
+   drive(1300, 200, 9);
+   roller(-100);
+
+
+  // Yeet outta there
+  drive(-300, 200, 10);
+  roller(0);
+
+
 
 }
 void r_b_orange() {       // red big orange cube
@@ -124,7 +136,31 @@ void b_s_8() {            // blue small 8 cube
   roller(-200);
   rack(RACK_DOWN, 200, 15);
 }
-void b_b_8() {            // blue big 8 cube
+void b_n_9() {            // Blue No Score 9 cube
+  start();
+  roller(200);
+  // Pick up 4 cubes
+
+  drive(1100, 105, 9, 10000, 0);
+
+
+  // Yoink 3 more cubes and turn right facing small red corner
+  path.run("yote", true);
+  path.del("yote");
+
+  drive(1200, 140, 9, 10000, 0);
+  Thread.disable_arm();
+  turn(-680, 160, 7);
+
+  // Drive to small red corner and place
+   drive(1300, 200, 9);
+   roller(-100);
+
+
+  // Yeet outta there
+  drive(-300, 200, 10);
+  roller(0);
+
 
 }
 void b_b_green() {        // blue big green cube
@@ -162,28 +198,28 @@ void skills1() {          // official skills
   strafe(50,100,5);
   drive(800,125,5);
   turn(530, 150, 2);
-  drive(-550,100,5);
+  drive(-600,100,5);
   roller(-200);
   wait(200);
   roller(0);
   rack(1500, 200, 11);
   rack(RACK_DOWN, 200, 11);
   roller(200);
-  drive(450,100,5);
-  turn(-200,100,5);
+  drive(500,100,5);
+  turn(-250,100,5);
   roller(0);
   CamFront.target(BLUE_ZONE, 0, 0, 0, 7);
 
   roller(-27);
   Thread.drive(700, 50, 9);
-  rack(RACK_UP, 120, 11);
+  rack(RACK_UP, 130, 11);
   Thread.disable_drive();
   wait(600);
 
   //score 7 cubes in small blue zone
   roller(-200);
   Thread.rack(RACK_DOWN, 200, 15);
-  drive(-270, 200, 9);
+  drive(-270, 200, 5);
   wait(100);
   turn(-700, 150, 7);
   align(300, 3);
@@ -198,7 +234,7 @@ void skills1() {          // official skills
   wait(100);
   drive(1200,90,4);
   roller(100);
-  wait(400);
+  wait(200);
 
   // Low
   tower(1);
@@ -231,12 +267,12 @@ void skills1() {          // official skills
   armReset();
   roller(200);
   turn(-550, 150, 7);
-  Thread.drive(1070,100,5);
+  Thread.drive(1070,90,5);
   roller(-28);
   rack(RACK_UP, 110, 11);
   Thread.disable_drive();
   wait(100);
   roller(-100);
   Thread.rack(RACK_DOWN, 200, 15);
-  drive(-300, 200, 9);
+  drive(-300, 200, 2);
 }
