@@ -10,7 +10,7 @@ const double kP = 0.11;
 
 static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 28, rollerDecel = 30;
 
-static double target, slewOutput = 0, accel = 9, decel = 20;
+static double target, slewOutput = 0, accel = 20, decel = 100;
 
 static PID rackVar, rollerVar;
 
@@ -21,12 +21,14 @@ void opcontrol() {
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_current_limit(8000);
 
-	RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
-	RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
+	RollerL.set_current_limit(15000);
+	RollerR.set_current_limit(15000);
+
+	Rack.set_current_limit(15000);
 
 	armAsync.resume();
 
-	Slew roller(28, 30);
+	Slew roller(60, 80);
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
@@ -117,6 +119,8 @@ void opcontrol() {
 		}
 
 		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6 || towerMode == 420) ::roller(roller.getOutput());
+
+		std::cout << RollerL.get_actual_velocity() << ", " << RollerR.get_actual_velocity() << std::endl;
 
 		// Yeet
 		pros::delay(20);

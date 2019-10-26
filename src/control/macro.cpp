@@ -16,11 +16,13 @@ void arm(int speed) {
 
 void roller(int speed) {
   RollerL.move_velocity(speed);
+  wait(50);
   RollerR.move_velocity(speed);
 }
 
 void roller(double rot, int speed) {
   RollerL.move_relative(rot, speed);
+  wait(20);
   RollerR.move_relative(rot, speed);
 }
 

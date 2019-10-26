@@ -20,19 +20,16 @@ void tester() {
   PREMADE FUNCTIONS
 ===========================================*/
 void start() {            // Deploy and zero arm
-
   roller(-200);
   wait(50);
   roller(-200);
   arm(0.4, 100, 60);
   wait(50);
   Thread.drive(-70,100,9);
-  roller(-200);
   armReset();
   wait(200);
   Thread.disable_drive();
 }
-
 
 /*===========================================
   RED MATCH AUTONOMOUSES
@@ -51,11 +48,11 @@ void r_s_8() {            // red small 8 cube
 
   drive(1200, 140, 9, 10000, 0);
   Thread.disable_arm();
-  turn(750, 160, 7);
+  turn(730, 160, 7);
 
   // Drive to small red corner and place
   roller(-23);
-  Thread.drive(1400, 150, 9);
+  Thread.drive(1450, 150, 9);
   rack(RACK_UP, 95, 6);
 
   // Yeet outta there
@@ -124,11 +121,11 @@ void b_s_8() {            // blue small 8 cube
 
   drive(1200, 140, 9, 10000, 0);
   Thread.disable_arm();
-  turn(-650, 160, 7);
+  turn(-700, 160, 7);
 
   // Drive to small red corner and place
   roller(-23);
-  Thread.drive(1400, 150, 9);
+  Thread.drive(1450, 150, 9);
   rack(RACK_UP, 95, 6);
 
   // Yeet outta there
