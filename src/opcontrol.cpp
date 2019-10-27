@@ -8,9 +8,9 @@
 
 const double kP = 0.11;
 
-static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 28, rollerDecel = 30;
+static int towerMode = 0, lastBtn = 0, lastR = 0;
 
-static double target, slewOutput = 0, accel = 20, decel = 100;
+static double accel = 20, decel = 60;
 
 static PID rackVar, rollerVar;
 
@@ -20,11 +20,6 @@ void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_current_limit(8000);
-
-	RollerL.set_current_limit(15000);
-	RollerR.set_current_limit(15000);
-
-	Rack.set_current_limit(15000);
 
 	armAsync.resume();
 

@@ -70,6 +70,22 @@ class Slew {
     bool noDecel;
 };
 
+class PID {
+  public:
+    PID(double kP_);
+    PID(double kP_, double kD_);
+
+    double calculate(double target, double input);
+
+    double getError();
+    double getOutput();
+
+  private:
+    double kP, kD;
+
+    double current, error, last, derivative, output;
+};
+
 
 // Calculates P term with the following equation. (Target - Sensor) * kP
 double pTerm(double target, double sensor, double kP);

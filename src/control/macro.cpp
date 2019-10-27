@@ -357,6 +357,29 @@ void Slew::reset() {
   input = output = 0;
 }
 
+PID::PID(double kP_) : kP(kP_), kD(0) { }
+
+PID::PID(double kP_, double kD_) : kP(kP_), kD(kD_) { }
+
+double PID::calculate(double target, double input) {
+
+  error = target - input;
+
+  output = ( error * kP ) + ( error - last ) * kD;
+
+  last = error;
+
+  return output;
+}
+
+double PID::getError() {
+  return error;
+}
+
+double PID::getOutput() {
+  return output;
+}
+
 
 
 double pTerm(double target, double sensor, double kP) {

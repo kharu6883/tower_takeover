@@ -25,7 +25,7 @@ void initialize() {
   // Motor Settings
   Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
   Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-  
+
   RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
 	RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
   print("Motor Set!");

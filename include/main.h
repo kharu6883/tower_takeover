@@ -23,9 +23,9 @@ struct Vector2 {
   int rate;
 };
 
-struct PID {
-  double current, error, last, output, slewOutput;
-};
+// struct PID {
+//   double current, error, last, output, slewOutput;
+// };
 
 // It's Everyday Functions Bro
 void wait(int ms);
@@ -110,6 +110,7 @@ void opcontrol(void);
 
 #ifdef __cplusplus
 
+#include <ostream>
 #include <iostream>
 #include <chrono>
 #include <ctime>
