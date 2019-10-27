@@ -22,9 +22,9 @@ bool ControlAsync::usingGyro = false;
 
 int ControlAsync::sturn = 0;
 
-PID ControlAsync::chassisVar = {0, 0, 0, 0, 0};
-PID ControlAsync::rackVar = {0, 0, 0, 0, 0};
-PID ControlAsync::armVar = {0, 0, 0, 0, 0};
+PIDS ControlAsync::chassisVar = {0, 0, 0, 0, 0};
+PIDS ControlAsync::rackVar = {0, 0, 0, 0, 0};
+PIDS ControlAsync::armVar = {0, 0, 0, 0, 0};
 
 Vector2 ControlAsync::chassis_target = {0, 0, 0};
 Vector2 ControlAsync::rack_target = {0, 0, 0};

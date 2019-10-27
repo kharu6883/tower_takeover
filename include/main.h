@@ -23,9 +23,9 @@ struct Vector2 {
   int rate;
 };
 
-// struct PID {
-//   double current, error, last, output, slewOutput;
-// };
+struct PIDS {
+  double current, error, last, output, slewOutput;
+};
 
 // It's Everyday Functions Bro
 void wait(int ms);
@@ -49,7 +49,7 @@ LV_IMG_DECLARE(michael2);
 #define ARM 6
 
 #define FLAPL 8
-#define FLAPR 3
+#define FLAPR 4
 
 // ADI
 #define RACKPOT 1
@@ -77,7 +77,7 @@ LV_IMG_DECLARE(michael2);
 // Constants
 #define RACK_DOWN 900
 #define RACK_UP 3615
-#define RACK_TOWER 1800
+#define RACK_TOWER 1950
 
 #define ARM_BOTTOM 0
 #define ARM_LOW_TOWER 1.3

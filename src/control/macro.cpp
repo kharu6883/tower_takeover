@@ -319,6 +319,19 @@ Slew::Slew(double accel_, double decel_) : accel(accel_), decel(decel_) {
   noDecel = false;
 }
 
+Slew& Slew::withLimit(double input) {
+
+  if(input > 0 && output > input) {
+    output = input;
+  }
+
+  if(input < 0 && output < input) {
+    output = input;
+  }
+
+  return *this;
+}
+
 double Slew::calculate(double input) {
   if(!noDecel) {
 
@@ -360,6 +373,17 @@ void Slew::reset() {
 PID::PID(double kP_) : kP(kP_), kD(0) { }
 
 PID::PID(double kP_, double kD_) : kP(kP_), kD(kD_) { }
+
+PID& PID::withConst(double kP_) {
+  kP = kP_;
+  return *this;
+}
+
+PID& PID::withConst(double kP_, double kD_) {
+  kP = kP_;
+  kD = kD_;
+  return *this;
+}
 
 double PID::calculate(double target, double input) {
 

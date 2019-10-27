@@ -50,12 +50,12 @@ class ControlAsync {
     static bool isDown;
 
     static bool usingGyro;
-    
+
     static int sturn;
 
     static Vector2 chassis_target, rack_target, arm_target;
 
-    static PID chassisVar, rackVar, armVar;
+    static PIDS chassisVar, rackVar, armVar;
 
     static double chassis_kP, chassis_kD;
     static double rack_kP;

@@ -57,6 +57,8 @@ class Slew {
     Slew(double accel_);
     Slew(double accel_, double decel_);
 
+    Slew& withLimit(double input);
+
     double calculate(double input);
 
     void setOutput(double output_);
@@ -65,7 +67,7 @@ class Slew {
     void reset();
 
   private:
-    const double accel, decel;
+    double accel, decel;
     double input, output;
     bool noDecel;
 };
@@ -74,6 +76,9 @@ class PID {
   public:
     PID(double kP_);
     PID(double kP_, double kD_);
+
+    PID& withConst(double kP_);
+    PID& withConst(double kP_, double kD_);
 
     double calculate(double target, double input);
 
