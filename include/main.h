@@ -49,7 +49,7 @@ LV_IMG_DECLARE(michael2);
 #define ARM 6
 
 #define FLAPL 8
-#define FLAPR 4
+#define FLAPR 3
 
 // ADI
 #define RACKPOT 1

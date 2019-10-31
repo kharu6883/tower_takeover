@@ -15,13 +15,13 @@ void RemoteDisplay::update() {
   int lastType, lastSlot;
 
   while(true) {
-    if(Auton.getType() != lastType || Auton.getSlot() != lastSlot) {
+    if((Auton.getType() != lastType || Auton.getSlot() != lastSlot)) {
       std::string setter = Auton.getAbbv(Auton.getType(), Auton.getSlot()) + "       ";
       master.set_text(0, 0, setter.c_str());
       lastType = Auton.getType();
       lastSlot = Auton.getSlot();
     }
-
+    
     pros::delay(20);
   }
 }

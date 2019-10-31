@@ -21,14 +21,16 @@ void tester() {
 ===========================================*/
 void start() {            // Deploy and zero arm
   roller(-200);
+  lockChassis();
   wait(50);
   roller(-200);
   arm(0.4, 100, 60);
   wait(50);
-  Thread.drive(-70,100,9);
+  //Thread.drive(-70,100,9);
   armReset();
   wait(200);
   Thread.disable_drive();
+  unlockChassis();
 }
 
 /*===========================================
@@ -186,7 +188,6 @@ void skills1() {          // official skills
 
   wait(100);
 
-
   //prime robot
   roller(200);
   drive(1300,135,5);
@@ -194,37 +195,53 @@ void skills1() {          // official skills
   drive(1000, 135, 5);
   strafe(50,100,5);
   drive(800,125,5);
-  turn(530, 150, 2);
+  turn(520, 150, 2);
   drive(-600,100,5);
   roller(-200);
-  wait(200);
+  wait(250);
   roller(0);
   rack(1500, 200, 11);
   rack(RACK_DOWN, 200, 11);
   roller(200);
   drive(500,100,5);
-  turn(-250,100,5);
-  roller(0);
-  CamFront.target(BLUE_ZONE, 0, 0, 0, 7);
+  wait(100);
+  turn(70, 200, 6);
+  roller(100);
+  wait(200);
+  roller(10);
+  wait(200);
+  Thread.disable_drive();
 
-  roller(-27);
-  Thread.drive(700, 50, 9);
-  rack(RACK_UP, 130, 11);
+  tower(1);
+  drive(200,100,5);
+  roller(-150);
+  wait(500);
+  Thread.drive(-200,100,5);
+  armReset();
+  Thread.disable_drive();
+  roller(200);
+  turn(-360,150,5);
+  roller(0);
+  CamFront.target(BLUE_ZONE, 0, 0, 0, 2);
+
+  roller(-29);
+  Thread.drive(550, 55, 6);
+  rack(RACK_UP, 135, 11);
   Thread.disable_drive();
   wait(600);
 
   //score 7 cubes in small blue zone
   roller(-200);
   Thread.rack(RACK_DOWN, 200, 15);
-  drive(-270, 200, 5);
+  drive(-270, 200, 9);
   wait(100);
-  turn(-700, 150, 7);
+  turn(-700, 200, 9);
   align(300, 3);
   roller(0);
   Thread.arm(1, 100, 20);
   drive(1000,200,6);
   turn(-500, 150, 7);
-  align(300, 2);
+  align(300, 3);
   Thread.disable_arm();
   armReset();
   roller(200);
@@ -258,18 +275,19 @@ void skills1() {          // official skills
 
   // Spit cube into the mid tower
   wait(500);
+  Thread.arm(ARM_BOTTOM-0.2, 200, 20);
   drive(-700,200,5);
-  Thread.disable_arm();
   wait(100);
-  armReset();
   roller(200);
   turn(-550, 150, 7);
   Thread.drive(1070,90,5);
   roller(-28);
   rack(RACK_UP, 110, 11);
+  Thread.disable_arm();
+
   Thread.disable_drive();
-  wait(100);
   roller(-100);
   Thread.rack(RACK_DOWN, 200, 15);
+  wait(100);
   drive(-300, 200, 2);
 }

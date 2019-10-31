@@ -456,6 +456,8 @@ void BrainDisplay::update() {
 
     lastType = nowType;
     lastSlot = nowSlot;
+
+    if(master.get_digital_new_press(DIGITAL_A)) std::cout << "Hello!" << std::endl;
     pros::delay(20);
   }
 }

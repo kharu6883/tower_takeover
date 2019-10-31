@@ -6,11 +6,7 @@
 #include "control/macro.h"
 #include "control/displayController.h"
 
-const double kP = 0.11;
-
-static int towerMode = 0, lastPos = 0, lastR = 0;
-
-static double accel = 20, decel = 60;
+static int towerMode = 0, lastPos = 0;
 
 static bool isTrack = false, isReset = false;
 
@@ -21,9 +17,9 @@ void opcontrol() {
 
 	armAsync.resume();
 
-	Slew roller(60, 80);
-	Slew rackSlew(20, 60);
-	PID rackPID(0.13);
+	Slew roller(60, 80); // Accel, Decel
+	Slew rackSlew(20, 60, true); // Accel, Decel
+	PID rackPID(0.13); // kP
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
@@ -49,7 +45,7 @@ void opcontrol() {
 		  } else { // Tower Placement
 				lastPos = 1;
 
-				rackPID.withConst(0.73).calculate(RACK_TOWER, rackPot.get_value());
+				rackPID.withConst(0.4).calculate(RACK_TOWER, rackPot.get_value());
 				rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 			}
@@ -92,8 +88,6 @@ void opcontrol() {
 		}
 
 		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6 || towerMode == 420) ::roller(roller.getOutput());
-
-		std::cout << RollerL.get_actual_velocity() << ", " << RollerR.get_actual_velocity() << std::endl;
 
 		// Yeet
 		pros::delay(20);

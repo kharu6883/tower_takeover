@@ -319,15 +319,14 @@ Slew::Slew(double accel_, double decel_) : accel(accel_), decel(decel_) {
   noDecel = false;
 }
 
+Slew::Slew(double accel_, double decel_, bool reversible_) : accel(accel_), decel(decel_), isReversible(reversible_) {
+  noDecel = false;
+}
+
 Slew& Slew::withLimit(double input) {
 
-  if(input > 0 && output > input) {
-    output = input;
-  }
-
-  if(input < 0 && output < input) {
-    output = input;
-  }
+  isLimited = true;
+  limit = input;
 
   return *this;
 }
@@ -335,12 +334,55 @@ Slew& Slew::withLimit(double input) {
 double Slew::calculate(double input) {
   if(!noDecel) {
 
-    if(input > output + accel) {
-      output += accel;
-    } else if(input < output - decel) {
-      output -= decel;
+    if(!isReversible) {
+      if(input > output + accel) {
+        output += accel;
+      } else if(input < output - decel) {
+        output -= decel;
+      } else {
+        output = input;
+      }
     } else {
-      output = input;
+      if(input > 0) {
+        if(input > output + accel) {
+          output += accel;
+        } else if(input < output - decel) {
+          output -= decel;
+        } else {
+          output = input;
+        }
+      }
+
+      if(input < 0) {
+        if(input < output - accel) {
+          output -= accel;
+        } else if(input > output + decel) {
+          output += decel;
+        } else {
+          output = input;
+        }
+      }
+
+      if(input == 0) {
+        if(input < output - decel) {
+          output -= decel;
+        } else if(input > output + decel) {
+          output += decel;
+        } else {
+          output = input;
+        }
+      }
+    }
+
+
+    if(isLimited) {
+      if(limit > 0 && output > limit) {
+        output = limit;
+      }
+
+      if(limit < 0 && output < limit) {
+        output = limit;
+      }
     }
 
   } else {
