@@ -56,7 +56,7 @@ void Path::update() {
         }
 
         case SLOT_BLUE: {
-          withPoint({4_ft, -7_ft, 0_deg}).gen("yote");
+          withPoint({4_ft, -8.5_ft, 0_deg}).gen("yote");
           break;
         }
 
