@@ -24,7 +24,7 @@ void start() {            // Deploy and zero arm
   lockChassis();
   wait(50);
   roller(-200);
-  arm(0.4, 100, 60);
+  arm(0.3, 200, 60);
   //Thread.drive(-70,100,9);
   armReset();
   wait(250);
@@ -38,51 +38,85 @@ void start() {            // Deploy and zero arm
 void r_s_7() {            // red small 8 cube
 
   start();
+  Thread.disable_drive();
   roller(200);
   // Pick up 4 cubes
 
-  drive(1100, 105, 9, 10000, 0);
+  drive(1300, 160, 9, 10000, 0);
 
   // Yoink 3 more cubes and turn right facing small red corner
-  path.run("yeety", true);
-  path.del("yeety");
+  path.run("yeet", true);
+  path.del("yeet");
 
-  drive(1200, 140, 9, 10000, 0);
+  drive(1400, 145, 9, 10000, 0);
+  Thread.rack(RACK_TOWER-200, 120, 7);
+  drive(-800, 200, 9, 10000, 0);
+  roller(-15);
   Thread.disable_arm();
-  turn(730, 160, 7);
+  turn(770, 200, 7);
 
   // Drive to small red corner and place
-  roller(-23);
-  Thread.drive(1450, 150, 9);
-  rack(RACK_UP, 95, 6);
+  roller(-35);
+  Thread.disable_rack();
+  Thread.drive(450, 120, 4);
+  wait(200);
+  rack(RACK_UP, 135, 7);
 
   // Yeet outta there
   Thread.drive(-300, 200, 10);
   roller(-200);
   rack(RACK_DOWN, 200, 15);
+
+
+
+  // start();
+  // roller(200);
+  // // Pick up 4 cubes
+  //
+  // drive(1100, 105, 9, 10000, 0);
+  //
+  // // Yoink 3 more cubes and turn right facing small red corner
+  // path.run("yeety", true);
+  // path.del("yeety");
+  //
+  // drive(1200, 140, 9, 10000, 0);
+  // Thread.disable_arm();
+  // turn(730, 160, 7);
+  //
+  // // Drive to small red corner and place
+  // roller(-23);
+  // Thread.drive(1450, 150, 9);
+  // rack(RACK_UP, 95, 6);
+  //
+  // // Yeet outta there
+  // Thread.drive(-300, 200, 10);
+  // roller(-200);
+  // rack(RACK_DOWN, 200, 15);
 }
 void r_s_8() {            // red small 8 cube
-  drive(250,200,9);
-  Thread.drive(-250,200,9);
+  drive(300,200,9);
+  Thread.drive(-300,200,9);
   start();
   Thread.disable_drive();
   roller(200);
   // Pick up 4 cubes
 
-  drive(1300, 140, 9, 10000, 0);
+  drive(1300, 150, 9, 10000, 0);
 
   // Yoink 3 more cubes and turn right facing small red corner
-  path.run("yeety", true);
-  path.del("yeety");
+  path.run("yeet", true);
+  path.del("yeet");
 
-  drive(1200, 130, 9, 10000, 0);
+  drive(1200, 120, 9, 10000, 0);
+  drive(-600, 200, 9, 10000, 0);
+
   Thread.disable_arm();
-  turn(750, 170, 7);
+  turn(750, 200, 7);
 
   // Drive to small red corner and place
-  roller(-32);
-  Thread.drive(1450, 145, 9);
-  rack(RACK_UP, 130, 8);
+  roller(-35);
+  Thread.drive(350, 100, 9);
+  rack(RACK_UP, 170, 7);
 
   // Yeet outta there
   Thread.drive(-300, 200, 10);

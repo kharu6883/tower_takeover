@@ -14,9 +14,9 @@ okapi::ChassisControllerIntegrated Path::driver = ChassisControllerFactory::crea
 
 // Acceleration factor
 okapi::AsyncMotionProfileController Path::profile = AsyncControllerFactory::motionProfile(
-  2.8, // Max possible velocity in m/s
-  2.5, // Max possible acceleration in m/s^2
-  4.5, // Max possible jerk in m/s^3
+  2.3, // Max possible velocity in m/s
+  2.3, // Max possible acceleration in m/s^2
+  4, // Max possible jerk in m/s^3
   driver
 );
 
@@ -52,6 +52,7 @@ void Path::update() {
       switch(Auton.getType()) {
         case SLOT_RED: {
           withPoint({-4_ft, -8.5_ft, 0_deg}).gen("yeety");
+          withPoint({2_ft, -6_ft, 0_deg}).gen("yeet");
           break;
         }
 
