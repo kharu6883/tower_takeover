@@ -27,12 +27,13 @@ void opcontrol() {
 		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
 		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
 
-		if(master.get_digital_new_press(DIGITAL_A)) {
+		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;
 				else isTrack = false;
+			while(master.get_digital(DIGITAL_A)) pros::delay(20);
 		}
 
-		if(master.get_digital_new_press(DIGITAL_DOWN)) setReset(true);
+		if(master.get_digital_new_press(DIGITAL_DOWN)) isReset = true;
 
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 
