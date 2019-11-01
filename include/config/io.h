@@ -4,7 +4,7 @@ extern pros::Controller master;
 
 // Sensors
 extern pros::ADIPotentiometer rackPot;
-extern pros::ADIDigitalIn selector;
+extern pros::ADIPotentiometer armPot;
 extern pros::ADIDigitalIn armLimit;
 extern pros::ADIGyro Gyro;
 

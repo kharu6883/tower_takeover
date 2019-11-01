@@ -61,7 +61,7 @@ LV_IMG_DECLARE(michael2);
 #define ULTRALPING 5
 #define ULTRALECHO 6
 
-#define SELECTOR 7
+#define ARMPOT 7
 
 #define GYRO 8
 

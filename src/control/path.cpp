@@ -14,8 +14,8 @@ okapi::ChassisControllerIntegrated Path::driver = ChassisControllerFactory::crea
 
 // Acceleration factor
 okapi::AsyncMotionProfileController Path::profile = AsyncControllerFactory::motionProfile(
-  2.3, // Max possible velocity in m/s
-  2.3, // Max possible acceleration in m/s^2
+  2.5, // Max possible velocity in m/s
+  2, // Max possible acceleration in m/s^2
   4, // Max possible jerk in m/s^3
   driver
 );

@@ -49,7 +49,7 @@ std::map<int, vision_object_s_t> Camera::getFeed() {
 
 void Camera::target(int sig, int size, int low, int high, double tolerance) {
 
-  const double kP = 1;
+  const double kP = 0.6;
 
   vision_object_s_t rtn;
   double output;
