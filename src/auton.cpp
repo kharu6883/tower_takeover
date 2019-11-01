@@ -36,6 +36,34 @@ void start() {            // Deploy and zero arm
 /*===========================================
   RED MATCH AUTONOMOUSES
 ===========================================*/
+void r_s_7()
+{
+
+  start();
+  roller(200);
+  // Pick up 4 cubes
+
+  drive(1100, 105, 9, 10000, 0);
+
+  // Yoink 3 more cubes and turn right facing small red corner
+  path.run("yeety", true);
+  path.del("yeety");
+
+  drive(1200, 140, 9, 10000, 0);
+  Thread.disable_arm();
+  turn(730, 160, 7);
+
+  // Drive to small red corner and place
+  roller(-23);
+  Thread.drive(1450, 150, 9);
+  rack(RACK_UP, 95, 6);
+
+  // Yeet outta there
+  Thread.drive(-300, 200, 10);
+  roller(-200);
+  rack(RACK_DOWN, 200, 15);
+}
+
 void r_s_8() {            // red small 8 cube
 
   start();
@@ -143,6 +171,33 @@ void r_b_orange() {       // red big orange cube
 /*===========================================
   BLUE MATCH AUTONOMOUSES
 ===========================================*/
+void b_s_7()
+{
+  start();
+ roller(200);
+ // Pick up 4 cubes
+
+ drive(1100, 105, 9, 10000, 0);
+
+ // Yoink 3 more cubes and turn right facing small red corner
+ path.run("yote", true);
+ path.del("yote");
+
+ drive(1200, 140, 9, 10000, 0);
+ Thread.disable_arm();
+ turn(-700, 160, 7);
+
+ // Drive to small red corner and place
+ roller(-23);
+ Thread.drive(1450, 150, 9);
+ rack(RACK_UP, 95, 6);
+
+ // Yeet outta there
+ Thread.drive(-300, 200, 10);
+ roller(-200);
+ rack(RACK_DOWN, 200, 15);
+}
+
 void b_s_8() {            // blue small 8 cube
   start();
   roller(200);
@@ -223,46 +278,46 @@ void skills1() {          // official skills
 
   //prime robot
   roller(200);
-  drive(1300,135,5);
+  drive(1300,130,5);
   strafe(-80,100,5);
-  drive(1000, 135, 5);
+  drive(1200, 130, 5);
   strafe(50,100,5);
-  drive(800,125,5);
+  drive(600,100,5);
   turn(520, 150, 2);
   drive(-600,100,5);
   roller(-200);
   wait(250);
   roller(0);
+  Thread.drive(550,130,7);
+  roller(0);
   rack(1500, 200, 11);
-  rack(RACK_DOWN, 200, 11);
+  wait(200);
+  Thread.disable_drive();
   roller(200);
-  drive(500,100,5);
-  wait(100);
-  turn(70, 200, 6);
+  Thread.rack(RACK_DOWN, 200, 15);
   roller(100);
+  turn(70, 200, 6);
   wait(200);
   roller(10);
   wait(200);
   Thread.disable_drive();
 
   tower(1);
-  drive(200,100,5);
+  drive(250,100,5);
   roller(-150);
-  wait(500);
-  Thread.drive(-200,100,5);
+  wait(400);
+  Thread.drive(-250,100,5);
   armReset();
   Thread.disable_drive();
   roller(200);
+  Thread.disable_rack();
   turn(-360,150,5);
   roller(0);
-  CamFront.target(BLUE_ZONE, 0, 0, 0, 2);
-
-  roller(-29);
-  Thread.drive(550, 55, 6);
+  roller(-31);
+  Thread.drive(550, 80, 6);
   rack(RACK_UP, 135, 11);
   Thread.disable_drive();
   wait(600);
-
   //score 7 cubes in small blue zone
   roller(-200);
   Thread.rack(RACK_DOWN, 200, 15);
@@ -285,7 +340,7 @@ void skills1() {          // official skills
 
   // Low
   tower(1);
-  turn(-200, 150, 4);
+  turn(-250, 150, 4);
   roller(-80);
   drive(150,150,8);
 
@@ -293,28 +348,31 @@ void skills1() {          // official skills
   drive(-150,150,4);
   roller(200);
   Thread.arm(ARM_BOTTOM-0.2, 200, 20);
-  turn(210, 150, 4);
+  turn(260, 150, 4);
   roller(200);
   drive(1600,90,6);
   Thread.disable_arm();
+  roller(100);
 
-  wait(500);
+  wait(300);
   tower(2);
 
   // Lift arm to mid tower height
   turn(330,80,7);
   drive(240,150,5);
-  roller(-160);
+  roller(-180);
 
   // Spit cube into the mid tower
   wait(500);
   Thread.arm(ARM_BOTTOM-0.2, 200, 20);
+  roller(200);
+
   drive(-700,200,5);
   wait(100);
   roller(200);
   turn(-550, 150, 7);
-  Thread.drive(1070,90,5);
-  roller(-28);
+  Thread.drive(1000,90,5);
+  roller(-30);
   rack(RACK_UP, 110, 11);
   Thread.disable_arm();
 
