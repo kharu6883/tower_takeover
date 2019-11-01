@@ -24,10 +24,11 @@ void start() {            // Deploy and zero arm
   lockChassis();
   wait(50);
   roller(-200);
-  arm(0.3, 200, 60);
+  arm(0.4, 100, 60);
+  wait(50);
   //Thread.drive(-70,100,9);
   armReset();
-  wait(250);
+  wait(200);
   Thread.disable_drive();
   unlockChassis();
 }
@@ -111,12 +112,12 @@ void r_s_8() {            // red small 8 cube
   drive(-600, 200, 9, 10000, 0);
 
   Thread.disable_arm();
-  turn(750, 200, 7);
+  turn(750, 160, 7);
 
   // Drive to small red corner and place
-  roller(-35);
-  Thread.drive(350, 100, 9);
-  rack(RACK_UP, 170, 7);
+  roller(-34);
+  Thread.drive(1450, 160, 9);
+  rack(RACK_UP, 125, 8);
 
   // Yeet outta there
   Thread.drive(-300, 200, 10);
@@ -171,7 +172,7 @@ void r_b_orange() {       // red big orange cube
 /*===========================================
   BLUE MATCH AUTONOMOUSES
 ===========================================*/
-void b_s_7() {            // blue small 8 cube
+void b_s_8() {            // blue small 8 cube
   start();
   roller(200);
   // Pick up 4 cubes
@@ -179,45 +180,17 @@ void b_s_7() {            // blue small 8 cube
   drive(1100, 105, 9, 10000, 0);
 
   // Yoink 3 more cubes and turn right facing small red corner
-  path.run("yeetyt", true);
-  path.del("yeety");
+  path.run("yote", true);
+  path.del("yote");
 
   drive(1200, 140, 9, 10000, 0);
   Thread.disable_arm();
-  turn(700, 160, 7);
+  turn(-700, 160, 7);
 
   // Drive to small red corner and place
   roller(-23);
   Thread.drive(1450, 150, 9);
   rack(RACK_UP, 95, 6);
-
-  // Yeet outta there
-  Thread.drive(-300, 200, 10);
-  roller(-200);
-  rack(RACK_DOWN, 200, 15);
-}
-void b_s_8() {            // blue small 8 cube
-  drive(250,200,9);
-  Thread.drive(-250,200,9);
-  start();
-  Thread.disable_drive();
-  roller(200);
-  // Pick up 4 cubes
-
-  drive(1300, 140, 9, 10000, 0);
-
-  // Yoink 3 more cubes and turn right facing small red corner
-  path.run("yeety", true);
-  path.del("yeety");
-
-  drive(1200, 130, 9, 10000, 0);
-  Thread.disable_arm();
-  turn(750, 170, 7);
-
-  // Drive to small red corner and place
-  roller(-32);
-  Thread.drive(1450, 145, 9);
-  rack(RACK_UP, 130, 8);
 
   // Yeet outta there
   Thread.drive(-300, 200, 10);
