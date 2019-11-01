@@ -165,7 +165,7 @@ void macroTask(void* ignore) {
 			}
 
 			case 420: {
-				Arm.set_current_limit(50);
+				Arm.set_current_limit(500);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				break;
 			}
@@ -173,7 +173,7 @@ void macroTask(void* ignore) {
 			default: {
 				disconnected = false;
 
-				Arm.set_current_limit(1000);
+				Arm.set_current_limit(2000);
 				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
