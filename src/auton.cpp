@@ -52,21 +52,22 @@ void r_s_7() {            // red small 8 cube
   drive(1400, 145, 9, 10000, 0);
   Thread.rack(RACK_TOWER-200, 120, 7);
   drive(-800, 200, 9, 10000, 0);
-  roller(-15);
   Thread.disable_arm();
-  turn(770, 200, 7);
+  roller(-20);
+  turn(750, 200, 7);
 
   // Drive to small red corner and place
-  roller(-35);
+  roller(0);
+  roller(-31);
+  Thread.drive(550, 90, 6);
+  rack(RACK_UP, 125, 11);
+  Thread.disable_drive();
+  wait(100);
   Thread.disable_rack();
-  Thread.drive(450, 120, 4);
-  wait(200);
-  rack(RACK_UP, 135, 7);
-
-  // Yeet outta there
-  Thread.drive(-300, 200, 10);
+  //score 7 cubes in small blue zone
   roller(-200);
-  rack(RACK_DOWN, 200, 15);
+  Thread.rack(RACK_DOWN, 200, 15);
+  drive(-270, 200, 9);
 
 
 
