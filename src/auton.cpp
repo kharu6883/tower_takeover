@@ -98,30 +98,6 @@ void r_s_8() {            // red small 8 cube
   drive(-270, 200, 9);
 
 
-
-  // start();
-  // roller(200);
-  // // Pick up 4 cubes
-  //
-  // drive(1100, 105, 9, 10000, 0);
-  //
-  // // Yoink 3 more cubes and turn right facing small red corner
-  // path.run("yeety", true);
-  // path.del("yeety");
-  //
-  // drive(1200, 140, 9, 10000, 0);
-  // Thread.disable_arm();
-  // turn(730, 160, 7);
-  //
-  // // Drive to small red corner and place
-  // roller(-23);
-  // Thread.drive(1450, 150, 9);
-  // rack(RACK_UP, 95, 6);
-  //
-  // // Yeet outta there
-  // Thread.drive(-300, 200, 10);
-  // roller(-200);
-  // rack(RACK_DOWN, 200, 15);
 }
 void r_n_9() {            // Red No Score 9 Cube
   start();
