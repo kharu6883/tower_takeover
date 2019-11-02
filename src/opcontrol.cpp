@@ -11,7 +11,7 @@ static int towerMode = 0, lastPos = 0;
 static bool isTrack = false, isReset = false;
 
 void opcontrol() {
-	Rack.set_brake_mode(MOTOR_BRAKE_HOLD); 
+	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	armAsync.resume();
@@ -95,7 +95,7 @@ void opcontrol() {
 		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6 || towerMode == 420) ::roller(roller.getOutput());
 
 		#ifdef DEBUG
-		std::cout << "Rack: " << Rack.get_current_draw() << "mA, Arm: " << Arm.get_current_draw() << "mA, RollerL: " << RollerL.get_efficiency() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
+		std::cout << "Rack: " << Rack.get_current_draw() << "mA, Arm: " << Arm.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
 		#endif
 
 		// Yeet
