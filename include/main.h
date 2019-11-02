@@ -5,6 +5,8 @@
 
 #define PROS_USE_LITERALS
 
+#define DEBUG 0
+
 // Nice includes below
 #include "api.h"
 #include "pros/apix.h"
@@ -49,7 +51,7 @@ LV_IMG_DECLARE(michael2);
 #define ARM 6
 
 #define FLAPL 8
-#define FLAPR 3
+#define FLAPR 4
 
 // ADI
 #define RACKPOT 1

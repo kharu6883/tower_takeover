@@ -11,9 +11,8 @@ static int towerMode = 0, lastPos = 0;
 static bool isTrack = false, isReset = false;
 
 void opcontrol() {
-	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
+	Rack.set_brake_mode(MOTOR_BRAKE_HOLD); 
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-	Arm.set_current_limit(8000);
 
 	armAsync.resume();
 
@@ -22,18 +21,22 @@ void opcontrol() {
 	PID rackPID(0.13); // kP
 
 	while (true) {
-		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
-		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
+		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
+		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X) * 2);
+		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
+		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X) * 2);
 
-		if(master.get_digital_new_press(DIGITAL_A)) {
+		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;
 				else isTrack = false;
+			while(master.get_digital(DIGITAL_A)) pros::delay(20);
 		}
 
 		if(master.get_digital_new_press(DIGITAL_DOWN)) setReset(true);
 
+		/*--------------------------------
+		    RACK
+		--------------------------------*/
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 
 			if(!isTrack) { // Put up Rack
@@ -72,7 +75,9 @@ void opcontrol() {
 
 		Rack.move_velocity(rackSlew.getOutput());
 
-		// Roller
+		/*--------------------------------
+				ROLLERS
+		--------------------------------*/
 		if(master.get_digital(DIGITAL_R1)) {
 
 			roller.calculate(200);
@@ -89,11 +94,18 @@ void opcontrol() {
 
 		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6 || towerMode == 420) ::roller(roller.getOutput());
 
+		#ifdef DEBUG
+		std::cout << "Rack: " << Rack.get_current_draw() << "mA, Arm: " << Arm.get_current_draw() << "mA, RollerL: " << RollerL.get_efficiency() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
+		#endif
+
 		// Yeet
 		pros::delay(20);
 	}
 }
 
+/*--------------------------------
+    ARM
+--------------------------------*/
 void macroTask(void* ignore) {
 
 	double armTarget, tolerance = 3;
