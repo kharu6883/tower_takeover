@@ -6,104 +6,78 @@
 #include "control/macro.h"
 #include "control/displayController.h"
 
-const double kP = 0.11;
-
-static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 28, rollerDecel = 30;
-
-static double target, slewOutput = 0, accel = 9, decel = 20;
-
-static PID rackVar, rollerVar;
+static int towerMode = 0, lastPos = 0;
 
 static bool isTrack = false, isReset = false;
-
-static Display::RemoteDisplay remote;
 
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
-	Arm.set_current_limit(8000);
-
-	RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
-	RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	armAsync.resume();
 
-	Slew roller(28, 30);
+	Slew roller(60, 80); // Accel, Decel
+	Slew rackSlew(30, 60, true); // Accel, Decel
+	PID rackPID(0.13); // kP
 
 	while (true) {
-		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
-		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X));
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X));
+		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
+		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X) * 2);
+		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
+		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X) * 2);
 
-		if(master.get_digital_new_press(DIGITAL_A)) {
+		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;
 				else isTrack = false;
+			while(master.get_digital(DIGITAL_A)) pros::delay(20);
 		}
 
 		if(master.get_digital_new_press(DIGITAL_DOWN)) setReset(true);
 
+		/*--------------------------------
+		    RACK
+		--------------------------------*/
 		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
-			lastBtn = 1;
 
-			if(!isTrack) {
+			if(!isTrack) { // Put up Rack
+				lastPos = 2;
 
-				rackVar.output = pTerm(RACK_UP, rackPot.get_value(), kP);
+				rackPID.withConst(0.13).calculate(RACK_UP, rackPot.get_value());
+				rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
-				if(rackVar.output > rackVar.slewOutput + accel) {
-			    rackVar.slewOutput += accel;
-			  } else {
-			    rackVar.slewOutput = rackVar.output;
-			  }
+		  } else { // Tower Placement
+				lastPos = 1;
 
-				rack(rackVar.slewOutput);
-
-		  } else {
-
-				rackVar.output = pTerm(RACK_TOWER+150, rackPot.get_value(), kP+0.6);
-
-				if(rackVar.output > rackVar.slewOutput + accel) {
-			    rackVar.slewOutput += accel;
-			  } else {
-			    rackVar.slewOutput = rackVar.output;
-			  }
-
-				rack(rackVar.slewOutput);
-			}
-
-		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
-
-			lastBtn = 2;
-			rackVar.output = pTerm(RACK_DOWN, rackPot.get_value(), kP + 0.3);
-
-			if(abs(rackVar.output) > rackVar.slewOutput + accel) {
-		    rackVar.slewOutput += accel;
-		  } else {
-		    rackVar.slewOutput = abs(rackVar.output);
-		  }
-
-			rack(-rackVar.slewOutput);
-
-		} else if(rackVar.slewOutput > 0) {
-			if(lastBtn == 1) {
-
-			  rackVar.slewOutput -= decel;
-				rack(rackVar.slewOutput);
-
-			} else if(lastBtn == 2) {
-
-				rackVar.slewOutput -= decel;
-				rack(-rackVar.slewOutput);
+				rackPID.withConst(0.4).calculate(RACK_TOWER, rackPot.get_value());
+				rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 			}
-		} else {
 
-			rackVar.slewOutput = 0;
-			rack(0);
+		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) { // Goin' Down
+			lastPos = 0;
+
+			rackPID.withConst(0.43).calculate(RACK_DOWN, rackPot.get_value());
+			rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
+
+		} else { // Stop
+
+			if(lastPos == 2) {
+				rackPID.calculate(RACK_UP, rackPot.get_value());
+			} else if(lastPos == 1) {
+				rackPID.calculate(RACK_TOWER, rackPot.get_value());
+			} else if(lastPos == 0) {
+				rackPID.calculate(RACK_DOWN, rackPot.get_value());
+			}
+
+			rackSlew.withLimit(rackPID.getOutput()).calculate(0);
 
 		}
 
-		// Roller
+		Rack.move_velocity(rackSlew.getOutput());
+
+		/*--------------------------------
+				ROLLERS
+		--------------------------------*/
 		if(master.get_digital(DIGITAL_R1)) {
 
 			roller.calculate(200);
@@ -120,11 +94,18 @@ void opcontrol() {
 
 		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6 || towerMode == 420) ::roller(roller.getOutput());
 
+		#ifdef DEBUG
+		std::cout << "Rack: " << Rack.get_current_draw() << "mA, Arm: " << Arm.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
+		#endif
+
 		// Yeet
 		pros::delay(20);
 	}
 }
 
+/*--------------------------------
+    ARM
+--------------------------------*/
 void macroTask(void* ignore) {
 
 	double armTarget, tolerance = 3;
@@ -134,7 +115,7 @@ void macroTask(void* ignore) {
 
 	towerMode = 0;
 
-	while(true) {
+	while (true) {
 		if(!master.is_connected()) { disconnected = true; pros::delay(20); continue; }
 		if(isReset) { towerMode = 0; isReset = false; disconnected = false; armReset(); pros::delay(20); continue; }
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400 && !disconnected) {
@@ -196,7 +177,7 @@ void macroTask(void* ignore) {
 			}
 
 			case 420: {
-				Arm.set_current_limit(50);
+				Arm.set_current_limit(500);
 				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				break;
 			}
@@ -204,7 +185,7 @@ void macroTask(void* ignore) {
 			default: {
 				disconnected = false;
 
-				Arm.set_current_limit(1000);
+				Arm.set_current_limit(2000);
 				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);

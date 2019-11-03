@@ -18,14 +18,13 @@ ControlAsync::isArm = false,
 ControlAsync::isZeroing = false,
 ControlAsync::isDown = false;
 
-bool ControlAsync::isWait = false;
-int ControlAsync::wait = 0;
+bool ControlAsync::usingGyro = false;
 
 int ControlAsync::sturn = 0;
 
-PID ControlAsync::chassisVar = {0, 0, 0, 0, 0};
-PID ControlAsync::rackVar = {0, 0, 0, 0, 0};
-PID ControlAsync::armVar = {0, 0, 0, 0, 0};
+PIDS ControlAsync::chassisVar = {0, 0, 0, 0, 0};
+PIDS ControlAsync::rackVar = {0, 0, 0, 0, 0};
+PIDS ControlAsync::armVar = {0, 0, 0, 0, 0};
 
 Vector2 ControlAsync::chassis_target = {0, 0, 0};
 Vector2 ControlAsync::rack_target = {0, 0, 0};
@@ -165,12 +164,6 @@ void ControlAsync::update() {
       } else if(isDown) { ::arm(0); isZeroing = false; }
     }
 
-
-    if(isWait && !isDisabled()) {
-      ::wait(wait);
-      isWait = false;
-    }
-
     /*===========================================
       DRIVING
     ===========================================*/
@@ -231,9 +224,14 @@ void ControlAsync::update() {
 
     if(isTurn) {
       if(chassis_target.length > 0) { // Turn Right
-        deltaL = (LF.get_position() + LB.get_position()) / 2;
-        deltaR = (RF.get_position() + RB.get_position()) / 2;
-        chassisVar.current = ( deltaL + abs(deltaR) ) / 2;
+        if(!usingGyro) {
+          deltaL = (LF.get_position() + LB.get_position()) / 2;
+          deltaR = (RF.get_position() + RB.get_position()) / 2;
+          chassisVar.current = ( deltaL + abs(deltaR) ) / 2;
+        } else {
+          chassisVar.current = Gyro.get_value();
+        }
+
         chassisVar.error = chassis_target.length - chassisVar.current;
 
         chassisVar.output = pTerm(chassis_target.length, chassisVar.current, chassis_kP) + dTerm(chassisVar.error, chassisVar.last) * chassis_kD;
@@ -251,13 +249,18 @@ void ControlAsync::update() {
         left(chassisVar.slewOutput);
         right(-chassisVar.slewOutput);
 
-        if(isSettled(chassisVar.error, 6)) { reset_drive(); isTurn = false; }
+        if(isSettled(chassisVar.error, 6)) { reset_drive(); isTurn = false; usingGyro = false; }
       }
 
       if(chassis_target.length < 0) { // Turn Left
-        deltaL = (LF.get_position() + LB.get_position()) / 2;
-        deltaR = (RF.get_position() + RB.get_position()) / 2;
-        chassisVar.current = ( abs(deltaL) + deltaR ) / 2;
+        if(!usingGyro) {
+          deltaL = (LF.get_position() + LB.get_position()) / 2;
+          deltaR = (RF.get_position() + RB.get_position()) / 2;
+          chassisVar.current = ( abs(deltaL) + deltaR ) / 2;
+        } else {
+          chassisVar.current = Gyro.get_value();
+        }
+
         chassisVar.error = chassis_target.length + chassisVar.current;
 
         chassisVar.output = pTerm(chassis_target.length, -chassisVar.current, chassis_kP) + dTerm(chassisVar.error, chassisVar.last) * chassis_kD;
@@ -275,7 +278,23 @@ void ControlAsync::update() {
         left(-chassisVar.slewOutput);
         right(chassisVar.slewOutput);
 
-        if(isSettled(chassisVar.error, 6)) { reset_drive(); isTurn = false; }
+        if(isSettled(chassisVar.error, 6)) { reset_drive(); isTurn = false; usingGyro = false; }
+      }
+
+      if(chassis_target.length == 0) { // Hold Angle
+        chassisVar.current = Gyro.get_value();
+        chassisVar.error = chassis_target.length - chassisVar.current;
+
+        chassisVar.output = pTerm(chassis_target.length, chassisVar.current, 0.5) + dTerm(chassisVar.error, chassisVar.last) * 1;
+
+        chassisVar.last = chassisVar.error;
+
+        chassisVar.slewOutput = chassisVar.output;
+
+        if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
+
+        left(chassisVar.slewOutput);
+        right(-chassisVar.slewOutput);
       }
     }
 
@@ -412,6 +431,8 @@ void ControlAsync::turn(double length, int speed, int rate) {
   this -> chassis_target.length = length;
   this -> chassis_target.speed = speed;
   this -> chassis_target.rate = rate;
+
+  if(usingGyro) Gyro.reset();
   isTurn = true;
 }
 
@@ -423,14 +444,22 @@ void ControlAsync::strafe(double length, int speed, int rate) {
   isStrafe = true;
 }
 
-ControlAsync& ControlAsync::withSturn(int sturn) {
-  this -> sturn = sturn;
+void ControlAsync::hold_angle() {
+  reset_drive();
+  this -> chassis_target.length = 0;
+  this -> chassis_target.speed = 100;
+  this -> chassis_target.rate = 9;
+  Gyro.reset();
+  isTurn = true;
+}
+
+ControlAsync& ControlAsync::withGyro() {
+  usingGyro = true;
   return *this;
 }
 
-ControlAsync& ControlAsync::withDelay(int ms) {
-  this -> wait = ms;
-  isWait = true;
+ControlAsync& ControlAsync::withSturn(int sturn) {
+  this -> sturn = sturn;
   return *this;
 }
 

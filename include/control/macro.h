@@ -13,10 +13,10 @@ void rack(int speed);
 void arm(int speed);
 
 // Rotates the rollers in a given speed. Use negative values for going down. Uses RPM for speed.
-int roller(int speed);
+void roller(int speed);
 
 // Rotates the rollers in a given speed to a given point. Use negative values for going down. Uses RPM for speed.
-int roller(double rot, int speed);
+void roller(double rot, int speed);
 
 
 /*--------------------------------
@@ -56,6 +56,9 @@ class Slew {
   public:
     Slew(double accel_);
     Slew(double accel_, double decel_);
+    Slew(double accel_, double decel_, bool reversible_);
+
+    Slew& withLimit(double input);
 
     double calculate(double input);
 
@@ -65,9 +68,28 @@ class Slew {
     void reset();
 
   private:
-    const double accel, decel;
-    double input, output;
-    bool noDecel;
+    double accel, decel;
+    double input, output, limit;
+    bool isReversible, noDecel, isLimited;
+};
+
+class PID {
+  public:
+    PID(double kP_);
+    PID(double kP_, double kD_);
+
+    PID& withConst(double kP_);
+    PID& withConst(double kP_, double kD_);
+
+    double calculate(double target, double input);
+
+    double getError();
+    double getOutput();
+
+  private:
+    double kP, kD;
+
+    double current, error, last, derivative, output;
 };
 
 

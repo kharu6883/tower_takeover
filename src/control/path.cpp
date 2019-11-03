@@ -51,12 +51,13 @@ void Path::update() {
 
       switch(Auton.getType()) {
         case SLOT_RED: {
-          withPoint({-3.6_ft, -6_ft, 0_deg}).gen("yeety");
+          withPoint({-3_ft, -7.7_ft, 0_deg}).gen("yeety");
+          withPoint({3_ft, -7.5_ft, 0_deg}).gen("yeet");
           break;
         }
 
         case SLOT_BLUE: {
-          withPoint({3.6_ft, -6_ft, 0_deg}).gen("yote");
+          withPoint({3.5_ft, -8_ft, 0_deg}).gen("yote");
           break;
         }
 

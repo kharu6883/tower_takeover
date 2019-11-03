@@ -5,6 +5,8 @@
 
 #define PROS_USE_LITERALS
 
+// #define DEBUG
+
 // Nice includes below
 #include "api.h"
 #include "pros/apix.h"
@@ -23,7 +25,7 @@ struct Vector2 {
   int rate;
 };
 
-struct PID {
+struct PIDS {
   double current, error, last, output, slewOutput;
 };
 
@@ -39,7 +41,7 @@ LV_IMG_DECLARE(logo);
 LV_IMG_DECLARE(michael1);
 LV_IMG_DECLARE(michael2);
 
-// Motor ports & ADI
+// Motor ports
 #define RFPORT 1
 #define RBPORT 2
 #define LFPORT 9
@@ -48,18 +50,22 @@ LV_IMG_DECLARE(michael2);
 #define RACK 5
 #define ARM 6
 
-#define FLAPL 8
+#define FLAPL 7
 #define FLAPR 3
 
+// ADI
 #define RACKPOT 1
-#define ARMPOT 7
 #define ARMLIMIT 2
+
+#define ULTRARPING 3
+#define ULTRARECHO 4
 
 #define ULTRALPING 5
 #define ULTRALECHO 6
 
-#define ULTRARPING 3
-#define ULTRARECHO 4
+#define SELECTOR 7
+
+#define GYRO 8
 
 // Vision Constants
 #define FRONTVISION 11
@@ -73,7 +79,7 @@ LV_IMG_DECLARE(michael2);
 // Constants
 #define RACK_DOWN 900
 #define RACK_UP 3615
-#define RACK_TOWER 1800
+#define RACK_TOWER 1950
 
 #define ARM_BOTTOM 0
 #define ARM_LOW_TOWER 1.3
@@ -106,6 +112,7 @@ void opcontrol(void);
 
 #ifdef __cplusplus
 
+#include <ostream>
 #include <iostream>
 #include <chrono>
 #include <ctime>

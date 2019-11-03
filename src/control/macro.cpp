@@ -14,14 +14,16 @@ void arm(int speed) {
   Arm.move_velocity(speed);
 }
 
-int roller(int speed) {
-  if(RollerL.move_velocity(speed) == EACCES || RollerR.move_velocity(speed) == EACCES) return EACCES;
-  else return 1;
+void roller(int speed) {
+  RollerL.move_velocity(speed);
+  wait(50);
+  RollerR.move_velocity(speed);
 }
 
-int roller(double rot, int speed) {
-  if(RollerL.move_relative(rot, speed) == EACCES || RollerR.move_relative(rot, speed) == EACCES) return EACCES;
-  else return 1;
+void roller(double rot, int speed) {
+  RollerL.move_relative(rot, speed);
+  wait(20);
+  RollerR.move_relative(rot, speed);
 }
 
 
@@ -317,15 +319,70 @@ Slew::Slew(double accel_, double decel_) : accel(accel_), decel(decel_) {
   noDecel = false;
 }
 
+Slew::Slew(double accel_, double decel_, bool reversible_) : accel(accel_), decel(decel_), isReversible(reversible_) {
+  noDecel = false;
+}
+
+Slew& Slew::withLimit(double input) {
+
+  isLimited = true;
+  limit = input;
+
+  return *this;
+}
+
 double Slew::calculate(double input) {
   if(!noDecel) {
 
-    if(input > output + accel) {
-      output += accel;
-    } else if(input < output - decel) {
-      output -= decel;
+    if(!isReversible) {
+      if(input > output + accel) {
+        output += accel;
+      } else if(input < output - decel) {
+        output -= decel;
+      } else {
+        output = input;
+      }
     } else {
-      output = input;
+      if(input > 0) {
+        if(input > output + accel) {
+          output += accel;
+        } else if(input < output - decel) {
+          output -= decel;
+        } else {
+          output = input;
+        }
+      }
+
+      if(input < 0) {
+        if(input < output - accel) {
+          output -= accel;
+        } else if(input > output + decel) {
+          output += decel;
+        } else {
+          output = input;
+        }
+      }
+
+      if(input == 0) {
+        if(input < output - decel) {
+          output -= decel;
+        } else if(input > output + decel) {
+          output += decel;
+        } else {
+          output = input;
+        }
+      }
+    }
+
+
+    if(isLimited) {
+      if(limit > 0 && output > limit) {
+        output = limit;
+      }
+
+      if(limit < 0 && output < limit) {
+        output = limit;
+      }
     }
 
   } else {
@@ -353,6 +410,40 @@ double Slew::getOutput() {
 
 void Slew::reset() {
   input = output = 0;
+}
+
+PID::PID(double kP_) : kP(kP_), kD(0) { }
+
+PID::PID(double kP_, double kD_) : kP(kP_), kD(kD_) { }
+
+PID& PID::withConst(double kP_) {
+  kP = kP_;
+  return *this;
+}
+
+PID& PID::withConst(double kP_, double kD_) {
+  kP = kP_;
+  kD = kD_;
+  return *this;
+}
+
+double PID::calculate(double target, double input) {
+
+  error = target - input;
+
+  output = ( error * kP ) + ( error - last ) * kD;
+
+  last = error;
+
+  return output;
+}
+
+double PID::getError() {
+  return error;
+}
+
+double PID::getOutput() {
+  return output;
 }
 
 
@@ -390,13 +481,13 @@ double slop(int mode, double offset, double amp_) {
 
   switch(mode) {
     case 1:
-      return (deltaL - deltaR + offset) / (amp + amp_);
+      return (deltaL - deltaR + offset) / ( amp + amp_ );
       break;
 
     case 2:
       deltaL = ( LF.get_position() - LB.get_position() ) / 2;
-      deltaR = ( RB.get_position() - RF.get_position() ) / 2;
-      return ( deltaL - deltaR ) / amp + offset;
+      deltaR = ( RF.get_position() - RB.get_position() ) / 2;
+      return ( deltaL - deltaR ) / ( amp + amp_ ) + offset;
       break;
 
     default:

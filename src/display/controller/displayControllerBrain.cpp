@@ -49,10 +49,12 @@ static lv_obj_t * expVal;
 
 static lv_obj_t * visorCont;
 
+static lv_obj_t * gyroVal;
+
 static lv_res_t main_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
-  lv_obj_del(scr);
+  lv_page_clean(scr);
 
   BrainDisplay display;
 
@@ -92,6 +94,7 @@ static lv_res_t settings_click_action(lv_obj_t * btn) {
 
   switch(id) {
     case 1: setReset(true); break;
+    case 2: Gyro.reset(); break;
   }
 
   return LV_RES_OK;
@@ -99,6 +102,8 @@ static lv_res_t settings_click_action(lv_obj_t * btn) {
 
 static lv_res_t system_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
+
+  lv_page_clean(scr);
 
   BrainDisplay display;
 
@@ -200,11 +205,10 @@ BrainDisplay::BrainDisplay() {
     initialized = true;
 
     pros::delay(200);
-  }
 
-  screen = 0;
-  scr = lv_page_create(NULL, NULL);
-  lv_scr_load(scr);
+    scr = lv_page_create(NULL, NULL);
+    main();
+  }
 }
 
 void BrainDisplay::main() {
@@ -222,6 +226,8 @@ void BrainDisplay::main() {
   lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_GPS" Sensors", lv_scr_act(), main_click_action);
   lv_obj_t * btnCamera = createButton(3, 250, 140, 200, 40, SYMBOL_IMAGE" Camera", lv_scr_act(), main_click_action);
   lv_obj_t * btnSetting = createButton(4, 250, 185, 200, 40, SYMBOL_SETTINGS" Settings", lv_scr_act(), main_click_action);
+
+  lv_scr_load(scr);
 }
 
 void BrainDisplay::auton() {
@@ -299,11 +305,17 @@ void BrainDisplay::auton() {
       break;
     }
   }
+
+  lv_scr_load(scr);
 }
 
 void BrainDisplay::sensor() {
   screen = 2;
   lv_obj_set_x(btnBack, 5);
+
+  gyroVal = createLabel(50, 50, "Gyro", lv_scr_act());
+
+  lv_scr_load(scr);
 }
 
 void BrainDisplay::camera() {
@@ -319,6 +331,8 @@ void BrainDisplay::camera() {
   lv_obj_t * expDec = createButton(1, 0, 25, 40, 40, SYMBOL_LEFT, scr, camera_click_action);
   expVal = createLabel(52, 35, "Exp", scr);
   lv_obj_t * expInc = createButton(2, 85, 25, 40, 40, SYMBOL_RIGHT, scr, camera_click_action);
+
+  lv_scr_load(scr);
 }
 
 void BrainDisplay::setting() {
@@ -327,15 +341,18 @@ void BrainDisplay::setting() {
   lv_obj_set_x(btnBack, 5);
 
   lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
+  lv_obj_t * gyro_reset = createButton(2, 0, 80, 200, 50, "Calibrate Gyro", scr, settings_click_action);
 
   lv_obj_t * hotSauce = lv_img_create(scr, NULL);
   lv_img_set_src(hotSauce, &michael1);
   lv_obj_set_size(hotSauce, 240, 240);
   lv_obj_set_pos(hotSauce, 240, 0);
+
+  lv_scr_load(scr);
 }
 
 void BrainDisplay::update() {
-  int lastType, lastSlot;
+  int nowType, lastType, nowSlot, lastSlot;
   std::string name;
   const char * c;
 
@@ -363,6 +380,9 @@ void BrainDisplay::update() {
       }
 
       case 2: { // Sensor
+        std::string gyro;
+        gyro = "Gyro: " + std::to_string(Gyro.get_value() / 10);
+        lv_label_set_text(gyroVal, gyro.c_str());
         break;
       }
 
@@ -410,7 +430,9 @@ void BrainDisplay::update() {
     }
 
     // Auton name display
-    if(lastType != Auton.getType() || lastSlot != Auton.getSlot()) {
+    nowType = Auton.getType();
+    nowSlot = Auton.getSlot();
+    if(lastType != nowType || lastSlot != nowSlot) {
       name.erase(name.begin() + 16, name.end());
       name.append(Auton.getName(Auton.getType(), Auton.getSlot()));
       c = name.c_str();
@@ -443,8 +465,9 @@ void BrainDisplay::update() {
       }
     }
 
-    lastType = Auton.getType();
-    lastSlot = Auton.getSlot();
+    lastType = nowType;
+    lastSlot = nowSlot;
+
     pros::delay(20);
   }
 }

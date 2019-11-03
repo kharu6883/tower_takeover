@@ -6,57 +6,29 @@
 using namespace Display;
 
 static Autonomous Auton;
-static int count = 0;
 
-bool RemoteDisplay::isSetting = false;
 const char *RemoteDisplay::text = "";
 
-okapi::Controller(controller);
-
-RemoteDisplay::RemoteDisplay() {
-
-}
+RemoteDisplay::RemoteDisplay() {}
 
 void RemoteDisplay::update() {
-  int type = 1, slot = 0, limit = Auton.getSize(type);
   int lastType, lastSlot;
 
   while(true) {
-    if(master.get_digital_new_press(DIGITAL_B)) type++;
-    if(type > 3) type = 0;
-
-    limit = Auton.getSize(type);
-
-    if(master.get_digital_new_press(DIGITAL_Y)) slot++;
-    if(slot > limit) slot = 0;
-
-    if(lastType != type || lastSlot != slot) {
-      setText(Auton.getAbbv(type, slot).c_str());
+    if((Auton.getType() != lastType || Auton.getSlot() != lastSlot)) {
+      std::string setter = Auton.getAbbv(Auton.getType(), Auton.getSlot()) + "       ";
+      master.set_text(0, 0, setter.c_str());
+      lastType = Auton.getType();
+      lastSlot = Auton.getSlot();
     }
-
-    if(master.get_digital_new_press(DIGITAL_A)) {
-      Auton.setType(type);
-      Auton.setSlot(slot);
-    }
-
-    lastType = type;
-    lastSlot = slot;
-
-    if(isSetting) {
-      master.set_text(0, 0, text);
-      isSetting = false;
-    }
-
-    pros::delay(1000);
+    
+    pros::delay(20);
   }
 }
 
-void RemoteDisplay::setText(const char *set) {
-  // std::string applier;
-  // applier.append(set);
-  // applier.append("            ");
-  text = set;
-  isSetting = true;
+void RemoteDisplay::setText(std::string text_) {
+  text_.append("");
+  text = text_.c_str();
 }
 
 void RemoteDisplay::run(void *ignore) {
