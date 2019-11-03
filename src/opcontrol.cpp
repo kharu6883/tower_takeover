@@ -17,7 +17,7 @@ void opcontrol() {
 	armAsync.resume();
 
 	Slew roller(60, 80); // Accel, Decel
-	Slew rackSlew(20, 60, true); // Accel, Decel
+	Slew rackSlew(30, 60, true); // Accel, Decel
 	PID rackPID(0.13); // kP
 
 	while (true) {

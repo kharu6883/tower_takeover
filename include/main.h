@@ -5,7 +5,7 @@
 
 #define PROS_USE_LITERALS
 
-#define DEBUG 0
+// #define DEBUG
 
 // Nice includes below
 #include "api.h"
@@ -50,7 +50,7 @@ LV_IMG_DECLARE(michael2);
 #define RACK 5
 #define ARM 6
 
-#define FLAPL 8
+#define FLAPL 7
 #define FLAPR 3
 
 // ADI
@@ -63,7 +63,7 @@ LV_IMG_DECLARE(michael2);
 #define ULTRALPING 5
 #define ULTRALECHO 6
 
-#define ARMPOT 7
+#define SELECTOR 7
 
 #define GYRO 8
 

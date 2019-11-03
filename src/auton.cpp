@@ -28,7 +28,8 @@ void start() {            // Deploy and zero arm
   wait(50);
   //Thread.drive(-70,100,9);
   armReset();
-  wait(200);
+  Thread.drive(-70,150,9);
+  wait(300);
   Thread.disable_drive();
   unlockChassis();
 }
@@ -36,14 +37,13 @@ void start() {            // Deploy and zero arm
 /*===========================================
   RED MATCH AUTONOMOUSES
 ===========================================*/
-void r_s_7()
-{
+void r_s_7() {
 
   start();
   roller(200);
   // Pick up 4 cubes
 
-  drive(1100, 105, 9, 10000, 0);
+  drive(1200, 145, 9, 10000, 0);
 
   // Yoink 3 more cubes and turn right facing small red corner
   path.run("yeety", true);
@@ -51,19 +51,18 @@ void r_s_7()
 
   drive(1200, 140, 9, 10000, 0);
   Thread.disable_arm();
-  turn(730, 160, 7);
+  turn(720,680, 7);
 
   // Drive to small red corner and place
   roller(-23);
   Thread.drive(1450, 150, 9);
-  rack(RACK_UP, 95, 6);
+  rack(RACK_UP, 110, 6);
 
   // Yeet outta there
   Thread.drive(-300, 200, 10);
   roller(-200);
   rack(RACK_DOWN, 200, 15);
 }
-
 void r_s_8() {            // red small 8 cube
 
   start();
@@ -147,33 +146,35 @@ void r_b_orange() {       // red big orange cube
 /*===========================================
   BLUE MATCH AUTONOMOUSES
 ===========================================*/
-void b_s_7()
-{
-  start();
- roller(200);
- // Pick up 4 cubes
+void b_s_7() {
 
- drive(1100, 105, 9, 10000, 0);
 
- // Yoink 3 more cubes and turn right facing small red corner
- path.run("yote", true);
- path.del("yote");
+    start();
+    roller(200);
+    // Pick up 4 cubes
 
- drive(1200, 140, 9, 10000, 0);
- Thread.disable_arm();
- turn(-700, 160, 7);
+    drive(1250, 145, 9, 10000, 0);
 
- // Drive to small red corner and place
- roller(-23);
- Thread.drive(1450, 150, 9);
- rack(RACK_UP, 95, 6);
+    // Yoink 3 more cubes and turn right facing small red corner
+    path.run("yote", true);
+    path.del("y0te");
 
- // Yeet outta there
- Thread.drive(-300, 200, 10);
- roller(-200);
- rack(RACK_DOWN, 200, 15);
+    drive(1200, 145, 9, 10000, 0);
+    Thread.disable_arm();
+    turn(-690, 160, 7);
+
+    // Drive to small red corner and place
+    roller(-25);
+    Thread.drive(1500, 150, 9);
+    rack(RACK_UP, 100, 6);
+
+    // Yeet outta there
+    Thread.drive(-300, 200, 10);
+    roller(-200);
+    rack(RACK_DOWN, 200, 15);
+
+
 }
-
 void b_s_8() {            // blue small 8 cube
   start();
   roller(200);
@@ -265,11 +266,11 @@ void skills1() {          // official skills
   wait(250);
   roller(0);
   Thread.drive(550,130,7);
-  roller(0);
+  roller(100);
   rack(1500, 200, 11);
+  roller(200);
   wait(200);
   Thread.disable_drive();
-  roller(200);
   Thread.rack(RACK_DOWN, 200, 15);
   roller(100);
   turn(70, 200, 6);
@@ -287,13 +288,15 @@ void skills1() {          // official skills
   Thread.disable_drive();
   roller(200);
   Thread.disable_rack();
-  turn(-360,150,5);
+  turn(-380,150,5);
   roller(0);
   roller(-31);
-  Thread.drive(550, 80, 6);
+  Thread.drive(600, 80, 6);
   rack(RACK_UP, 135, 11);
   Thread.disable_drive();
-  wait(600);
+  wait(300);
+  Thread.disable_rack();
+
   //score 7 cubes in small blue zone
   roller(-200);
   Thread.rack(RACK_DOWN, 200, 15);
@@ -309,22 +312,21 @@ void skills1() {          // official skills
   Thread.disable_arm();
   armReset();
   roller(200);
-  wait(100);
   drive(1200,90,4);
   roller(100);
   wait(200);
 
   // Low
   tower(1);
-  turn(-250, 150, 4);
-  roller(-80);
+  turn(-220, 150, 4);
+  roller(-70);
   drive(150,150,8);
 
   // Drive to red tower and drop out cube
   drive(-150,150,4);
   roller(200);
-  Thread.arm(ARM_BOTTOM-0.2, 200, 20);
-  turn(260, 150, 4);
+  Thread.arm(ARM_BOTTOM-0.2, 150, 10);
+  turn(230, 150, 4);
   roller(200);
   drive(1600,90,6);
   Thread.disable_arm();
@@ -336,11 +338,11 @@ void skills1() {          // official skills
   // Lift arm to mid tower height
   turn(330,80,7);
   drive(240,150,5);
-  roller(-180);
+  roller(-160);
 
   // Spit cube into the mid tower
   wait(500);
-  Thread.arm(ARM_BOTTOM-0.2, 200, 20);
+  Thread.arm(ARM_BOTTOM-0.2, 200, 10);
   roller(200);
 
   drive(-700,200,5);
