@@ -8,8 +8,6 @@
 #include "control/macro.h"
 #include "control/vision.h"
 
-using namespace Display;
-
 Autonomous Auton;
 Vision CamFront(FRONTVISION);
 Camera Feed(FRONTVISION);
@@ -56,7 +54,7 @@ static lv_res_t main_click_action(lv_obj_t * btn) {
 
   lv_page_clean(scr);
 
-  BrainDisplay display;
+  Display display;
 
   if(id == 1) { display.auton(); }
   if(id == 2) { display.sensor(); }
@@ -105,7 +103,7 @@ static lv_res_t system_action(lv_obj_t * btn) {
 
   lv_page_clean(scr);
 
-  BrainDisplay display;
+  Display display;
 
   switch(id) {
     case 1: auton_type = 1; display.auton(); break;
@@ -118,7 +116,7 @@ static lv_res_t system_action(lv_obj_t * btn) {
   return LV_RES_OK;
 }
 
-BrainDisplay::BrainDisplay() {
+Display::Display() {
   if(!initialized) {
     // Theme & Style init
     lv_theme_t *th = lv_theme_alien_init(120, NULL);
@@ -211,7 +209,7 @@ BrainDisplay::BrainDisplay() {
   }
 }
 
-void BrainDisplay::main() {
+void Display::main() {
   screen = 0;
 
   lv_obj_t *img = lv_img_create(scr, NULL);
@@ -230,7 +228,7 @@ void BrainDisplay::main() {
   lv_scr_load(scr);
 }
 
-void BrainDisplay::auton() {
+void Display::auton() {
   screen = 1;
 
   lv_obj_set_x(btnBack, 5);
@@ -309,7 +307,7 @@ void BrainDisplay::auton() {
   lv_scr_load(scr);
 }
 
-void BrainDisplay::sensor() {
+void Display::sensor() {
   screen = 2;
   lv_obj_set_x(btnBack, 5);
 
@@ -318,7 +316,7 @@ void BrainDisplay::sensor() {
   lv_scr_load(scr);
 }
 
-void BrainDisplay::camera() {
+void Display::camera() {
   screen = 3;
 
   lv_obj_set_x(btnBack, 5);
@@ -335,7 +333,7 @@ void BrainDisplay::camera() {
   lv_scr_load(scr);
 }
 
-void BrainDisplay::setting() {
+void Display::setting() {
   screen = 4;
 
   lv_obj_set_x(btnBack, 5);
@@ -351,7 +349,7 @@ void BrainDisplay::setting() {
   lv_scr_load(scr);
 }
 
-void BrainDisplay::update() {
+void Display::run() {
   int nowType, lastType, nowSlot, lastSlot;
   std::string name;
   const char * c;
@@ -468,19 +466,31 @@ void BrainDisplay::update() {
     lastType = nowType;
     lastSlot = nowSlot;
 
+    remoteUpdate();
+
     pros::delay(20);
   }
 }
 
-void BrainDisplay::run(void* ignore) {
+void Display::start(void* ignore) {
   pros::delay(500);
-  BrainDisplay* that = static_cast<BrainDisplay*>(ignore);
-  that -> update();
+  Display* that = static_cast<Display*>(ignore);
+  that -> run();
 }
 
-// Macros
+void Display::remoteUpdate() {
+  lastAutonType = Auton.getType();
+  lastAutonSlot = Auton.getSlot();
 
-lv_obj_t * BrainDisplay::createLabel(int x, int y, std::string text_, lv_obj_t * parent) {
+  if((Auton.getType() != lastAutonType || Auton.getSlot() != lastAutonSlot)) {
+    std::string setter = Auton.getAbbv(Auton.getType(), Auton.getSlot()) + "       ";
+    master.set_text(0, 0, setter.c_str());
+    lastAutonType = Auton.getType();
+    lastAutonSlot = Auton.getSlot();
+  }
+}
+
+lv_obj_t * Display::createLabel(int x, int y, std::string text_, lv_obj_t * parent) {
   lv_obj_t * label = lv_label_create(parent, NULL);
   lv_obj_set_pos(label, x, y);
   const char * text;
@@ -490,7 +500,7 @@ lv_obj_t * BrainDisplay::createLabel(int x, int y, std::string text_, lv_obj_t *
   return label;
 }
 
-lv_obj_t * BrainDisplay::createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action) {
+lv_obj_t * Display::createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action) {
   lv_obj_t * button = lv_btn_create(parent, NULL);
   lv_obj_set_pos(button, x, y);
   lv_obj_set_size(button, width, height);
@@ -502,7 +512,7 @@ lv_obj_t * BrainDisplay::createButton(int id, int x, int y, int width, int heigh
   return button;
 }
 
-lv_obj_t * BrainDisplay::drawRectangle(int x, int y, int width, int height, lv_color_t stroke, lv_color_t fill, lv_obj_t * parent) {
+lv_obj_t * Display::drawRectangle(int x, int y, int width, int height, lv_color_t stroke, lv_color_t fill, lv_obj_t * parent) {
   lv_obj_t * obj = lv_obj_create(parent, NULL);
 
   lv_style_t *style1 = (lv_style_t *)malloc( sizeof( lv_style_t ));

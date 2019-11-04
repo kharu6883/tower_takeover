@@ -12,8 +12,7 @@ class ControlAsync {
 
     // Getters and Setters
     bool isDisabled();
-
-
+    
     void reset_drive();
     void drive(double length, int speed, int rate);
     void turn(double length, int speed, int rate);

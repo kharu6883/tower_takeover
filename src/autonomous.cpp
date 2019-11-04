@@ -2,6 +2,7 @@
 
 #include "control/asyncController.h"
 #include "control/autonController.h"
+#include "config/io.h"
 using namespace okapi;
 using namespace std;
 
@@ -159,4 +160,49 @@ std::string Autonomous::getAbbv(int type_, int slot_) {
       break;
     }
   }
+}
+
+void Autonomous::run() {
+  bool isPressed, isReleased, isHeld;
+  int dT;
+
+  okapi::Timer timer;
+
+  while(true) {
+    if(selector.get_value()) isPressed = true;
+      else isPressed = false;
+
+    if(selector.get_value()) {
+			int last = timer.millis().convert(okapi::millisecond);
+			while(selector.get_value()) pros::delay(20);
+			int now = timer.millis().convert(okapi::millisecond);
+			isReleased = true;
+			dT = now - last;
+		}
+
+    if(dT > 500) {
+      isHeld = true;
+      dT = 0;
+    }
+
+    if(isReleased && !isHeld) {
+      slot++;
+      isReleased = false;
+    } else if(isReleased && isHeld) {
+      type++;
+      isReleased = false;
+      isHeld = false;
+    }
+
+    if(type > SLOT_SKILLS) type = SLOT_RED;
+    if(slot >= getSize(getType())) slot = 0;
+
+    pros::delay(20);
+  }
+}
+
+void Autonomous::start(void* ignore) {
+  pros::delay(500);
+  Autonomous* that = static_cast<Autonomous*>(ignore);
+  that -> run();
 }

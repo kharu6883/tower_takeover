@@ -42,10 +42,6 @@ LV_IMG_DECLARE(michael1);
 LV_IMG_DECLARE(michael2);
 
 // Motor ports
-#define RFPORT 1
-#define RBPORT 2
-#define LFPORT 9
-#define LBPORT 10
 
 #define RACK 5
 #define ARM 6

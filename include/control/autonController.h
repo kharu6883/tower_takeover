@@ -24,6 +24,9 @@ class Autonomous {
     std::string getName(int type_, int slot_);
     std::string getAbbv(int type_, int slot_);
 
+    void run();
+    static void start(void* ignore);
+
   private:
     static bool isInitialized;
     static int type, slot;
