@@ -25,7 +25,6 @@ Chassis& Chassis::withSlop(double amp_, double offset_) {
 
 Chassis& Chassis::runOnThread() {
   if(!isRunning) pros::Task ChassisController(start, NULL, "Chassis Controller");
-
   usingThread = true;
   return *this;
 }
