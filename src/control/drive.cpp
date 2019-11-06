@@ -415,7 +415,7 @@ void align(double target, double tolerance) {
   double errorL, errorR, lastL, lastR, outputL, outputR;
   double now, last, elapsed;
 
-  double kP = 0.7, kI = 1, kD = 8;
+  double kP = 0.7, kI = 1, kD = 7;
 
   reset();
 
@@ -423,14 +423,14 @@ void align(double target, double tolerance) {
     elapsed = now - last;
     now = clock();
 
-    errorL = target - ultraL.get_value();
+    errorL = target - (ultraL.get_value()+23);
     errorR = target - ultraR.get_value();
 
     outputL = pTerm(target, ultraL.get_value(), kP) + kD * dTerm(errorL, lastL) * elapsed;
     outputR = pTerm(target, ultraR.get_value(), kP) + kD * dTerm(errorR, lastR) * elapsed;
 
-    left(outputL);
-    right(outputR);
+    left(-outputR);
+    right(-outputL);
 
     lastL = errorL;
     lastR = errorR;
@@ -441,6 +441,28 @@ void align(double target, double tolerance) {
   }
 
   reset();
+
+  //   elapsed = now - last;
+  //   now = clock();
+  //
+  //   errorL = target - ultraL.get_value();
+  //   errorR = target - ultraR.get_value();
+  //
+  //   outputL = pTerm(target, ultraL.get_value(), kP) + kD * dTerm(errorL, lastL) * elapsed;
+  //   outputR = pTerm(target, ultraR.get_value(), kP) + kD * dTerm(errorR, lastR) * elapsed;
+  //
+  //   left(outputL);
+  //   right(outputR);
+  //
+  //   lastL = errorL;
+  //   lastR = errorR;
+  //
+  //   last = clock();
+  //
+  //   if(isSettled(outputL, tolerance) && isSettled(outputR, tolerance)) break;
+  // }
+  //
+  // reset();
 }
 
 void lockChassis() {
