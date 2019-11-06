@@ -19,7 +19,7 @@ Chassis& Chassis::withTolerance(double tolerance_) {
 
 Chassis& Chassis::withSlop(double amp_, double offset_) {
   amp = amp_;
-  offset = offset_;
+  amp = offset_;
   return *this;
 }
 
@@ -60,8 +60,24 @@ void Chassis::waitUntilSettled() {
 }
 
 void Chassis::reset() {
+  target = speed = rate = 0;
   current = last = error = derivative = output = slewOutput = 0;
 
+  usingThread = false;
+}
+
+void Chassis::lock() {
+  LF.set_brake_mode(MOTOR_BRAKE_HOLD);
+  LB.set_brake_mode(MOTOR_BRAKE_HOLD);
+  RF.set_brake_mode(MOTOR_BRAKE_HOLD);
+  RB.set_brake_mode(MOTOR_BRAKE_HOLD);
+}
+
+void Chassis::unlock() {
+  LF.set_brake_mode(MOTOR_BRAKE_COAST);
+  LB.set_brake_mode(MOTOR_BRAKE_COAST);
+  RF.set_brake_mode(MOTOR_BRAKE_COAST);
+  RB.set_brake_mode(MOTOR_BRAKE_COAST);
 }
 
 void Chassis::run() {
@@ -76,17 +92,14 @@ void Chassis::run() {
 void Chassis::start(void* ignore) {
   if(!isRunning) {
     pros::delay(500);
-    that = static_cast<Chassis*>(ignore);
+    Chassis *that = static_cast<Chassis*>(ignore);
     that -> run();
   }
 }
 
-void Chassis::pause() { }
-
 void Chassis::stop() {
   reset();
   isRunning = false;
-  delete(that);
 }
 
 void Chassis::left(int speed) {
@@ -100,13 +113,8 @@ void Chassis::right(int speed) {
 }
 
 double Chassis::slop(int mode) {
-  if(amp != 0)
   switch(mode) {
     case 1: return ((LF.get_position() + LB.get_position()) / 2) + ((RF.get_position() + RB.get_position()) / 2);
-
-
-    default: { // Drive
-
-    }
+    default: return ((LF.get_position() + LB.get_position() / 2) - ((RF.get_position() + RB.get_position()) / 2) + offset) * amp; break;
   }
 }

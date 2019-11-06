@@ -24,13 +24,14 @@ class Chassis {
 
     void reset();
 
+    void lock();
+    void unlock();
+
     void run();
     static void start(void* ignore);
-    void pause();
     void stop();
 
   private:
-    static Chassis* that;
     static bool isRunning;
     static bool isSettled;
     bool usingThread;
