@@ -38,30 +38,55 @@ void start() {            // Deploy and zero arm
   RED MATCH AUTONOMOUSES
 ===========================================*/
 void r_s_7() {
-
-  start();
+  align(165,3);
+  //start();
   roller(200);
   // Pick up 4 cubes
 
-  drive(1200, 145, 9, 10000, 0);
+  drive(1200, 155, 9, 10000, 0);
 
   // Yoink 3 more cubes and turn right facing small red corner
-  path.run("yeety", true);
-  path.del("yeety");
+  path.run("yote", true);
+  path.del("yote");
 
-  drive(1200, 140, 9, 10000, 0);
+  drive(1200, 160, 9, 10000, 0);
   Thread.disable_arm();
-  turn(720,680, 7);
+  drive(-800,200,6);
+  turn(700,200, 7);
 
   // Drive to small red corner and place
   roller(-23);
-  Thread.drive(1450, 150, 9);
-  rack(RACK_UP, 110, 6);
+  Thread.drive(400,100,7);
+  rack(RACK_UP, 130, 9);
+
 
   // Yeet outta there
   Thread.drive(-300, 200, 10);
   roller(-200);
   rack(RACK_DOWN, 200, 15);
+  // start();
+  // roller(200);
+  // // Pick up 4 cubes
+  //
+  // drive(1200, 145, 9, 10000, 0);
+  //
+  // // Yoink 3 more cubes and turn right facing small red corner
+  // path.run("yeety", true);
+  // path.del("yeety");
+  //
+  // drive(1200, 140, 9, 10000, 0);
+  // Thread.disable_arm();
+  // turn(720,680, 7);
+  //
+  // // Drive to small red corner and place
+  // roller(-23);
+  // Thread.drive(1450, 150, 9);
+  // rack(RACK_UP, 110, 6);
+  //
+  // // Yeet outta there
+  // Thread.drive(-300, 200, 10);
+  // roller(-200);
+  // rack(RACK_DOWN, 200, 15);
 }
 void r_s_8() {            // red small 8 cube
 
