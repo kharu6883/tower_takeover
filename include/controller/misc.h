@@ -6,9 +6,6 @@ extern bool isStacking;
     BASIC MOVEMENT
 --------------------------------*/
 
-// Moves the rack in a given speed. Use negative values for going down. Uses RPM for speed.
-void rack(int speed);
-
 // Moves the arm speed in a given speed. Use negative values for going down. Uses RPM for speed.
 void arm(int speed);
 
@@ -22,9 +19,6 @@ void roller(double rot, int speed);
 /*--------------------------------
     COMPLEX MOVEMENT
 --------------------------------*/
-
-// Moves the rack to the target, in a given speed.
-void rack(double target, int speed, double rate);
 
 // Moves the arm to the target, in a given speed.
 void arm(double target, int speed, double rate);

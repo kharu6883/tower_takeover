@@ -3,16 +3,7 @@
 #include "config/motor.h"
 #include "config/io.h"
 
-#include "control/macro.h"
-#include "control/drive.h"
-
-void rack(int speed) {
-  Rack.move_velocity(speed);
-}
-
-void arm(int speed) {
-  Arm.move_velocity(speed);
-}
+#include "controller/misc.h"
 
 void roller(int speed) {
   RollerL.move_velocity(speed);
@@ -24,54 +15,6 @@ void roller(double rot, int speed) {
   RollerL.move_relative(rot, speed);
   wait(20);
   RollerR.move_relative(rot, speed);
-}
-
-
-
-void rack(double target, int speed, double rate) {
-  const double kP = 100;
-
-  double tolerance = 3;
-
-  double slewOutput;
-
-  while(target > rackPot.get_value()) { // Goin' up
-    double desired = pTerm(target, rackPot.get_value(), kP);
-
-    if(desired > slewOutput + rate) {
-      slewOutput += rate;
-    } else {
-      slewOutput = desired;
-    }
-
-    if(slewOutput > speed) slewOutput = speed;
-
-    if(isSettled(desired, tolerance)) break;
-
-    rack(slewOutput);
-
-    wait(20);
-  }
-
-  while(target < rackPot.get_value()) { // Goin' down
-    double desired = pTerm(target, rackPot.get_value(), kP);
-
-    if(abs(desired) > slewOutput + rate) {
-      slewOutput += rate;
-    } else {
-      slewOutput = abs(desired);
-    }
-
-    if(slewOutput > speed) slewOutput = speed;
-
-    if(isSettled(desired, tolerance)) break;
-
-    rack(-slewOutput);
-
-    wait(20);
-  }
-
-  rack(0);
 }
 
 void arm(double target, int speed, double rate) {
@@ -463,39 +406,6 @@ bool isSettled(double error, double tolerance) {
 
   return settled;
 }
-
-double slop(double amp_) {
-  const double amp = 8;
-
-  double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
-  double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
-
-  return ( deltaL - deltaR ) / (amp + amp_);
-}
-
-double slop(int mode, double offset, double amp_) {
-  const double amp = 8;
-
-  double deltaL = ( LF.get_position() + LB.get_position() ) / 2;
-  double deltaR = ( RF.get_position() + RB.get_position() ) / 2;
-
-  switch(mode) {
-    case 1:
-      return (deltaL - deltaR + offset) / ( amp + amp_ );
-      break;
-
-    case 2:
-      deltaL = ( LF.get_position() - LB.get_position() ) / 2;
-      deltaR = ( RF.get_position() - RB.get_position() ) / 2;
-      return ( deltaL - deltaR ) / ( amp + amp_ ) + offset;
-      break;
-
-    default:
-      return ( deltaL - deltaR ) / amp;
-      break;
-  }
-}
-
 
 
 void wait(int ms) {

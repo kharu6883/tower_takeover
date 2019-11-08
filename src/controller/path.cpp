@@ -2,12 +2,12 @@
 
 #include "config/io.h"
 
-#include "control/autonController.h"
-#include "control/path.h"
+#include "controller/autonController.h"
+#include "controller/path.h"
 
 okapi::ChassisControllerIntegrated Path::driver = ChassisControllerFactory::create(
-  {LFPORT, LBPORT},
-  {-RFPORT, -RBPORT},
+  {9, 10},
+  {-1, -2},
   AbstractMotor::gearset::green,
   {8_in, 30_in}
 );

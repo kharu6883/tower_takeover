@@ -1,9 +1,9 @@
 #include "main.h"
 
 #include "config/io.h"
-#include "control/vision.h"
-#include "control/drive.h"
-#include "control/macro.h"
+#include "controller/vision.h"
+#include "controller/drive.h"
+#include "controller/macro.h"
 
 using namespace pros;
 

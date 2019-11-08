@@ -3,22 +3,31 @@
 #include "config/motor.h"
 #include "config/io.h"
 
-#include "control/macro.h"
-#include "control/displayController.h"
+#include "controller/chassis.h"
+
+#include "controller/misc.h"
+#include "controller/displayController.h"
 
 static int towerMode = 0, lastPos = 0;
 
 static bool isTrack = false, isReset = false;
 
 void opcontrol() {
+	
+	Slew roller(60, 80); // Accel, Decel
+	Slew rackSlew(30, 60, true); // Accel, Decel
+	PID rackPID(0.13); // kP
+
+	pros::Motor LF(LFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
+							LB(LBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
+							RF(RFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
+							RB(RBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);
+
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 
 	armAsync.resume();
 
-	Slew roller(60, 80); // Accel, Decel
-	Slew rackSlew(30, 60, true); // Accel, Decel
-	PID rackPID(0.13); // kP
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);

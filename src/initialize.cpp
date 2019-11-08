@@ -3,13 +3,15 @@
 #include "config/io.h"
 #include "config/motor.h"
 
-#include "control/displayController.h"
-#include "control/autonController.h"
-#include "control/asyncController.h"
-#include "control/macro.h"
-#include "control/path.h"
+#include "controller/chassis.h"
+#include "controller/rack.h"
+#include "controller/misc.h"
 
-static ControlAsync Control;
+#include "controller/displayController.h"
+#include "controller/autonController.h"
+#include "controller/path.h"
+
+
 pros::Task armAsync(macroTask, NULL, "Opcontrol Arm Task");
 
 void initialize() {
@@ -31,9 +33,13 @@ void initialize() {
   print("Motors Initialized!");
 
   // Threads
-  pros::Task asyncController(Control.run, NULL, "Async Controller");
-  Control.pause();
-  print("Task Controller Initialized!");
+  Chassis chassis(0.6, 0.6);
+  pros::Task baseController(chassis.start, NULL, "Chassis Controller");
+  print("Chassis Initialized!");
+
+  class Rack rack;
+  pros::Task rackController(rack.start, NULL, "Rack Controller");
+  print("Rack Initialized!");
 
   Display Disp;
   pros::Task b_display(Disp.start, NULL, "Brain Display");
@@ -52,9 +58,6 @@ void initialize() {
   std::cout << "Initialization Done!" << std::endl;
 }
 
-void disabled() {
-  Control.pause();
-  armAsync.suspend();
-}
+void disabled() { }
 
 void competition_initialize() { }

@@ -2,10 +2,7 @@
 
 pros::Controller master(CONTROLLER_MASTER);
 
-// Sensors
-pros::ADIPotentiometer rackPot(RACKPOT);
 pros::ADIDigitalIn selector(SELECTOR);
-pros::ADIDigitalIn armLimit(ARMLIMIT);
 
 pros::ADIGyro Gyro(GYRO);
 

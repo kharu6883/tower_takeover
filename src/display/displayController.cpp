@@ -3,10 +3,10 @@
 #include "config/motor.h"
 #include "config/io.h"
 
-#include "control/displayController.h"
-#include "control/autonController.h"
-#include "control/macro.h"
-#include "control/vision.h"
+#include "controller/displayController.h"
+#include "controller/autonController.h"
+#include "controller/macro.h"
+#include "controller/vision.h"
 
 Autonomous Auton;
 Vision CamFront(FRONTVISION);

@@ -2,6 +2,10 @@
 #include <iostream>
 #include <map>
 
+#define SLOT_RED 1
+#define SLOT_BLUE 2
+#define SLOT_SKILLS 3
+
 struct typeName {
   std::string red;
   std::string blue;

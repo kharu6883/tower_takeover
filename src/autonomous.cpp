@@ -1,12 +1,9 @@
 #include "main.h"
 
-#include "control/asyncController.h"
-#include "control/autonController.h"
+#include "controller/autonController.h"
 #include "config/io.h"
 using namespace okapi;
 using namespace std;
-
-static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
 int Autonomous::type = SLOT_RED,
@@ -19,7 +16,6 @@ std::map<int, typeName> Autonomous::slotName;
 std::map<int, typeName> Autonomous::slotAbbv;
 
 void autonomous() {
-  Control.resume();
   Autonomous Auton;
   Auton.runAuton();
 }

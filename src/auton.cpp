@@ -1,19 +1,23 @@
 #include "main.h"
 
-#include "control/drive.h"
-#include "control/asyncController.h"
-#include "control/macro.h"
-#include "control/vision.h"
-#include "control/path.h"
+#include "controller/chassis.h"
+#include "controller/rack.h"
+#include "controller/arm.h"
 
+#include "controller/misc.h"
+#include "controller/vision.h"
+#include "controller/path.h"
+
+
+static Chassis chassis(0.6, 0.6);
+static Rack rack;
+static Arm arm;
 static Path path;
-static ControlAsync Thread;
 static Camera CamFront(FRONTVISION);
 
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  Thread.hold_angle();
 }
 
 /*===========================================
@@ -21,24 +25,24 @@ void tester() {
 ===========================================*/
 void start() {            // Deploy and zero arm
   roller(-200);
-  lockChassis();
+  chassis.lock();
   wait(50);
   roller(-200);
   arm(0.4, 100, 60);
   wait(50);
   //Thread.drive(-70,100,9);
   armReset();
-  Thread.drive(-70,150,9);
+  chassis.drive(-70,150,9);
   wait(300);
-  Thread.disable_drive();
-  unlockChassis();
+  chassis.waitUntilSettled();
+  chassis.unlock();
 }
 
 /*===========================================
   RED MATCH AUTONOMOUSES
 ===========================================*/
 void r_s_7() {
-  align(165,3);
+  chassisalign(165,3);
   //start();
   roller(200);
   // Pick up 4 cubes
@@ -50,18 +54,18 @@ void r_s_7() {
   path.del("yote");
 
   drive(1200, 160, 9, 10000, 0);
-  Thread.disable_arm();
+  // Thread.disable_arm();
   drive(-800,200,6);
   turn(700,200, 7);
 
   // Drive to small red corner and place
   roller(-23);
-  Thread.drive(400,100,7);
+  chassis.drive(400,100,7);
   rack(RACK_UP, 130, 9);
 
 
   // Yeet outta there
-  Thread.drive(-300, 200, 10);
+  chassis.drive(-300, 200, 10);
   roller(-200);
   rack(RACK_DOWN, 200, 15);
   // start();
@@ -91,7 +95,6 @@ void r_s_7() {
 void r_s_8() {            // red small 8 cube
 
   start();
-  Thread.disable_drive();
   roller(200);
   // Pick up 4 cubes
 

@@ -14,20 +14,7 @@
 #include "okapi/api.hpp"
 
 void macroTask(void* ignore);
-
-extern pros::Task controlDrive;
 extern pros::Task armAsync;
-
-// Structures
-struct Vector2 {
-  double length;
-  int speed;
-  int rate;
-};
-
-struct PIDS {
-  double current, error, last, output, slewOutput;
-};
 
 // It's Everyday Functions Bro
 void wait(int ms);
@@ -42,17 +29,10 @@ LV_IMG_DECLARE(michael1);
 LV_IMG_DECLARE(michael2);
 
 // Motor ports
-
-#define RACK 5
-#define ARM 6
-
 #define FLAPL 7
 #define FLAPR 3
 
 // ADI
-#define RACKPOT 1
-#define ARMLIMIT 2
-
 #define ULTRARPING 3
 #define ULTRARECHO 4
 
@@ -72,25 +52,8 @@ LV_IMG_DECLARE(michael2);
 #define BLUE_ZONE 4
 #define RED_ZONE 5
 
-// Constants
-#define RACK_DOWN 900
-#define RACK_UP 3615
-#define RACK_TOWER 1950
-
-#define ARM_BOTTOM 0
-#define ARM_LOW_TOWER 1.3
-#define ARM_LOW_TOWER_MANUAL 1.2
-#define ARM_LOW_TOWER_DESCORE 1.1
-#define ARM_MID_TOWER 1.7
-#define ARM_MID_TOWER_DESCORE 1.7
-
-#define MODE_CHASSIS 1
-#define MODE_RACK 2
-#define MODE_ARM 3
-
-#define SLOT_RED 1
-#define SLOT_BLUE 2
-#define SLOT_SKILLS 3
+// Global Constants
+#define IDLE 0
 
 using namespace okapi;
 
