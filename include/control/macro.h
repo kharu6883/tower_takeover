@@ -66,7 +66,6 @@ class Slew {
     double getOutput();
 
     void reset();
-
   private:
     double accel, decel;
     double input, output, limit;
