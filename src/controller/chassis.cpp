@@ -4,10 +4,17 @@ Chassis::Chassis(double kP_, double kD_) : kP(kP_), kD(kD_),
 LF(LFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
 LB(LBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
 RF(RFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
-RB(RBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS) { }
+RB(RBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
+LSonic(SONIC_L_PING, SONIC_L_ECHO), RSonic(SONIC_R_PING, SONIC_R_ECHO),
+Gyro(GYRO) { }
 
 Chassis::~Chassis() {
   reset();
+}
+
+Chassis& Chassis::calibrateGyro() {
+  Gyro.reset();
+  return *this;
 }
 
 Chassis& Chassis::withTolerance(double tolerance_) {
@@ -29,6 +36,7 @@ Chassis& Chassis::drive(double target_, int speed_, int rate_) {
   return *this;
 }
 
+
 Chassis& Chassis::turn(double target_, int speed_, int rate_) {
   target = target_;
   speed = speed_;
@@ -43,6 +51,19 @@ Chassis& Chassis::strafe(double target_, int speed_, int rate_) {
   rate = rate_;
   mode = STRAFING;
   return *this;
+}
+
+Chassis& Chassis::arc(double target_, double angle_, int speed_, int rate_, double gyroAmp_) {
+  target = target_;
+  angle = angle_;
+  speed = speed_;
+  rate = rate_;
+  gyroAmp = gyroAmp_;
+  return *this;
+}
+
+Chassis& Chassis::drive2point(double target_asdfsdfasdf) {
+
 }
 
 Chassis& Chassis::align(double target_) {
@@ -133,6 +154,7 @@ void Chassis::run() {
           reset();
           withTolerance();
           withSlop();
+          isSettled = true;
           goto end;
         }
 
@@ -175,6 +197,7 @@ void Chassis::run() {
           reset();
           withTolerance();
           withSlop();
+          isSettled = true;
           goto end;
         }
 
@@ -217,6 +240,7 @@ void Chassis::run() {
           reset();
           withTolerance();
           withSlop();
+          isSettled = true;
           goto end;
         }
 

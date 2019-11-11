@@ -2,8 +2,8 @@
 
 #include "config/io.h"
 #include "controller/vision.h"
-#include "controller/drive.h"
-#include "controller/macro.h"
+#include "controller/chassis.h"
+#include "controller/misc.h"
 
 using namespace pros;
 
@@ -53,13 +53,14 @@ void Camera::target(int sig, int size, int low, int high, double tolerance) {
 
   vision_object_s_t rtn;
   double output;
+  Chassis chassis;
 
   while(true) {
     rtn = withSig(sig).withArea(low, high).getFeed()[size];
     output = pTerm(150, rtn.x_middle_coord, kP);
 
-    left(output);
-    right(-output);
+    chassis.left(output);
+    chassis.right(-output);
 
     if(isSettled(output, tolerance)) break;
     wait(20);

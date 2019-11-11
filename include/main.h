@@ -33,15 +33,7 @@ LV_IMG_DECLARE(michael2);
 #define FLAPR 3
 
 // ADI
-#define ULTRARPING 3
-#define ULTRARECHO 4
-
-#define ULTRALPING 5
-#define ULTRALECHO 6
-
 #define SELECTOR 7
-
-#define GYRO 8
 
 // Vision Constants
 #define FRONTVISION 11

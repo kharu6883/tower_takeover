@@ -28,7 +28,7 @@ void start() {            // Deploy and zero arm
   chassis.lock();
   wait(50);
   roller(-200);
-  arm(0.4, 100, 60);
+  arm.move(0.4, 100, 60);
   wait(50);
   //Thread.drive(-70,100,9);
   armReset();
@@ -36,38 +36,39 @@ void start() {            // Deploy and zero arm
   wait(300);
   chassis.waitUntilSettled();
   chassis.unlock();
+  chassis.drive(1000, 200);
 }
 
 /*===========================================
   RED MATCH AUTONOMOUSES
 ===========================================*/
 void r_s_7() {
-  chassisalign(165,3);
+  chassis.withTolerance(3).align(165);
   //start();
   roller(200);
   // Pick up 4 cubes
 
-  drive(1200, 155, 9, 10000, 0);
+  chassis.drive(1200, 155, 9);
 
   // Yoink 3 more cubes and turn right facing small red corner
   path.run("yote", true);
   path.del("yote");
 
-  drive(1200, 160, 9, 10000, 0);
+  chassis.drive(1200, 160, 9);
   // Thread.disable_arm();
-  drive(-800,200,6);
-  turn(700,200, 7);
+  chassis.drive(-800, 200, 6);
+  chassis.turn(700,200, 7);
 
   // Drive to small red corner and place
   roller(-23);
   chassis.drive(400,100,7);
-  rack(RACK_UP, 130, 9);
+  rack.move(RACK_UP, 130, 9);
 
 
   // Yeet outta there
   chassis.drive(-300, 200, 10);
   roller(-200);
-  rack(RACK_DOWN, 200, 15);
+  rack.move(RACK_DOWN, 200, 15);
   // start();
   // roller(200);
   // // Pick up 4 cubes
@@ -98,13 +99,13 @@ void r_s_8() {            // red small 8 cube
   roller(200);
   // Pick up 4 cubes
 
-  drive(1300, 160, 9, 10000, 0);
+  chassis.drive(1300, 160, 9);
 
   // Yoink 3 more cubes and turn right facing small red corner
   path.run("yeet", true);
   path.del("yeet");
 
-  drive(1400, 145, 9, 10000, 0);
+  chassis.drive(1400, 145, 9);
   Thread.rack(RACK_TOWER-200, 120, 7);
   drive(-800, 200, 9, 10000, 0);
   Thread.disable_arm();

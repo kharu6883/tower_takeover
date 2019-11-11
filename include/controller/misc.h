@@ -6,9 +6,6 @@ extern bool isStacking;
     BASIC MOVEMENT
 --------------------------------*/
 
-// Moves the arm speed in a given speed. Use negative values for going down. Uses RPM for speed.
-void arm(int speed);
-
 // Rotates the rollers in a given speed. Use negative values for going down. Uses RPM for speed.
 void roller(int speed);
 
@@ -19,9 +16,6 @@ void roller(double rot, int speed);
 /*--------------------------------
     COMPLEX MOVEMENT
 --------------------------------*/
-
-// Moves the arm to the target, in a given speed.
-void arm(double target, int speed, double rate);
 
 // Macro for towers. 1 - Low Tower, 2 - Mid Tower, 3 - Descore Low Tower
 void tower(int tower);
@@ -39,8 +33,6 @@ void armReset();
 
 // Gets information from the selected signature.
 pros::vision_object_s_t getVisionSig(int id, int size);
-
-
 
 /*--------------------------------
     CONTROL & PID CALCULATION
