@@ -13,15 +13,14 @@ class ControlAsync {
     // Getters and Setters
     bool isDisabled();
 
-
     void reset_drive();
-    void drive(double length, int speed, int rate);
+    void drive(double length, int speed, int rate, double tol = 9);
     void turn(double length, int speed, int rate);
     void strafe(double length, int speed, int rate);
 
     void hold_angle();
 
-    ControlAsync& withGyro();
+    ControlAsync& withGyro(double angle_, double gyroAmp_);
     ControlAsync& withSturn(int sturn);
     ControlAsync& withConst(int mode, double kP_, double kD_);
 
@@ -42,6 +41,7 @@ class ControlAsync {
     static bool isPaused;
 
     static bool isDrive;
+    static bool isArc;
     static bool isTurn;
     static bool isStrafe;
     static bool isRack;
@@ -49,7 +49,10 @@ class ControlAsync {
     static bool isZeroing;
     static bool isDown;
 
+    static double tolerance;
+
     static bool usingGyro;
+    static double angle, gyroAmp;
 
     static int sturn;
 

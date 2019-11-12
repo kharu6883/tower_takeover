@@ -76,8 +76,8 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
     if(isSettled(abs(error), 9)) break;
 
-    left(-slewOutput -  ((Gyro.get_value() / 5)+angle*2));
-    right(-slewOutput +  ((Gyro.get_value() /5)+angle*2));
+    left(-slewOutput -  ((Gyro.get_value() / 5) + angle * 2 * gyroamp));
+    right(-slewOutput +  ((Gyro.get_value() / 5) + angle * 2 * gyroamp));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -606,60 +606,43 @@ void strafe(double target, int speed, double rate, double sturn) {
 }
 
 
-void align(double target, double tolerance) {
 
-  double errorL, errorR, lastL, lastR, outputL, outputR;
-  double now, last, elapsed;
+    void align(double target, double tolerance) {
 
-  double kP = 0.7, kI = 1, kD = 7;
+    double errorL, errorR, lastL, lastR, outputL, outputR;
+    double now, last, elapsed;
 
-  reset();
+    double kP = 0.7, kI = 1, kD = 8;
 
-  while(true) {
-    elapsed = now - last;
-    now = clock();
+    reset();
+    lockChassis();
+    while(true) {
+      elapsed = now - last;
+      now = clock();
 
-    errorL = target - (ultraL.get_value()+23);
-    errorR = target - ultraR.get_value();
+      errorL = target - ultraL.get_value();
+      errorR = target - ultraR.get_value();
 
-    outputL = pTerm(target, ultraL.get_value(), kP) + kD * dTerm(errorL, lastL) * elapsed;
-    outputR = pTerm(target, ultraR.get_value(), kP) + kD * dTerm(errorR, lastR) * elapsed;
+      outputL = pTerm(target, ultraL.get_value(), kP) + kD * dTerm(errorL, lastL) * elapsed;
+      outputR = pTerm(target, ultraR.get_value(), kP) + kD * dTerm(errorR, lastR) * elapsed;
 
-    left(-outputR);
-    right(-outputL);
+      left(outputL);
+      right(outputR);
 
-    lastL = errorL;
-    lastR = errorR;
+      lastL = errorL;
+      lastR = errorR;
 
-    last = clock();
+      last = clock();
 
-    if(isSettled(outputL, tolerance) && isSettled(outputR, tolerance)) break;
+      if(isSettled(outputL, tolerance) && isSettled(outputR, tolerance)) break;
+      pros::delay(30);
+    }
+
+    reset();
+    unlockChassis();
   }
 
-  reset();
 
-  //   elapsed = now - last;
-  //   now = clock();
-  //
-  //   errorL = target - ultraL.get_value();
-  //   errorR = target - ultraR.get_value();
-  //
-  //   outputL = pTerm(target, ultraL.get_value(), kP) + kD * dTerm(errorL, lastL) * elapsed;
-  //   outputR = pTerm(target, ultraR.get_value(), kP) + kD * dTerm(errorR, lastR) * elapsed;
-  //
-  //   left(outputL);
-  //   right(outputR);
-  //
-  //   lastL = errorL;
-  //   lastR = errorR;
-  //
-  //   last = clock();
-  //
-  //   if(isSettled(outputL, tolerance) && isSettled(outputR, tolerance)) break;
-  // }
-  //
-  // reset();
-}
 
 void lockChassis() {
   LF.set_brake_mode(MOTOR_BRAKE_HOLD);
