@@ -8,8 +8,8 @@ using namespace std;
 static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::type = SLOT_SKILLS,
-Autonomous::slot = 1;
+int Autonomous::type = SLOT_RED,
+Autonomous::slot = 3;
 
 std::map<int, void(*)()> Autonomous::redAuton;
 std::map<int, void(*)()> Autonomous::blueAuton;
@@ -30,7 +30,7 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
     addAuton(SLOT_RED, "Small zone 7 cubes", "Red S 7", r_s_7);
     addAuton(SLOT_RED, "Small zone 8 cubes", "Red S 8", r_s_8); // Slot 0
     addAuton(SLOT_RED, "No place 9 cubes", "Red No Cube 9", r_n_9);
-    addAuton(SLOT_RED, "Big zone orange tower", "Red B O", r_b_orange);
+    addAuton(SLOT_RED, "Big zone stack", "Red B O", r_b_orange);
 
     // Blue
     addAuton(SLOT_BLUE, "Small zone 7 cubes", "Blue S 7", b_s_7);
