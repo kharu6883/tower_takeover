@@ -41,15 +41,11 @@ class Autonomous {
 
 // Red
 void r_s_7();
-void r_s_8();
-void r_n_9();
-void r_b_orange();
+void r_b_9();
 
 // Blue
 void b_s_7();
-void b_s_8();
-void b_n_9();
-void b_b_green();
+void b_b_9();
 
 // Skills
 void tester();
