@@ -89,10 +89,6 @@ void initialize() {
 	RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
   print("Motors Initialized!");
 
-  Gyro.reset();
-  print("Gyro reset!");
-  master.rumble(" -");
-
   // Threads
   pros::Task asyncController(Control.run, NULL, "Async Controller");
   Control.pause();

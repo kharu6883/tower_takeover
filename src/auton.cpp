@@ -40,31 +40,29 @@ void start() {            // Deploy and zero arm
 ===========================================*/
 void r_s_7() {
 
-  //calibrategyro();
-  //wait(1000);
+  calibrategyro();
+  wait(1000);
 
   start();
   roller(200);
   drivegyro(1100, 150, 9, 0 , 2 , 0);
   //pick up first 3 cubes
-  drivegyro(-1250, 200, 15, 65 , 1 , 5);
+  drivegyro(-1250, 200, 15, 65 , 0.05 , 5);
   drivegyro(1400, 135, 4, 0,3,10);
   //pick up 4 cubes
   Thread.disable_arm();
-  drivegyro(-1020,200,4,0,2,10);
+  drivegyro(-1050,200,4,0,2,10);
   //drive back to corner
   lockChassis();
   roller(-0.5,70);
   Thread.rack(1500, 200, 10);
   unlockChassis();
-  drivegyro(430,200,2,-135,1,20);
+  drivegyro(400,200,2,-135,1,20);
   //driveinto corner
   roller(-20);
   Thread.disable_rack();
   rack(RACK_UP, 200, 10);
-  Thread.drive(10,200,9);
-  wait(100);
-  Thread.disable_drive();
+  drive(10,200,100);
   roller(-150);
   Thread.drive(-300, 200, 10);
   rack(RACK_DOWN, 200, 15);
@@ -134,20 +132,20 @@ void r_n_9() {            // Red No Score 9 Cube
 
 }
 void r_b_orange() {       // red big orange cube
-  drivegyro(300, 200, 7, 0, 1, 10);
-  Thread.withGyro(0, 2).drive(-200, 200,9);
   start();
-  Thread.disable_drive();
-  roller(200);
-
-  drivegyro(600, 110, 7, 0, 1, 10);
-  drivegyro(-200, 200, 7, 0, 1, 10);
-  turn(500,200,7);
-  drivegyro(300,100,3,-85,1,10);
-  drivegyro(1000,100,5,-25,1,10);
-  drivegyro(700,200,1,100,1,10);
-  drivegyro(600,100,2,90,1,10);
-
+  roller(100);
+  drive(200,100,50);
+  roller(0);
+  turn(-150,100,8);
+  Thread.arm(ARM_LOW_TOWER, 200, 60);
+  drive(1200,200,3);
+  turn(300,100,8);
+  drive(200,200,3);
+  roller(-200);
+  drive(-250,200,6);
+  turn(320,50,6);
+  Thread.disable_arm();
+  roller(0);
 }
 
 /*===========================================
