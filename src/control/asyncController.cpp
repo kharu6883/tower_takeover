@@ -221,11 +221,11 @@ void ControlAsync::update() {
         if(chassisVar.slewOutput > chassis_target.speed) chassisVar.slewOutput = chassis_target.speed;
 
         if(!usingGyro) {
-          left(chassisVar.slewOutput - slop(0));
-          right(chassisVar.slewOutput + slop(0));
+          left(-chassisVar.slewOutput - slop(0));
+          right(-chassisVar.slewOutput + slop(0));
         } else {
-          left(chassisVar.slewOutput - ((Gyro.get_value() / 5) + angle * 2 * gyroAmp));
-          right(chassisVar.slewOutput + ((Gyro.get_value() / 5) + angle * 2 * gyroAmp));
+          left(-chassisVar.slewOutput - ((Gyro.get_value() / 5) + angle * 2 * gyroAmp));
+          right(-chassisVar.slewOutput + ((Gyro.get_value() / 5) + angle * 2 * gyroAmp));
         }
 
         if(isSettled(abs(chassisVar.error), tolerance)) { reset_drive(); usingGyro = false; isDrive = false; }

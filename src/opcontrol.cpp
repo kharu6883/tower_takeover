@@ -18,7 +18,7 @@ void opcontrol() {
 
 	Slew roller(60, 80); // Accel, Decel
 	Slew rackSlew(30, 60, true); // Accel, Decel
-	PID rackPID(0.13); // kP
+	PID rackPID(0.1); // kP
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
@@ -31,8 +31,6 @@ void opcontrol() {
 				else isTrack = false;
 			while(master.get_digital(DIGITAL_A)) pros::delay(20);
 		}
-
-		if(master.get_digital_new_press(DIGITAL_DOWN)) setReset(true);
 
 		/*--------------------------------
 		    RACK
@@ -117,7 +115,7 @@ void macroTask(void* ignore) {
 
 	while (true) {
 		if(!master.is_connected()) { disconnected = true; pros::delay(20); continue; }
-		if(isReset) { towerMode = 0; isReset = false; disconnected = false; armReset(); pros::delay(20); continue; }
+		if(master.get_digital_new_press(DIGITAL_DOWN)) { towerMode = 0; isReset = false; disconnected = false; armReset(); pros::delay(20); continue; }
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400 && !disconnected) {
 				arm(0);
 				towerMode = 1;
@@ -185,7 +183,7 @@ void macroTask(void* ignore) {
 			default: {
 				disconnected = false;
 
-				Arm.set_current_limit(2000);
+				Arm.set_current_limit(5000);
 				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
 
 				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);

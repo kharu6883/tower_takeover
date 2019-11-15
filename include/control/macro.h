@@ -29,6 +29,9 @@ void rack(double target, int speed, double rate);
 // Moves the arm to the target, in a given speed.
 void arm(double target, int speed, double rate);
 
+// Reset mode
+void reset(bool set);
+
 // Macro for towers. 1 - Low Tower, 2 - Mid Tower, 3 - Descore Low Tower
 void tower(int tower);
 
