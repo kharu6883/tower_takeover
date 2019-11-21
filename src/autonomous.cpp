@@ -8,7 +8,7 @@ using namespace std;
 static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::type = SLOT_SKILLS,
+int Autonomous::type = SLOT_RED,
 Autonomous::slot = 0;
 
 std::map<int, void(*)()> Autonomous::redAuton;
