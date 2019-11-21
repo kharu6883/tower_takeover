@@ -40,42 +40,42 @@ void Path::update() {
   isRunning = true;
   int last;
 
-  Autonomous Auton;
-
-  while(isRunning) {
-    if(Auton.getType() != last) {
-      for(int i = 0; i < profile.getPaths().size(); i++) {
-        profile.removePath(profile.getPaths()[i]);
-      }
-
-      switch(Auton.getType()) {
-        case SLOT_RED: {
-          withPoint({2.3_ft, -6.5_ft, 0_deg}).gen("yote");
-          withPoint({-3_ft, -7.7_ft, 0_deg}).gen("yeety");
-          withPoint({3_ft, -7.5_ft, 0_deg}).gen("yeet");
-          break;
-        }
-
-        case SLOT_BLUE: {
-          withPoint({3.5_ft, -8_ft, 0_deg}).gen("yote");
-          break;
-        }
-
-        case SLOT_SKILLS: {
-          break;
-        }
-
-        default: {
-          break;
-        }
-      }
-
-      io::master.rumble(" . .");
-      last = Auton.getType();
-    }
-
-    pros::delay(20);
-  }
+  // Autonomous Auton;
+  //
+  // while(isRunning) {
+  //   if(Auton.getType() != last) {
+  //     for(int i = 0; i < profile.getPaths().size(); i++) {
+  //       profile.removePath(profile.getPaths()[i]);
+  //     }
+  //
+  //     switch(Auton.getType()) {
+  //       case SLOT_RED: {
+  //         withPoint({2.3_ft, -6.5_ft, 0_deg}).gen("yote");
+  //         withPoint({-3_ft, -7.7_ft, 0_deg}).gen("yeety");
+  //         withPoint({3_ft, -7.5_ft, 0_deg}).gen("yeet");
+  //         break;
+  //       }
+  //
+  //       case SLOT_BLUE: {
+  //         withPoint({3.5_ft, -8_ft, 0_deg}).gen("yote");
+  //         break;
+  //       }
+  //
+  //       case SLOT_SKILLS: {
+  //         break;
+  //       }
+  //
+  //       default: {
+  //         break;
+  //       }
+  //     }
+  //
+  //     io::master.rumble(" . .");
+  //     last = Auton.getType();
+  //   }
+  //
+  //   pros::delay(20);
+  // }
 }
 
 void Path::stopThread() {

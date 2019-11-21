@@ -3,7 +3,8 @@
 
 bool Arm::isRunning = false,
 Arm::isSettled = true,
-Arm::keepPos = true;
+Arm::keepPos = true,
+Arm::reached = false;
 
 int Arm::mode = 0,
 Arm::nextCmd = 0;
