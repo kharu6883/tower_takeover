@@ -1,12 +1,22 @@
 #include "controller/rack.h"
 
+bool Rack::isRunning = false,
+Rack::isSettled = true,
+Rack::isActive = false;
+
+double Rack::error = 0, Rack::output = 0, Rack::slewOutput = 0;
+
 Rack::Rack(double kP_) : kP(kP_),
 Motor(RACK, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS),
 Pot(RACKPOT) { }
 
 Rack::~Rack() { }
 
-Rack& Rack::withTolerance(double tolerance_) {
+/*--------------------------------
+    GETTERS & SETTERS
+--------------------------------*/
+
+Rack& Rack::withTol(double tolerance_) {
   tolerance = tolerance_;
   return *this;
 }
@@ -15,6 +25,7 @@ Rack& Rack::move(double target_, int speed_, int rate_) {
   target = target_;
   speed = speed_;
   rate = rate_;
+  isSettled = false;
   isActive = true;
   return *this;
 }
@@ -28,6 +39,10 @@ void Rack::reset() {
   isActive = false;
 }
 
+void Rack::setBrakeType(pros::motor_brake_mode_e_t type_) {
+  Motor.set_brake_mode(type_);
+}
+
 bool Rack::getState() {
   return isSettled;
 }
@@ -35,6 +50,10 @@ bool Rack::getState() {
 int Rack::getPot() {
   return Pot.get_value();
 }
+
+/*--------------------------------
+    TASK
+--------------------------------*/
 
 void Rack::run() {
   isRunning = true;
@@ -64,12 +83,12 @@ void Rack::run() {
       if(slewOutput > speed) slewOutput = speed;
 
       if(-tolerance < error < tolerance) {
-        reset();
-        withTolerance();
+        withTol().reset();
+        isSettled = true;
         goto end;
       }
 
-      rack(slewOutput);
+      move(slewOutput);
     }
 
     end:
@@ -88,4 +107,12 @@ void Rack::start(void *ignore) {
 void Rack::stop() {
   isRunning = false;
   reset();
+}
+
+/*--------------------------------
+    MOVEMENT
+--------------------------------*/
+
+void Rack::move(int speed) {
+  Motor.move(speed);
 }

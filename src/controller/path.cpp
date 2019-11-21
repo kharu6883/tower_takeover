@@ -1,9 +1,8 @@
 #include "main.h"
 
-#include "config/io.h"
-
 #include "controller/autonController.h"
 #include "controller/path.h"
+#include "controller/misc.h"
 
 okapi::ChassisControllerIntegrated Path::driver = ChassisControllerFactory::create(
   {9, 10},
@@ -71,7 +70,7 @@ void Path::update() {
         }
       }
 
-      master.rumble(" . .");
+      io::master.rumble(" . .");
       last = Auton.getType();
     }
 

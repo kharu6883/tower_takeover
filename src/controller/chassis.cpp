@@ -1,5 +1,17 @@
 #include "controller/chassis.h"
 
+bool Chassis::isRunning = false,
+Chassis::isSettled = true,
+Chassis::usingGyro = false;
+
+int Chassis::mode = IDLE;
+
+double Chassis::deltaL = 0, Chassis::deltaR = 0,
+Chassis::current = 0, Chassis::last = 0, Chassis::error = 0, Chassis::derivative = 0,
+Chassis::output = 0, Chassis::slewOutput = 0, Chassis::lastL = 0, Chassis::lastR = 0,
+Chassis::outputL = 0, Chassis::outputR = 0, Chassis::nowTime = 0,
+Chassis::lastTime = 0, Chassis::elapsed = 0;
+
 Chassis::Chassis(double kP_, double kD_) : kP(kP_), kD(kD_),
 LF(LFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
 LB(LBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
@@ -17,7 +29,7 @@ Chassis& Chassis::calibrateGyro() {
   return *this;
 }
 
-Chassis& Chassis::withTolerance(double tolerance_) {
+Chassis& Chassis::withTol(double tolerance_) {
   tolerance = tolerance_;
   return *this;
 }
@@ -28,42 +40,29 @@ Chassis& Chassis::withSlop(double amp_, double offset_) {
   return *this;
 }
 
+Chassis& Chassis::withGyro(double angle_, double gyroAmp_) {
+  angle = angle_;
+  gyroAmp = gyroAmp_;
+  usingGyro = true;
+  return *this;
+}
+
 Chassis& Chassis::drive(double target_, int speed_, int rate_) {
   target = target_;
   speed = speed_;
   rate = rate_;
   mode = DRIVING;
+  isSettled = false;
   return *this;
 }
-
 
 Chassis& Chassis::turn(double target_, int speed_, int rate_) {
   target = target_;
   speed = speed_;
   rate = rate_;
   mode = TURNING;
+  isSettled = false;
   return *this;
-}
-
-Chassis& Chassis::strafe(double target_, int speed_, int rate_) {
-  target = target_;
-  speed = speed_;
-  rate = rate_;
-  mode = STRAFING;
-  return *this;
-}
-
-Chassis& Chassis::arc(double target_, double angle_, int speed_, int rate_, double gyroAmp_) {
-  target = target_;
-  angle = angle_;
-  speed = speed_;
-  rate = rate_;
-  gyroAmp = gyroAmp_;
-  return *this;
-}
-
-Chassis& Chassis::drive2point(double target_asdfsdfasdf) {
-
 }
 
 Chassis& Chassis::align(double target_) {
@@ -78,6 +77,7 @@ void Chassis::waitUntilSettled() {
 
 void Chassis::reset() {
   current = last = error = derivative = output = slewOutput = 0;
+  deltaL = deltaR = lastL = lastR = outputL = outputR = 0;
 
   mode = IDLE;
 
@@ -106,6 +106,10 @@ void Chassis::unlock() {
   RB.set_brake_mode(MOTOR_BRAKE_COAST);
 }
 
+int Chassis::getGyro() {
+  return Gyro.get_value();
+}
+
 bool Chassis::getState() {
   return isSettled;
 }
@@ -120,7 +124,7 @@ void Chassis::run() {
   while(isRunning) {
 
     switch(mode) {
-      case 1: { // Driving
+      case DRIVING: { // Driving
         deltaL = ( LF.get_position() + LB.get_position() ) / 2;
         deltaR = ( RF.get_position() + RB.get_position() ) / 2;
         current = ( deltaL - deltaR ) / 2;
@@ -150,20 +154,24 @@ void Chassis::run() {
         if(slewOutput > speed) slewOutput = speed;
         if(slewOutput < -speed) slewOutput = speed;
 
-        if(-tolerance < error < tolerance) {
-          reset();
-          withTolerance();
-          withSlop();
+        if(-tolerance < output < tolerance) {
+          withTol().withSlop().reset();
           isSettled = true;
           goto end;
         }
 
-        left(slewOutput - slop());
-        right(slewOutput + slop());
+        if(!usingGyro) {
+          left(slewOutput - slop());
+          right(slewOutput + slop());
+        } else {
+          left(slewOutput - ((Gyro.get_value() / 5) + angle * 2 * gyroAmp));
+          right(slewOutput + ((Gyro.get_value() / 5) + angle * 2 * gyroAmp));
+        }
+
         break;
       }
 
-      case 2: { // Turning
+      case TURNING: { // Turning
         deltaL = ( LF.get_position() + LB.get_position() ) / 2;
         deltaR = ( RF.get_position() + RB.get_position() ) / 2;
         current = ( deltaL + deltaR ) / 2;
@@ -194,9 +202,7 @@ void Chassis::run() {
         if(slewOutput < -speed) slewOutput = speed;
 
         if(-tolerance < error < tolerance) {
-          reset();
-          withTolerance();
-          withSlop();
+          withTol().withSlop().reset();
           isSettled = true;
           goto end;
         }
@@ -206,57 +212,36 @@ void Chassis::run() {
         break;
       }
 
-      case 3: { // Strafing
-        deltaL = ( LF.get_position() - LB.get_position() ) / 2;
-        deltaR = ( RB.get_position() - RF.get_position() ) / 2;
-        current = ( deltaL + deltaR ) / 2;
+      case ALIGNING: { // Aligning
+        nowTime = clock();
+        elapsed = nowTime - lastTime;
 
-        error = target - current;
+        deltaL = target - LSonic.get_value();
+        deltaR = target - RSonic.get_value();
 
-        output = (error * kP) + (error - last) * kD;
+        outputL = deltaL * kP + ( deltaL - lastL ) * elapsed * kD;
+        outputR = deltaR * kP + ( deltaR - lastR ) * elapsed * kD;
 
-        last = error;
+        lastL = deltaL;
+        lastR = deltaR;
 
-        if(output > 0) {
-          if(output > slewOutput + rate) {
-            slewOutput += rate;
-          } else {
-            slewOutput = output;
-          }
-        }
-
-        if(output < 0) {
-          if(output < slewOutput - rate) {
-            slewOutput -= rate;
-          } else {
-            slewOutput = output;
-          }
-        }
-
-        if(slewOutput > speed) slewOutput = speed;
-        if(slewOutput < -speed) slewOutput = speed;
-
-        if(-tolerance < error < tolerance) {
-          reset();
-          withTolerance();
-          withSlop();
+        if(-tolerance < deltaL < tolerance && -tolerance < deltaR < tolerance) {
+          withTol().withSlop().reset();
           isSettled = true;
           goto end;
         }
 
-        LF.move_velocity(-slewOutput - slop(1));
-        LB.move_velocity(slewOutput + slop(1));
-        RF.move_velocity(-slewOutput - slop(1));
-        RB.move_velocity(slewOutput + slop(1));
+        left(outputL);
+        right(outputR);
         break;
       }
 
-      case 4: { // Aligning
-
+      default: {
+        break;
       }
-
-      default: { }
     }
+
+
 
     end:
     pros::delay(20);
@@ -277,22 +262,15 @@ void Chassis::stop() {
 }
 
 void Chassis::left(int speed) {
-  LF.move_velocity(speed);
-  LB.move_velocity(speed);
+  LF.move(speed);
+  LB.move(speed);
 }
 
 void Chassis::right(int speed) {
-  RF.move_velocity(-speed);
-  RB.move_velocity(-speed);
+  RF.move(-speed);
+  RB.move(-speed);
 }
 
 double Chassis::slop(int mode) {
-  switch(mode) {
-    case 1: {
-      return ((( LF.get_position() - LB.get_position() ) / 2) +
-      (( RF.get_position() - RB.get_position() / 2)) + offset) * amp;
-    }
-
-    default: return ( deltaL + deltaR + offset) * amp; break;
-  }
+  return ( deltaL + deltaR + offset) * amp;
 }

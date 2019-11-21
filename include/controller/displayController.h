@@ -1,6 +1,13 @@
 #pragma once
 #include "pros/apix.h"
 
+// Image Declaration
+LV_IMG_DECLARE(intro);
+LV_IMG_DECLARE(logo);
+
+LV_IMG_DECLARE(michael1);
+LV_IMG_DECLARE(michael2);
+
 class Display {
   public:
     Display();

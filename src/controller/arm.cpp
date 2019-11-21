@@ -1,12 +1,23 @@
 #include "controller/arm.h"
+#include "controller/misc.h"
 
-Arm::Arm(double kP_) : kP(kP_),
-Motor(ARM, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
+bool Arm::isRunning = false,
+Arm::isSettled = true,
+Arm::keepPos = true;
+
+int Arm::mode = 0,
+Arm::nextCmd = 0;
+
+double Arm::kP = 300;
+
+double Arm::error = 0, Arm::output = 0, Arm::slewOutput = 0;
+
+Arm::Arm() : Motor(ARM, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
 Limit(ARMLIMIT) { }
 
 Arm::~Arm() { }
 
-Arm& Arm::withTolerance(double tolerance_) {
+Arm& Arm::withTol(double tolerance_) {
   tolerance = tolerance_;
   return *this;
 }
@@ -15,63 +26,29 @@ Arm& Arm::move(double target_, int speed_, int rate_) {
   target = target_;
   speed = speed_;
   rate = rate_;
-  mode = MOVING;
+  nextCmd = 0;
+  mode = 0;
   return *this;
 }
 
 Arm& Arm::tower(int tower) {
-  const double kP = 210;
+  target = ARM_BOTTOM;
+  speed = 127;
+  rate = 9;
 
-  double armTarget;
+  if(tower == 1 || tower == 2) {
+    nextCmd = tower;
+    mode = 11;
+  } else mode = tower;
 
-  Arm.set_current_limit(7000);
+  return *this;
+}
 
-  if(tower == 2) { // Mid Tower
-    while(true) {
-      armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
-      arm(armTarget);
-
-      if(isSettled(armTarget, tolerance) || armLimit.get_value()) { arm(0); break; }
-      wait(20);
-    }
-
-    roller(rollerpreprime);
-    wait(rollerWait);
-    roller(rollerRot, rollerSpeed);
-    wait(rollerwaitprime);
-    while(true) {
-      armTarget = pTerm(ARM_MID_TOWER, Arm.get_position(), kP);
-      arm(armTarget);
-
-      if(isSettled(armTarget, tolerance)) { arm(0); break; }
-      wait(20);
-    }
-  } else if(tower == 3) {
-    while(true) {
-      armTarget = pTerm(ARM_LOW_TOWER_MANUAL, Arm.get_position(), kP + 10);
-      arm(armTarget);
-
-      if(isSettled(armTarget, tolerance)) { arm(0); break; }
-      wait(20);
-    }
-  } else if(tower == 4) {
-    while(true) {
-      armTarget = pTerm(ARM_LOW_TOWER_DESCORE, Arm.get_position(), kP + 10);
-      arm(armTarget);
-
-      if(isSettled(armTarget, tolerance)) { arm(0); break; }
-      wait(20);
-    }
-  } else if(tower == 5) {
-    while(true) {
-      armTarget = pTerm(ARM_MID_TOWER_DESCORE, Arm.get_position(), kP + 10);
-      arm(armTarget);
-
-      if(isSettled(armTarget, tolerance)) { arm(0); break; }
-      wait(20);
-    }
-  }
-
+Arm& Arm::zero() {
+  target = ARM_BOTTOM;
+  reached = Limit.get_value();
+  nextCmd = 0;
+  mode = 10;
   return *this;
 }
 
@@ -79,9 +56,20 @@ void Arm::waitUntilSettled() {
   while(!isSettled) pros::delay(20);
 }
 
+void Arm::keepPosIfSettled() {
+  keepPos = true;
+}
+
 void Arm::reset() {
   error = output = slewOutput = 0;
+}
 
+void Arm::tarePos() {
+  Motor.tare_position();
+}
+
+void Arm::setBrakeType(pros::motor_brake_mode_e_t type_) {
+  Motor.set_brake_mode(type_);
 }
 
 bool Arm::getState() {
@@ -98,33 +86,130 @@ bool Arm::getLimit() {
 
 void Arm::run() {
   isRunning = true;
-  double rollerRot = -0.8, rollerSpeed = 150, rollerwaitprime=100, rollerWait = 200, rollerpreprime = 100;
+  double rollerRot = -0.8, rollerSpeed = 150, rollerWaitPrime = 100, rollerWait = 200, rollerPrePrime = 100;
 
   while(isRunning) {
+    if(!io::master.is_connected()) { mode = 10; goto end; }
+
     switch(mode) {
+
+      // Low Tower
       case 1: {
-        while(true) {
-          output = (ARM_BOTTOM * Motor.get_position()) * kP;
-          arm(output);
+        io::roller(rollerPrePrime);
+        pros::delay(rollerWait);
+        io::roller(rollerRot, rollerSpeed);
+        pros::delay(rollerWaitPrime);
 
-          if( || Limit.get_value()) { arm(0); break; }
-          wait(20);
+        target = ARM_LOW_TOWER;
+        mode = 11;
+        break;
+      }
+
+      // Mid Tower
+      case 2: {
+        io::roller(rollerPrePrime);
+        pros::delay(rollerWait);
+        io::roller(rollerRot, rollerSpeed);
+        pros::delay(rollerWaitPrime);
+
+        target = ARM_MID_TOWER;
+        mode = 11;
+        break;
+      }
+
+      // Low Tower Manual
+      case 3: {
+        target = ARM_LOW_TOWER_MANUAL;
+        mode = 11;
+        break;
+      }
+
+      // Low Tower Descore
+      case 4: {
+        target = ARM_LOW_TOWER_DESCORE;
+        mode = 11;
+        break;
+      }
+
+      // Mid Tower Descore
+      case 5: {
+        target = ARM_MID_TOWER_DESCORE;
+        mode = 11;
+        break;
+      }
+
+      // Low Tower... again?
+      case 6: {
+        io::roller(rollerPrePrime);
+        pros::delay(rollerWait);
+        io::roller(rollerRot, rollerSpeed);
+        pros::delay(rollerWaitPrime);
+
+        target = ARM_LOW_TOWER;
+        mode = 11;
+        break;
+      }
+
+      // Reset
+      case 10: {
+        move(-127);
+        if(Limit.get_new_press()) {
+          Motor.tare_position();
+          move(0);
+          keepPos = true;
+          target = ARM_BOTTOM;
+          mode = 11;
+          goto end;
+        } else if(reached) {
+          keepPos = true;
+          target = ARM_BOTTOM;
+          mode = 11;
+          goto end;
         }
 
-        roller(rollerpreprime);
-        wait(rollerWait);
-        roller(rollerRot, rollerSpeed);
-        wait(rollerwaitprime);
-        while(true) {
-          armTarget = pTerm(ARM_LOW_TOWER, Arm.get_position(), kP);
-          arm(armTarget);
+        break;
+      }
 
-          if(isSettled(armTarget, tolerance)) { arm(0); break; }
-          wait(20);
+      // MovePos
+      case 11: {
+        output = (target - Motor.get_position()) * kP;
+
+        if(output > 0) {
+          if(slewOutput > output + rate) {
+            slewOutput += rate;
+          } else {
+            slewOutput = output;
+          }
         }
+
+        if(output < 0) {
+          if(slewOutput < output - rate) {
+            slewOutput -= rate;
+          } else {
+            slewOutput = output;
+          }
+        }
+
+        if(-tolerance < output < tolerance || Limit.get_value()) {
+          if(nextCmd != 0) {
+            mode = nextCmd;
+            goto end;
+          } else if(!keepPos) { withTol(); nextCmd = 0; mode = 0; goto end; }
+        }
+
+        if(slewOutput > speed) slewOutput = speed;
+        if(slewOutput < -speed) slewOutput = -speed;
+
+        move(slewOutput);
+        break;
+      }
+
+      default: {
+        break;
       }
     }
 
+    end:
     pros::delay(20);
   }
 }
@@ -140,4 +225,8 @@ void Arm::start(void *ignore) {
 void Arm::stop() {
   isRunning = false;
   reset();
+}
+
+void Arm::move(int speed) {
+  Motor.move(speed);
 }

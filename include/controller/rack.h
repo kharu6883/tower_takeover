@@ -12,7 +12,7 @@ class Rack {
     Rack(double kP_ = 100);
     ~Rack();
 
-    Rack& withTolerance(double tolerance_ = 3);
+    Rack& withTol(double tolerance_ = 3);
 
     Rack& move(double target_, int speed_, int rate_ = 9);
 
@@ -20,7 +20,7 @@ class Rack {
 
     void reset();
 
-    // Getters
+    void setBrakeType(pros::motor_brake_mode_e_t type_);
 
     bool getState();
     int getPot();
@@ -28,6 +28,8 @@ class Rack {
     void run();
     static void start(void *ignore);
     void stop();
+
+    void move(int speed);
 
   private:
     static bool isRunning;
@@ -37,12 +39,13 @@ class Rack {
     pros::Motor Motor;
     pros::ADIPotentiometer Pot;
 
-    double kP, tolerance;
+    double kP;
+
+    double tolerance;
 
     double target;
     int speed, rate;
 
-    double error, output, slewOutput;
+    static double error, output, slewOutput;
 
-    void rack(int speed);
 };

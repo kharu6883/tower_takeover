@@ -1,16 +1,18 @@
 #include "main.h"
 
-#include "config/motor.h"
-#include "config/io.h"
-
+#include "controller/chassis.h"
+#include "controller/arm.h"
 #include "controller/displayController.h"
 #include "controller/autonController.h"
-#include "controller/macro.h"
+#include "controller/misc.h"
 #include "controller/vision.h"
 
 Autonomous Auton;
 Vision CamFront(FRONTVISION);
 Camera Feed(FRONTVISION);
+
+Chassis chassis;
+Arm arm;
 
 static int screen = 0;
 static int auton_type = 1;
@@ -91,8 +93,8 @@ static lv_res_t settings_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
   switch(id) {
-    case 1: setReset(true); break;
-    case 2: Gyro.reset(); break;
+    case 1: arm.reset(); break;
+    case 2: chassis.calibrateGyro(); break;
   }
 
   return LV_RES_OK;
@@ -379,7 +381,7 @@ void Display::run() {
 
       case 2: { // Sensor
         std::string gyro;
-        gyro = "Gyro: " + std::to_string(Gyro.get_value() / 10);
+        gyro = "Gyro: " + std::to_string(chassis.getGyro() / 10);
         lv_label_set_text(gyroVal, gyro.c_str());
         break;
       }
@@ -484,7 +486,7 @@ void Display::remoteUpdate() {
 
   if((Auton.getType() != lastAutonType || Auton.getSlot() != lastAutonSlot)) {
     std::string setter = Auton.getAbbv(Auton.getType(), Auton.getSlot()) + "       ";
-    master.set_text(0, 0, setter.c_str());
+    io::master.set_text(0, 0, setter.c_str());
     lastAutonType = Auton.getType();
     lastAutonSlot = Auton.getSlot();
   }

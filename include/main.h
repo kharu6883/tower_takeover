@@ -13,28 +13,6 @@
 #include "pros/rtos.h"
 #include "okapi/api.hpp"
 
-void macroTask(void* ignore);
-extern pros::Task armAsync;
-
-// It's Everyday Functions Bro
-void wait(int ms);
-void print(const char * text);
-void setReset(bool set);
-
-// Image declaration
-LV_IMG_DECLARE(intro);
-LV_IMG_DECLARE(logo);
-
-LV_IMG_DECLARE(michael1);
-LV_IMG_DECLARE(michael2);
-
-// Motor ports
-#define FLAPL 7
-#define FLAPR 3
-
-// ADI
-#define SELECTOR 7
-
 // Vision Constants
 #define FRONTVISION 11
 
