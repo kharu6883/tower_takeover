@@ -35,6 +35,9 @@ void initialize() {
   pros::Task rackController(rack.start, NULL, "Rack Controller");
   macro::print("Rack Initialized!");
 
+  pros::Task armController(arm.start, NULL, "Rack Controller");
+  macro::print("Arm Initialized!");
+
   Display Disp;
   pros::Task b_display(Disp.start, NULL, "Brain Display");
   b_display.set_priority(TASK_PRIORITY_MIN);

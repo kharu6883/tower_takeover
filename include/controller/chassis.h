@@ -29,7 +29,6 @@ class Chassis {
 
     Chassis& drive(double target_, int speed_, int rate_ = 9);
     Chassis& turn(double target_, int speed_, int rate_ = 9);
-    Chassis& arc(double target_, double angle_, int speed_, int rate_ = 9, double gyroAmp_ = 1);
 
     Chassis& align(double target_);
 

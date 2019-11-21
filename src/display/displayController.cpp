@@ -14,6 +14,9 @@ Camera Feed(FRONTVISION);
 Chassis chassis;
 Arm arm;
 
+int Display::lastAutonType = 0,
+Display::lastAutonSlot = 0;
+
 static int screen = 0;
 static int auton_type = 1;
 
@@ -222,10 +225,10 @@ void Display::main() {
   lv_obj_set_x(btnBlue, -100);
   lv_obj_set_x(btnSkills, -100);
 
-  lv_obj_t * btnAuton = createButton(1, 250, 30, 200, 40, SYMBOL_LIST" Autonomous", lv_scr_act(), main_click_action);
-  lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_GPS" Sensors", lv_scr_act(), main_click_action);
-  lv_obj_t * btnCamera = createButton(3, 250, 140, 200, 40, SYMBOL_IMAGE" Camera", lv_scr_act(), main_click_action);
-  lv_obj_t * btnSetting = createButton(4, 250, 185, 200, 40, SYMBOL_SETTINGS" Settings", lv_scr_act(), main_click_action);
+  lv_obj_t * btnAuton = createButton(1, 250, 30, 200, 40, SYMBOL_LIST" Autonomous", scr, main_click_action);
+  lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_GPS" Sensors", scr, main_click_action);
+  lv_obj_t * btnCamera = createButton(3, 250, 140, 200, 40, SYMBOL_IMAGE" Camera", scr, main_click_action);
+  lv_obj_t * btnSetting = createButton(4, 250, 185, 200, 40, SYMBOL_SETTINGS" Settings", scr, main_click_action);
 
   lv_scr_load(scr);
 }
@@ -381,7 +384,7 @@ void Display::run() {
 
       case 2: { // Sensor
         std::string gyro;
-        gyro = "Gyro: " + std::to_string(chassis.getGyro() / 10);
+        gyro = "Gyro: " +  std::to_string(chassis.getGyro() / 10);
         lv_label_set_text(gyroVal, gyro.c_str());
         break;
       }

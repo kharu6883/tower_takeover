@@ -29,6 +29,10 @@ VERSION:=1.0.0
 EXCLUDE_SRC_FROM_LIB+=$(foreach file, $(SRCDIR)/opcontrol $(SRCDIR)/initialize $(SRCDIR)/autonomous,$(foreach cext,$(CEXTS),$(file).$(cext)) $(foreach cxxext,$(CXXEXTS),$(file).$(cxxext)))
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/auton.cpp
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/display/displayController.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/chassis.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/rack.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/arm.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/vision.cpp
 
 # files that get distributed to every user (beyond your source archive) - add
 # whatever files you want here. This line is configured to add all header files

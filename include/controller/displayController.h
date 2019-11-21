@@ -17,13 +17,12 @@ class Display {
     void sensor();
     void camera();
     void setting();
-
-
+    
     void run();
     static void start(void* ignore);
 
   private:
-    int lastAutonType, lastAutonSlot;
+    static int lastAutonType, lastAutonSlot;
 
     void remoteUpdate();
 
