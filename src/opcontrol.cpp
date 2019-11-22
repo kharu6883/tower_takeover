@@ -21,10 +21,10 @@ void opcontrol() {
 	PID rackPID(0.1); // kP
 
 	while (true) {
-		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
-		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 + master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X) * 2);
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 - master.get_analog(ANALOG_LEFT_X) * 2);
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X) * 2 + master.get_analog(ANALOG_LEFT_X) * 2);
+		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 - master.get_analog(ANALOG_RIGHT_X) / 1.57 );
+		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 - master.get_analog(ANALOG_RIGHT_X) / 1.57 );
+		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 + master.get_analog(ANALOG_RIGHT_X) / 1.57 );
+		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 + master.get_analog(ANALOG_RIGHT_X) / 1.57 );
 
 		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;

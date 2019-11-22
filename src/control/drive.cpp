@@ -20,7 +20,7 @@ void calibrategyro() {
 
 void drivegyro(double target, int speed, double rate, double angle, double gyroamp, double tol) {
   double current, error, last, derivative, output;
-
+  target=-target;
   const double kP = 0.6;
   const double kD = 0.6;
 
@@ -88,7 +88,7 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
 void drivegyro(double target, int speed, double rate, double angle, double gyroamp, double target2, int speed2, double rate2, double angle2, double gyroamp2) {
   double current, error, last, derivative, output;
-
+ target=-target;
   const double kP = 0.6;
   const double kD = 0.6;
 
@@ -212,6 +212,8 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
 
 void drive(double target, int speed, double rate) {
+  target=-target;
+
   double current, error, last, derivative, output;
 
   const double kP = 0.6;
@@ -280,6 +282,8 @@ void drive(double target, int speed, double rate) {
 }
 
 void drive(double target, int speed, double rate, double amp, double offset) {
+  target=-target;
+
   double current, error, last, derivative, output;
 
   const double kP = 0.6;
@@ -348,6 +352,8 @@ void drive(double target, int speed, double rate, double amp, double offset) {
 }
 
 void turn(double target, int speed, double rate) {
+  target=-target;
+
   double current, error, last, derivative, output;
 
   const double kP = 0.6;
