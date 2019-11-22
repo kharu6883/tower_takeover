@@ -1,20 +1,24 @@
 #include "controller/arm.h"
 #include "controller/misc.h"
 
+pros::Motor ArmMotor(ARM, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
+pros::ADIDigitalIn Limit(ARMLIMIT);
+
 bool Arm::isRunning = false,
 Arm::isSettled = true,
-Arm::keepPos = true,
 Arm::reached = false;
 
 int Arm::mode = 0,
 Arm::nextCmd = 0;
 
-double Arm::kP = 300;
+double Arm::target = 0, Arm::tolerance = 3;
+int Arm::speed = 0, Arm::rate = 9;
+
+double Arm::kP = 210;
 
 double Arm::error = 0, Arm::output = 0, Arm::slewOutput = 0;
 
-Arm::Arm() : Motor(ARM, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
-Limit(ARMLIMIT) { }
+Arm::Arm() { }
 
 Arm::~Arm() { }
 
@@ -28,7 +32,7 @@ Arm& Arm::move(double target_, int speed_, int rate_) {
   speed = speed_;
   rate = rate_;
   nextCmd = 0;
-  mode = 0;
+  mode = 11;
   return *this;
 }
 
@@ -40,7 +44,10 @@ Arm& Arm::tower(int tower) {
   if(tower == 1 || tower == 2) {
     nextCmd = tower;
     mode = 11;
-  } else mode = tower;
+  } else {
+    nextCmd = 0;
+    mode = tower;
+  }
 
   return *this;
 }
@@ -57,20 +64,16 @@ void Arm::waitUntilSettled() {
   while(!isSettled) pros::delay(20);
 }
 
-void Arm::keepPosIfSettled() {
-  keepPos = true;
-}
-
 void Arm::reset() {
   error = output = slewOutput = 0;
 }
 
 void Arm::tarePos() {
-  Motor.tare_position();
+  ArmMotor.tare_position();
 }
 
 void Arm::setBrakeType(pros::motor_brake_mode_e_t type_) {
-  Motor.set_brake_mode(type_);
+  ArmMotor.set_brake_mode(type_);
 }
 
 bool Arm::getState() {
@@ -90,8 +93,6 @@ void Arm::run() {
   double rollerRot = -0.8, rollerSpeed = 150, rollerWaitPrime = 100, rollerWait = 200, rollerPrePrime = 100;
 
   while(isRunning) {
-    if(!io::master.is_connected()) { mode = 10; goto end; }
-
     switch(mode) {
 
       // Low Tower
@@ -102,6 +103,7 @@ void Arm::run() {
         pros::delay(rollerWaitPrime);
 
         target = ARM_LOW_TOWER;
+        nextCmd = 0;
         mode = 11;
         break;
       }
@@ -114,6 +116,7 @@ void Arm::run() {
         pros::delay(rollerWaitPrime);
 
         target = ARM_MID_TOWER;
+        nextCmd = 0;
         mode = 11;
         break;
       }
@@ -153,19 +156,11 @@ void Arm::run() {
 
       // Reset
       case 10: {
-        move(-127);
-        if(Limit.get_new_press()) {
-          Motor.tare_position();
+        move(-70);
+        if(Limit.get_value()) {
+          ArmMotor.tare_position();
           move(0);
-          keepPos = true;
-          target = ARM_BOTTOM;
           mode = 11;
-          goto end;
-        } else if(reached) {
-          keepPos = true;
-          target = ARM_BOTTOM;
-          mode = 11;
-          goto end;
         }
 
         break;
@@ -173,10 +168,10 @@ void Arm::run() {
 
       // MovePos
       case 11: {
-        output = (target - Motor.get_position()) * kP;
+        output = (target - ArmMotor.get_position()) * kP;
 
         if(output > 0) {
-          if(slewOutput > output + rate) {
+          if(output > slewOutput + rate) {
             slewOutput += rate;
           } else {
             slewOutput = output;
@@ -184,18 +179,18 @@ void Arm::run() {
         }
 
         if(output < 0) {
-          if(slewOutput < output - rate) {
+          if(output < slewOutput - rate) {
             slewOutput -= rate;
           } else {
             slewOutput = output;
           }
         }
 
-        if(-tolerance < output < tolerance || Limit.get_value()) {
+        if((output > -tolerance && output < tolerance) || (target == ARM_BOTTOM && Limit.get_value())) {
           if(nextCmd != 0) {
             mode = nextCmd;
-            goto end;
-          } else if(!keepPos) { withTol(); nextCmd = 0; mode = 0; goto end; }
+            break;
+          } else { withTol(); nextCmd = 0; mode = 0; break; }
         }
 
         if(slewOutput > speed) slewOutput = speed;
@@ -206,11 +201,11 @@ void Arm::run() {
       }
 
       default: {
+        ArmMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
         break;
       }
     }
 
-    end:
     pros::delay(20);
   }
 }
@@ -229,5 +224,5 @@ void Arm::stop() {
 }
 
 void Arm::move(int speed) {
-  Motor.move(speed);
+  ArmMotor.move(speed);
 }

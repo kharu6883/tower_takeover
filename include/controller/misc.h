@@ -1,7 +1,7 @@
 #include "api.h"
 
-#define ROLLERL 7
-#define ROLLERR 3
+#define ROLLERL 12
+#define ROLLERR 19
 
 #define SELECTOR 7
 

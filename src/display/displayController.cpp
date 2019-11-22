@@ -14,8 +14,8 @@ Camera Feed(FRONTVISION);
 Chassis chassis;
 Arm arm;
 
-int Display::lastAutonType = 0,
-Display::lastAutonSlot = 0;
+std::string Display::setText = "",
+Display::lastText = "";
 
 static int screen = 0;
 static int auton_type = 1;
@@ -384,7 +384,7 @@ void Display::run() {
 
       case 2: { // Sensor
         std::string gyro;
-        gyro = "Gyro: " +  std::to_string(chassis.getGyro() / 10);
+        gyro = "Limit Switch: " +  std::to_string(arm.getLimit());
         lv_label_set_text(gyroVal, gyro.c_str());
         break;
       }
@@ -483,15 +483,14 @@ void Display::start(void* ignore) {
   that -> run();
 }
 
-void Display::remoteUpdate() {
-  lastAutonType = Auton.getType();
-  lastAutonSlot = Auton.getSlot();
+void Display::setRemoteText(std::string text_) {
+  setText = text_;
+}
 
-  if((Auton.getType() != lastAutonType || Auton.getSlot() != lastAutonSlot)) {
-    std::string setter = Auton.getAbbv(Auton.getType(), Auton.getSlot()) + "       ";
-    io::master.set_text(0, 0, setter.c_str());
-    lastAutonType = Auton.getType();
-    lastAutonSlot = Auton.getSlot();
+void Display::remoteUpdate() {
+  if(setText != lastText) {
+    io::master.set_text(0, 0, setText.c_str());
+    lastText = setText;
   }
 }
 

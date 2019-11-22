@@ -21,8 +21,10 @@ class Display {
     void run();
     static void start(void* ignore);
 
+    void setRemoteText(std::string text_);
+
   private:
-    static int lastAutonType, lastAutonSlot;
+    static std::string setText, lastText;
 
     void remoteUpdate();
 

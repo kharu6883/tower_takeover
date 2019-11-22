@@ -28,14 +28,14 @@ void initialize() {
   macro::print("Motors Initialized!");
 
   // Threads
-  Chassis chassis(0.6, 0.6);
+  Chassis chassis;
   pros::Task baseController(chassis.start, NULL, "Chassis Controller");
   macro::print("Chassis Initialized!");
 
   pros::Task rackController(rack.start, NULL, "Rack Controller");
   macro::print("Rack Initialized!");
 
-  pros::Task armController(arm.start, NULL, "Rack Controller");
+  pros::Task armController(arm.start, NULL, "Arm Controller");
   macro::print("Arm Initialized!");
 
   Display Disp;
@@ -48,9 +48,9 @@ void initialize() {
   // pathMaker.set_priority(TASK_PRIORITY_MIN);
   // print("PathMaker Initialized!");
 
-  pros::Task autonSelect(Auton.start, NULL, "Auton Selector");
-  autonSelect.set_priority(TASK_PRIORITY_MIN);
-  macro::print("Auton Selector Initialized!");
+  // pros::Task autonSelect(Auton.start, NULL, "Auton Selector");
+  // autonSelect.set_priority(TASK_PRIORITY_MIN);
+  // macro::print("Auton Selector Initialized!");
 
   std::cout << "Initialization Done!" << std::endl;
 }

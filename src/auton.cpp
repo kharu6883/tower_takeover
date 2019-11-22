@@ -7,7 +7,7 @@
 #include "controller/misc.h"
 #include "controller/vision.h"
 
-static Chassis chassis(0.6, 0.6);
+static Chassis chassis;
 static Rack rack;
 static Arm arm;
 static Camera CamFront(FRONTVISION);
@@ -15,7 +15,8 @@ static Camera CamFront(FRONTVISION);
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  chassis.drive(1000, 127, 1).waitUntilSettled();
+  chassis.drive(50, 127, 9);
+  io::master.rumble(" .");
 }
 
 /*===========================================
@@ -25,11 +26,20 @@ void tester() {
 /*===========================================
   RED MATCH AUTONOMOUSES
 ===========================================*/
+void red1() {
+
+}
 
 /*===========================================
   BLUE MATCH AUTONOMOUSES
 ===========================================*/
+void blue1() {
+
+}
 
 /*===========================================
   SKILLS AUTONOMOUSES
 ===========================================*/
+void skills1() {
+
+}

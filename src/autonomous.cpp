@@ -7,7 +7,7 @@ using namespace okapi;
 using namespace std;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::type = SLOT_RED,
+int Autonomous::type = SLOT_SKILLS,
 Autonomous::slot = 0;
 
 std::map<int, void(*)()> Autonomous::redAuton;
@@ -17,6 +17,7 @@ std::map<int, typeName> Autonomous::slotName;
 std::map<int, typeName> Autonomous::slotAbbv;
 
 void autonomous() {
+  macro::print("Starting Autonomous");
   Autonomous Auton;
   Auton.runAuton();
 }
@@ -24,8 +25,15 @@ void autonomous() {
 Autonomous::Autonomous() { // The autons will be stored in this order, starting from 0.
   if(!isInitialized) {
 
+    // RED
+    addAuton(SLOT_RED, "Placeholder", "Placeholder", red1);
+
+    // BLUE
+    addAuton(SLOT_BLUE, "placeholder", "placeholder", blue1);
+
     // Skills
     addAuton(SLOT_SKILLS, "Tester", "Tester", tester); // Slot 0
+    addAuton(SLOT_SKILLS, "Skills 1", "Skills1", skills1);
 
     isInitialized = true;
   }
@@ -146,44 +154,7 @@ std::string Autonomous::getAbbv(int type_, int slot_) {
   }
 }
 
-void Autonomous::run() {
-  bool isPressed, isReleased, isHeld;
-  int dT;
-
-  okapi::Timer timer;
-
-  while(true) {
-    if(io::selector.get_value()) isPressed = true;
-      else isPressed = false;
-
-    if(io::selector.get_value()) {
-			int last = timer.millis().convert(okapi::millisecond);
-			while(io::selector.get_value()) pros::delay(20);
-			int now = timer.millis().convert(okapi::millisecond);
-			isReleased = true;
-			dT = now - last;
-		}
-
-    if(dT > 500) {
-      isHeld = true;
-      dT = 0;
-    }
-
-    if(isReleased && !isHeld) {
-      slot++;
-      isReleased = false;
-    } else if(isReleased && isHeld) {
-      type++;
-      isReleased = false;
-      isHeld = false;
-    }
-
-    if(type > SLOT_SKILLS) type = SLOT_RED;
-    if(slot >= getSize(getType())) slot = 0;
-
-    pros::delay(20);
-  }
-}
+void Autonomous::run() { }
 
 void Autonomous::start(void* ignore) {
   pros::delay(500);

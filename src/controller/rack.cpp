@@ -1,14 +1,18 @@
 #include "controller/rack.h"
 
+pros::Motor RackMotor(RACK, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
+pros::ADIPotentiometer Pot(RACKPOT);
+
 bool Rack::isRunning = false,
 Rack::isSettled = true,
 Rack::isActive = false;
 
+double Rack::kP = 100, Rack::tolerance = 3, Rack::target = 0;
+int Rack::speed = 0, Rack::rate = 0;
+
 double Rack::error = 0, Rack::output = 0, Rack::slewOutput = 0;
 
-Rack::Rack(double kP_) : kP(kP_),
-Motor(RACK, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS),
-Pot(RACKPOT) { }
+Rack::Rack() { }
 
 Rack::~Rack() { }
 
@@ -40,7 +44,7 @@ void Rack::reset() {
 }
 
 void Rack::setBrakeType(pros::motor_brake_mode_e_t type_) {
-  Motor.set_brake_mode(type_);
+  RackMotor.set_brake_mode(type_);
 }
 
 bool Rack::getState() {
@@ -82,7 +86,7 @@ void Rack::run() {
 
       if(slewOutput > speed) slewOutput = speed;
 
-      if(-tolerance < error < tolerance) {
+      if(output > -tolerance && output < tolerance) {
         withTol().reset();
         isSettled = true;
         goto end;
@@ -114,5 +118,5 @@ void Rack::stop() {
 --------------------------------*/
 
 void Rack::move(int speed) {
-  Motor.move(speed);
+  RackMotor.move(speed);
 }

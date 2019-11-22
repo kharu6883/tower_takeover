@@ -1,15 +1,18 @@
 #include "main.h"
 
-#define RACK 5
+#define RACK 18
 #define RACKPOT 1
 
-#define RACK_DOWN 900
-#define RACK_TOWER 1950
-#define RACK_UP 3615
+#define RACK_DOWN 230
+#define RACK_TOWER 1250
+#define RACK_UP 3200
+
+extern pros::Motor RackMotor;
+extern pros::ADIPotentiometer Pot;
 
 class Rack {
   public:
-    Rack(double kP_ = 100);
+    Rack();
     ~Rack();
 
     Rack& withTol(double tolerance_ = 3);
@@ -36,15 +39,12 @@ class Rack {
     static bool isSettled;
     static bool isActive;
 
-    pros::Motor Motor;
-    pros::ADIPotentiometer Pot;
+    static double kP;
 
-    double kP;
+    static double tolerance;
 
-    double tolerance;
-
-    double target;
-    int speed, rate;
+    static double target;
+    static int speed, rate;
 
     static double error, output, slewOutput;
 

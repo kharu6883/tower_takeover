@@ -46,9 +46,13 @@ class Autonomous {
   AUTON DECLARATIONS
 ===========================================*/
 
+void tester();
+
 // Red
+void red1();
 
 // Blue
+void blue1();
 
 // Skills
-void tester();
+void skills1();

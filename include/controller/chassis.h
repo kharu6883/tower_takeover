@@ -1,9 +1,13 @@
 #include "main.h"
 
-#define LFPORT 9
-#define LBPORT 10
-#define RFPORT 1
-#define RBPORT 2
+extern pros::Motor LF, LB, RF, RB;
+extern pros::ADIUltrasonic LSonic, RSonic;
+extern pros::ADIGyro Gyro;
+
+#define LFPORT 14
+#define LBPORT 15
+#define RFPORT 17
+#define RBPORT 16
 
 #define SONIC_L_PING 5
 #define SONIC_L_ECHO 6
@@ -18,7 +22,7 @@
 
 class Chassis {
   public:
-    Chassis(double kP_ = 0.6, double kD_ = 0.6);
+    Chassis();
     ~Chassis();
 
     Chassis& calibrateGyro();
@@ -60,14 +64,10 @@ class Chassis {
 
     static bool usingGyro;
 
-    pros::Motor LF, LB, RF, RB;
-    pros::ADIUltrasonic LSonic, RSonic;
-    pros::ADIGyro Gyro;
-
-    double kP, kD;
-    double tolerance, amp, offset;
-    double target;
-    int speed, rate;
+    static double kP, kD;
+    static double tolerance, amp, offset;
+    static double target;
+    static int speed, rate;
 
     double angle, gyroAmp;
 

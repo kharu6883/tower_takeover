@@ -1,14 +1,17 @@
 #include "main.h"
 
-#define ARM 6
+#define ARM 13
 #define ARMLIMIT 2
 
 #define ARM_BOTTOM 0
-#define ARM_LOW_TOWER 1.3
-#define ARM_LOW_TOWER_MANUAL 1.2
-#define ARM_LOW_TOWER_DESCORE 1.1
-#define ARM_MID_TOWER 1.7
-#define ARM_MID_TOWER_DESCORE 1.7
+#define ARM_LOW_TOWER 0.95
+#define ARM_LOW_TOWER_MANUAL 0.95
+#define ARM_LOW_TOWER_DESCORE 0.9
+#define ARM_MID_TOWER 1.252
+#define ARM_MID_TOWER_DESCORE 1.252
+
+extern pros::Motor ArmMotor;
+extern pros::ADIDigitalIn Limit;
 
 class Arm {
   public:
@@ -22,7 +25,6 @@ class Arm {
     Arm& zero();
 
     void waitUntilSettled();
-    void keepPosIfSettled();
 
     void reset();
 
@@ -46,21 +48,17 @@ class Arm {
   private:
     static bool isRunning;
     static bool isSettled;
-    static bool keepPos;
     static int mode;
     static int nextCmd;
 
     static bool reached;
 
-    pros::Motor Motor;
-    pros::ADIDigitalIn Limit;
-
     static double kP;
 
-    double tolerance;
+    static double tolerance;
 
-    double target;
-    int speed, rate;
+    static double target;
+    static int speed, rate;
 
     static double error, output, slewOutput;
 };
