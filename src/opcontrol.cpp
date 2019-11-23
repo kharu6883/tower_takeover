@@ -18,7 +18,7 @@ void opcontrol() {
 
 	Slew roller(60, 80); // Accel, Decel
 	Slew rackSlew(30, 60, true); // Accel, Decel
-	PID rackPID(0.1); // kP
+	PID rackPID(0.09); // kP
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 - master.get_analog(ANALOG_RIGHT_X) / 1.57 );

@@ -20,18 +20,12 @@ void tester() {
   PREMADE FUNCTIONS
 ===========================================*/
 void start() {            // Deploy and zero arm
-  roller(-150);
   lockChassis();
-  wait(50);
-  roller(-200);
-  arm(0.4, 100, 60);
-  wait(50);
-  roller(-200);
-  //Thread.drive(-70,100,9);
+  roller(-0.5,-200);
+  arm(0.4,200,2);
+  roller(0.5,200);
   armReset();
-  //Thread.drive(-70,150,9);
-  wait(200);
-  //Thread.disable_drive();
+  wait(100);
   unlockChassis();
 }
 

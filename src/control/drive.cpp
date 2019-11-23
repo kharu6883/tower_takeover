@@ -98,8 +98,8 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
   reset();
 
   while(target > 0) {
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
     error = target - current;
 
@@ -107,45 +107,38 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
     last = error;
 
-    if(output > slewOutput + rate) {
       slewOutput += rate;
-    } else {
-      slewOutput = output;
-    }
 
     if(slewOutput > speed) slewOutput = speed;
 
     if(isSettled(error, 9)) break;
 
-    left(slewOutput -  ((Gyro.get_value() / 5)+angle*2*gyroamp));
-    right(slewOutput +  ((Gyro.get_value() / 5)+angle*2*gyroamp));
+    left(slewOutput -  (((Gyro.get_value() / 10)+angle)*gyroamp));
+    right(slewOutput +  (((Gyro.get_value() / 10)+angle)*gyroamp));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
   }
 
   while(target < 0) {
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
     error = target - current;
 
-    output = pTerm(target, current, kP) + dTerm(error, last) * kD;
 
     last = error;
 
-    if(abs(output) > slewOutput + rate) {
+
       slewOutput += rate;
-    } else {
-      slewOutput = abs(output);
-    }
+
 
     if(slewOutput > speed) slewOutput = speed;
 
     if(isSettled(abs(error), 9)) break;
 
-    left(-slewOutput -  ((Gyro.get_value() / 5)+angle*2*gyroamp));
-    right(-slewOutput +  ((Gyro.get_value() /5)+angle*2*gyroamp));
+    left(-slewOutput -  (((Gyro.get_value() / 10)+angle)*gyroamp));
+    right(-slewOutput +  (((Gyro.get_value() /10)+angle)*gyroamp));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -154,8 +147,8 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
   reset();
 
   while(target2 > 0) {
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
     error = target - current;
 
@@ -181,8 +174,8 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
   }
 
   while(target < 0) {
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
     error = target - current;
 
@@ -225,8 +218,8 @@ void drive(double target, int speed, double rate) {
   reset();
 
   while(target > 0) {
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
     error = target - current;
 
@@ -295,8 +288,8 @@ void drive(double target, int speed, double rate, double amp, double offset) {
   reset();
 
   while(target > 0) {
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
     error = target - current;
 
@@ -322,8 +315,8 @@ void drive(double target, int speed, double rate, double amp, double offset) {
   }
 
   while(target < 0) {
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
     error = target - current;
 
@@ -367,8 +360,8 @@ void turn(double target, int speed, double rate) {
   reset();
 
   while(target > 0) { // Turn Right
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( deltaL + abs(deltaR) ) / 2;
     error = target - current;
 
@@ -390,8 +383,8 @@ void turn(double target, int speed, double rate) {
   }
 
   while(target < 0) { // Turn Right
-    deltaL = (LF.get_position() + LB.get_position()) / 2;
-    deltaR = (RF.get_position() + RB.get_position()) / 2;
+    deltaL = LF.get_position();
+    deltaR = RF.get_position();
     current = ( abs(deltaL) + deltaR ) / 2;
     error = target + current;
 

@@ -293,7 +293,7 @@ void tower(int tower, double tolerance) {
 
 void armReset() {
   Arm.set_current_limit(10000);
-  arm(-200);
+  arm(-100);
 
   bool isDown = armLimit.get_value();
 
