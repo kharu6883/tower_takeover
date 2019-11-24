@@ -142,7 +142,7 @@ void opcontrol() {
 			}
 
 			case 11: {
-				if(arm.getMacroState()) { towerMode = 0; break; }
+				if(arm.getState()) { towerMode = 0; break; }
 				break;
 			}
 
@@ -161,7 +161,7 @@ void opcontrol() {
 
 		} else if(master.get_digital(DIGITAL_R2)) {
 
-			roller.calculate(-80);
+			roller.calculate(-100);
 
 		} else {
 
@@ -172,7 +172,7 @@ void opcontrol() {
 		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6) io::roller(roller.getOutput());
 
 		#ifdef DEBUG
-		std::cout << "Rack: " << Rack.get_current_draw() << "mA, Arm: " << Arm.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
+		std::cout << "Rack: " << RackMotor.get_current_draw() << "mA, Arm: " << ArmMotor.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
 		#endif
 
 		// Yeet

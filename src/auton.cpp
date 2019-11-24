@@ -15,9 +15,6 @@ static Camera CamFront(FRONTVISION);
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  chassis.drive(5, 127, 4).waitUntilSettled();
-  chassis.align(100).waitUntilSettled();
-  io::master.rumble(" .");
 }
 
 /*===========================================

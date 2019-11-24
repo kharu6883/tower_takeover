@@ -28,11 +28,11 @@ class Chassis {
     Chassis& calibrateGyro();
 
     Chassis& withTol(double tolerance_ = 1);
-    Chassis& withSlop(double amp_ = 8, double offset_ = 0);
+    Chassis& withSlop(double amp_ = 100, double offset_ = 0);
     Chassis& withGyro(double angle_, double gyroAmp_ = 2);
 
-    Chassis& drive(double target_, int speed_, int rate_ = 9);
-    Chassis& turn(double target_, int speed_, int rate_ = 9);
+    Chassis& drive(double target_, int speed_, int rate_ = 4);
+    Chassis& turn(double target_, int speed_, int rate_ = 4);
 
     Chassis& align(double target_);
 
@@ -69,7 +69,7 @@ class Chassis {
     static double target;
     static int speed, rate;
 
-    double angle, gyroAmp;
+    static double angle, gyroAmp;
 
     static double deltaL, deltaR;
     static double current, last, error, derivative, output, slewOutput;

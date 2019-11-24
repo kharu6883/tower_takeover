@@ -4,7 +4,7 @@
 #define ARMLIMIT 2
 
 #define ARM_BOTTOM 0
-#define ARM_LOW_TOWER 0.95
+#define ARM_LOW_TOWER 1.05
 #define ARM_LOW_TOWER_MANUAL 0.95
 #define ARM_LOW_TOWER_DESCORE 0.9
 #define ARM_MID_TOWER 1.252
@@ -19,7 +19,7 @@ class Arm {
     Arm();
     ~Arm();
 
-    Arm& withTol(double tolerance_ = 3);
+    Arm& withTol(double tolerance_ = 25);
 
     Arm& move(double target_, int speed_, int rate_ = 9);
     Arm& tower(int tower);

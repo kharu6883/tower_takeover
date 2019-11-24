@@ -15,7 +15,7 @@ class Rack {
     Rack();
     ~Rack();
 
-    Rack& withTol(double tolerance_ = 3);
+    Rack& withTol(double tolerance_ = 5);
 
     Rack& move(double target_, int speed_, int rate_ = 9);
 

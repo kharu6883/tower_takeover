@@ -5,7 +5,7 @@
 
 #define PROS_USE_LITERALS
 
-// #define DEBUG
+#define DEBUG
 
 // Nice includes below
 #include "api.h"

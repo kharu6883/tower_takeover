@@ -7,7 +7,7 @@ bool Rack::isRunning = false,
 Rack::isSettled = true,
 Rack::isActive = false;
 
-double Rack::kP = 100, Rack::tolerance = 3, Rack::target = 0;
+double Rack::kP = 0.09, Rack::tolerance = 5, Rack::target = 0;
 int Rack::speed = 0, Rack::rate = 0;
 
 double Rack::error = 0, Rack::output = 0, Rack::slewOutput = 0;
@@ -63,6 +63,7 @@ void Rack::run() {
   isRunning = true;
 
   while(isRunning) {
+    if(!pros::competition::is_autonomous()) goto end;
 
     if(isActive) {
       error = target - Pot.get_value();
@@ -87,13 +88,17 @@ void Rack::run() {
       if(slewOutput > speed) slewOutput = speed;
 
       if(output > -tolerance && output < tolerance) {
-        withTol().reset();
         isSettled = true;
+        withTol().reset();
         goto end;
       }
 
       move(slewOutput);
     }
+
+    #ifdef DEBUG
+    std::cout << "Rack Output: " << output << std::endl;
+    #endif
 
     end:
     pros::delay(20);

@@ -15,10 +15,12 @@ Chassis::usingGyro = false;
 
 int Chassis::mode = IDLE;
 
-double Chassis::kP = 20, Chassis::kD = 0;
+double Chassis::kP = 40, Chassis::kD = 5;
 
-double Chassis::tolerance = 1, Chassis::amp = 8, Chassis::offset = 0, Chassis::target = 0;
+double Chassis::tolerance = 2, Chassis::amp = 100, Chassis::offset = 0, Chassis::target = 0;
 int Chassis::speed = 0, Chassis::rate = 4;
+
+double Chassis::angle = 0, Chassis::gyroAmp = 2;
 
 double Chassis::deltaL = 0, Chassis::deltaR = 0,
 Chassis::current = 0, Chassis::last = 0, Chassis::error = 0, Chassis::derivative = 0,
@@ -134,12 +136,13 @@ void Chassis::run() {
   isRunning = true;
 
   while(isRunning) {
+    if(!pros::competition::is_autonomous()) goto end;
 
     switch(mode) {
       case DRIVING: { // Driving
         deltaL = LF.get_position();
         deltaR = RF.get_position();
-        current = ( deltaL - deltaR ) / 2;
+        current = ( deltaR - deltaL ) / 2;
 
         error = target - current;
 
@@ -171,8 +174,8 @@ void Chassis::run() {
         }
 
         if(!usingGyro) {
-          left(slewOutput - slop());
-          right(slewOutput + slop());
+          left(slewOutput + slop());
+          right(slewOutput - slop());
         } else {
           left(slewOutput - (((Gyro.get_value() / 5) + angle) * 2 * gyroAmp));
           right(slewOutput + (((Gyro.get_value() / 5) + angle) * 2 * gyroAmp));
@@ -184,11 +187,11 @@ void Chassis::run() {
       case TURNING: { // Turning
         deltaL = LF.get_position();
         deltaR = RF.get_position();
-        current = ( deltaL + deltaR ) / 2;
+        current = -1 * ( deltaR + deltaL ) / 2;
 
         error = target - current;
 
-        output = (error * kP) + (error - last) * kD;
+        output = (error * (kP + 60)) + (error - last) * kD;
 
         last = error;
 
@@ -207,7 +210,7 @@ void Chassis::run() {
         }
 
         if(slewOutput > speed) slewOutput = speed;
-        if(slewOutput < -speed) slewOutput = speed;
+        if(slewOutput < -speed) slewOutput = -speed;
 
         if(output > -tolerance && output < tolerance) {
           isSettled = true;
@@ -224,8 +227,8 @@ void Chassis::run() {
         deltaL = target - LSonic.get_value();
         deltaR = target - RSonic.get_value();
 
-        outputL = deltaL * ( kP / 10 ) + ( deltaL - lastL ) * kD;
-        outputR = deltaR * ( kP / 10 ) + ( deltaR - lastR ) * kD;
+        outputL = deltaL * ( kP - 30 ) + ( deltaL - lastL ) * kD;
+        outputR = deltaR * ( kP - 30 ) + ( deltaR - lastR ) * kD;
 
         lastL = deltaL;
         lastR = deltaR;
@@ -247,9 +250,10 @@ void Chassis::run() {
     }
 
     #ifdef DEBUG
-    std::cout << LF.get_position() << std::endl;
+    std::cout << "Left Front: " << LF.get_position() << ", Output: " << output << std::endl;
     #endif
 
+    end:
     pros::delay(20);
   }
 }
@@ -268,20 +272,20 @@ void Chassis::stop() {
 }
 
 void Chassis::left(int speed) {
-  LF.move(speed);
-  LB.move(speed);
+  LF.move(-speed);
+  LB.move(-speed);
 }
 
 void Chassis::right(int speed) {
-  RF.move(-speed);
-  RB.move(-speed);
+  RF.move(speed);
+  RB.move(speed);
 }
 
 double Chassis::slop(int mode) {
   switch(mode) {
-    case 0: return ( deltaL + deltaR + offset) * amp; break;
-    case 1: return ( deltaL - deltaR ) * amp; break;
+    case 0: return ( deltaR + deltaL + offset) * amp; break;
+    case 1: return ( deltaR - deltaL ) * amp; break;
 
-    default: return ( deltaL + deltaR + offset ) * amp; break;
+    default: return ( deltaR + deltaL + offset ) * amp; break;
   }
 }

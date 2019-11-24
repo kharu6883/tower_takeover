@@ -12,10 +12,10 @@ Arm::reached = false;
 int Arm::mode = 0,
 Arm::nextCmd = 0;
 
-double Arm::target = 0, Arm::tolerance = 3;
+double Arm::target = 0, Arm::tolerance = 25;
 int Arm::speed = 0, Arm::rate = 9;
 
-double Arm::kP = 250;
+double Arm::kP = 350;
 
 double Arm::error = 0, Arm::output = 0, Arm::slewOutput = 0;
 
@@ -32,6 +32,8 @@ Arm& Arm::move(double target_, int speed_, int rate_) {
   target = target_;
   speed = speed_;
   rate = rate_;
+  isSettled = false;
+  reset();
   nextCmd = 0;
   mode = 11;
   return *this;
@@ -41,6 +43,8 @@ Arm& Arm::tower(int tower) {
   target = ARM_BOTTOM;
   speed = 127;
   rate = 9;
+  reset();
+  isSettled = false;
 
   if(tower == 1 || tower == 2) {
     macroFin = false;
@@ -57,6 +61,7 @@ Arm& Arm::tower(int tower) {
 Arm& Arm::zero() {
   target = ARM_BOTTOM;
   reached = Limit.get_value();
+  isSettled = false;
   nextCmd = 0;
   mode = 10;
   return *this;
@@ -68,6 +73,7 @@ void Arm::waitUntilSettled() {
 
 void Arm::reset() {
   error = output = slewOutput = 0;
+  move(0);
 }
 
 void Arm::tarePos() {
@@ -96,7 +102,7 @@ bool Arm::getLimit() {
 
 void Arm::run() {
   isRunning = true;
-  double rollerPrePrime = 100, rollerWait = 150, rollerRot = -0.8, rollerSpeed = 150, rollerWaitPrime = 100;
+  double rollerPrePrime = 50, rollerWait = 100, rollerRot = -0.4, rollerSpeed = 60, rollerWaitPrime = 0;
 
   while(isRunning) {
     switch(mode) {
@@ -110,6 +116,7 @@ void Arm::run() {
         macroFin = true;
 
         target = ARM_LOW_TOWER;
+        rate = 50;
         nextCmd = 0;
         mode = 11;
         break;
@@ -124,6 +131,7 @@ void Arm::run() {
         macroFin = true;
 
         target = ARM_MID_TOWER;
+        rate = 50;
         nextCmd = 0;
         mode = 11;
         break;
@@ -158,6 +166,7 @@ void Arm::run() {
         pros::delay(rollerWaitPrime);
 
         target = ARM_LOW_TOWER;
+        rate = 50;
         mode = 11;
         break;
       }
@@ -175,6 +184,7 @@ void Arm::run() {
         if(Limit.get_value()) {
           ArmMotor.tare_position();
           move(0);
+          isSettled = true;
           mode = 11;
         }
 
@@ -205,7 +215,7 @@ void Arm::run() {
           if(nextCmd != 0) {
             mode = nextCmd;
             break;
-          } else { withTol(); nextCmd = 0; mode = 0; break; }
+          } else { withTol().reset(); isSettled = true; nextCmd = 0; mode = 0; break; }
         }
 
         if(slewOutput > speed) slewOutput = speed;
@@ -220,6 +230,10 @@ void Arm::run() {
         break;
       }
     }
+
+    #ifdef DEBUG
+    std::cout << "Arm Output: " << output << std::endl;
+    #endif
 
     pros::delay(20);
   }
