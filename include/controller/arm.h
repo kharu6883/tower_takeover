@@ -1,6 +1,6 @@
 #include "main.h"
 
-#define ARM 13
+#define ARM 13 // 13
 #define ARMLIMIT 2
 
 #define ARM_BOTTOM 0
@@ -9,6 +9,7 @@
 #define ARM_LOW_TOWER_DESCORE 0.9
 #define ARM_MID_TOWER 1.252
 #define ARM_MID_TOWER_DESCORE 1.252
+#define ARM_TWO_CUBE 0.25
 
 extern pros::Motor ArmMotor;
 extern pros::ADIDigitalIn Limit;
@@ -33,8 +34,9 @@ class Arm {
     void setBrakeType(pros::motor_brake_mode_e_t type_);
 
     // Task States
-    bool getState();
     int getMode();
+    bool getState();
+    bool getMacroState();
 
     // Sensors
     bool getLimit();
@@ -51,6 +53,7 @@ class Arm {
     static int mode;
     static int nextCmd;
 
+    static bool macroFin;
     static bool reached;
 
     static double kP;

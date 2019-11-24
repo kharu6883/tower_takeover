@@ -1,14 +1,10 @@
 #include "api.h"
 
-#define ROLLERL 12
-#define ROLLERR 19
-
-#define SELECTOR 7
+#define ROLLERL 12 // 12
+#define ROLLERR 19 // 19
 
 namespace io {
   extern pros::Controller master;
-
-  extern pros::ADIDigitalIn selector;
 
   extern pros::Motor RollerL, RollerR;
 

@@ -4,17 +4,17 @@ extern pros::Motor LF, LB, RF, RB;
 extern pros::ADIUltrasonic LSonic, RSonic;
 extern pros::ADIGyro Gyro;
 
-#define LFPORT 9 // 14
-#define LBPORT 10 // 15
-#define RFPORT 1 // 17
-#define RBPORT 2 // 16
+#define LFPORT 14 // 14
+#define LBPORT 15 // 15
+#define RFPORT 17 // 17
+#define RBPORT 16 // 16
 
-#define SONIC_L_PING 5
-#define SONIC_L_ECHO 6
-#define SONIC_R_PING 3
-#define SONIC_R_ECHO 4
+#define SONIC_L_PING 3
+#define SONIC_L_ECHO 4
+#define SONIC_R_PING 5
+#define SONIC_R_ECHO 6
 
-#define GYRO 8
+#define GYRO 7
 
 #define DRIVING 1
 #define TURNING 2

@@ -48,10 +48,6 @@ void initialize() {
   // pathMaker.set_priority(TASK_PRIORITY_MIN);
   // print("PathMaker Initialized!");
 
-  // pros::Task autonSelect(Auton.start, NULL, "Auton Selector");
-  // autonSelect.set_priority(TASK_PRIORITY_MIN);
-  // macro::print("Auton Selector Initialized!");
-
   std::cout << "Initialization Done!" << std::endl;
 }
 

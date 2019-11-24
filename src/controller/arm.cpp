@@ -6,6 +6,7 @@ pros::ADIDigitalIn Limit(ARMLIMIT);
 
 bool Arm::isRunning = false,
 Arm::isSettled = true,
+Arm::macroFin = true,
 Arm::reached = false;
 
 int Arm::mode = 0,
@@ -14,7 +15,7 @@ Arm::nextCmd = 0;
 double Arm::target = 0, Arm::tolerance = 3;
 int Arm::speed = 0, Arm::rate = 9;
 
-double Arm::kP = 210;
+double Arm::kP = 250;
 
 double Arm::error = 0, Arm::output = 0, Arm::slewOutput = 0;
 
@@ -42,6 +43,7 @@ Arm& Arm::tower(int tower) {
   rate = 9;
 
   if(tower == 1 || tower == 2) {
+    macroFin = false;
     nextCmd = tower;
     mode = 11;
   } else {
@@ -76,12 +78,16 @@ void Arm::setBrakeType(pros::motor_brake_mode_e_t type_) {
   ArmMotor.set_brake_mode(type_);
 }
 
+int Arm::getMode() {
+  return mode;
+}
+
 bool Arm::getState() {
   return isSettled;
 }
 
-int Arm::getMode() {
-  return mode;
+bool Arm::getMacroState() {
+  return macroFin;
 }
 
 bool Arm::getLimit() {
@@ -90,7 +96,7 @@ bool Arm::getLimit() {
 
 void Arm::run() {
   isRunning = true;
-  double rollerRot = -0.8, rollerSpeed = 150, rollerWaitPrime = 100, rollerWait = 200, rollerPrePrime = 100;
+  double rollerPrePrime = 100, rollerWait = 150, rollerRot = -0.8, rollerSpeed = 150, rollerWaitPrime = 100;
 
   while(isRunning) {
     switch(mode) {
@@ -101,6 +107,7 @@ void Arm::run() {
         pros::delay(rollerWait);
         io::roller(rollerRot, rollerSpeed);
         pros::delay(rollerWaitPrime);
+        macroFin = true;
 
         target = ARM_LOW_TOWER;
         nextCmd = 0;
@@ -114,6 +121,7 @@ void Arm::run() {
         pros::delay(rollerWait);
         io::roller(rollerRot, rollerSpeed);
         pros::delay(rollerWaitPrime);
+        macroFin = true;
 
         target = ARM_MID_TOWER;
         nextCmd = 0;
@@ -154,9 +162,16 @@ void Arm::run() {
         break;
       }
 
+      // 2 Cube Height
+      case 7: {
+        target = ARM_TWO_CUBE;
+        mode = 11;
+        break;
+      }
+
       // Reset
       case 10: {
-        move(-70);
+        move(-100);
         if(Limit.get_value()) {
           ArmMotor.tare_position();
           move(0);

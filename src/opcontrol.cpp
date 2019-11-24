@@ -22,19 +22,14 @@ void opcontrol() {
 	macro::Slew rackSlew(10, 30, true); // Accel, Decel
 	macro::PID rackPID(0.13); // kP
 
-	// pros::Motor LF(LFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
-	// 						LB(LBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
-	// 						RF(RFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS),
-	// 						RB(RBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);
-
 	rack.setBrakeType(MOTOR_BRAKE_HOLD);
 	arm.setBrakeType(MOTOR_BRAKE_HOLD);
 
 	while (true) {
-		LF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X));
-		LB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X));
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X));
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 2 - master.get_analog(ANALOG_RIGHT_X));
+		LF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		LB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
 
 		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;
@@ -93,6 +88,7 @@ void opcontrol() {
 		if(master.get_digital_new_press(DIGITAL_B) && rack.getPot() <= 1400) towerMode = 4;
 		if(master.get_digital_new_press(DIGITAL_Y) && rack.getPot() <= 1400) towerMode = 5;
 		if(master.get_digital_new_press(DIGITAL_X) && rack.getPot() <= 1400) towerMode = 6;
+		if(master.get_digital_new_press(DIGITAL_A) && rack.getPot() <= 1400) towerMode = 7;
 
 		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) towerMode = 10;
 
@@ -105,37 +101,48 @@ void opcontrol() {
 
 			case 2: {
 				arm.tower(1);
-				towerMode = 0;
+				towerMode = 11;
 				break;
 			}
 
 			case 3: {
 				arm.tower(2);
-				towerMode = 0;
+				towerMode = 11;
 				break;
 			}
 
 			case 4: {
 				arm.tower(3);
-				towerMode = 0;
+				towerMode = 11;
 				break;
 			}
 
 			case 5: {
 				arm.tower(4);
-				towerMode = 0;
+				towerMode = 11;
 				break;
 			}
 
 			case 6: {
 				arm.tower(5);
-				towerMode = 0;
+				towerMode = 11;
+				break;
+			}
+
+			case 7: {
+				arm.tower(7);
+				towerMode = 11;
 				break;
 			}
 
 			case 10: {
 				arm.move(ARM_BOTTOM, 127);
-				towerMode = 0;
+				towerMode = 11;
+				break;
+			}
+
+			case 11: {
+				if(arm.getMacroState()) { towerMode = 0; break; }
 				break;
 			}
 
@@ -150,11 +157,11 @@ void opcontrol() {
 		--------------------------------*/
 		if(master.get_digital(DIGITAL_R1)) {
 
-			roller.calculate(200);
+			roller.calculate(127);
 
 		} else if(master.get_digital(DIGITAL_R2)) {
 
-			roller.calculate(-150);
+			roller.calculate(-80);
 
 		} else {
 

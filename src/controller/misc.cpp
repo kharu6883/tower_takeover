@@ -5,15 +5,13 @@
 namespace io {
   pros::Controller master(CONTROLLER_MASTER);
 
-  pros::ADIDigitalIn selector(SELECTOR);
-
   pros::Motor RollerL(ROLLERL, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);
   pros::Motor RollerR(ROLLERR, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
 
   void roller(int speed) {
-    RollerL.move_velocity(speed);
+    RollerL.move(speed);
     pros::delay(50);
-    RollerR.move_velocity(speed);
+    RollerR.move(speed);
   }
 
   void roller(double rot, int speed) {

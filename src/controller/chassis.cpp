@@ -1,11 +1,12 @@
 #include "controller/chassis.h"
 
-pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
-LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
-RF(RFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
-RB(RBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS);
+pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS),
+LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS),
+RF(RFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS),
+RB(RBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS);
 
-pros::ADIUltrasonic LSonic(SONIC_L_PING, SONIC_L_ECHO), RSonic(SONIC_R_PING, SONIC_R_ECHO);
+pros::ADIUltrasonic LSonic(SONIC_L_PING, SONIC_L_ECHO);
+pros::ADIUltrasonic RSonic(SONIC_R_PING, SONIC_R_ECHO);
 pros::ADIGyro Gyro(GYRO);
 
 bool Chassis::isRunning = false,
@@ -14,10 +15,10 @@ Chassis::usingGyro = false;
 
 int Chassis::mode = IDLE;
 
-double Chassis::kP = 1500, Chassis::kD = 50;
+double Chassis::kP = 20, Chassis::kD = 0;
 
 double Chassis::tolerance = 1, Chassis::amp = 8, Chassis::offset = 0, Chassis::target = 0;
-int Chassis::speed = 0, Chassis::rate = 0;
+int Chassis::speed = 0, Chassis::rate = 4;
 
 double Chassis::deltaL = 0, Chassis::deltaR = 0,
 Chassis::current = 0, Chassis::last = 0, Chassis::error = 0, Chassis::derivative = 0,
@@ -59,6 +60,7 @@ Chassis& Chassis::drive(double target_, int speed_, int rate_) {
   speed = speed_;
   rate = rate_;
   isSettled = false;
+  reset();
   mode = DRIVING;
   return *this;
 }
@@ -68,6 +70,7 @@ Chassis& Chassis::turn(double target_, int speed_, int rate_) {
   speed = speed_;
   rate = rate_;
   isSettled = false;
+  reset();
   mode = TURNING;
   return *this;
 }
@@ -75,6 +78,7 @@ Chassis& Chassis::turn(double target_, int speed_, int rate_) {
 Chassis& Chassis::align(double target_) {
   target = target_;
   isSettled = false;
+  reset();
   mode = ALIGNING;
   return *this;
 }
@@ -135,7 +139,7 @@ void Chassis::run() {
       case DRIVING: { // Driving
         deltaL = LF.get_position();
         deltaR = RF.get_position();
-        current = ( deltaR - deltaL ) / 2;
+        current = ( deltaL - deltaR ) / 2;
 
         error = target - current;
 
@@ -149,9 +153,7 @@ void Chassis::run() {
           } else {
             slewOutput = output;
           }
-        }
-
-        if(output < 0) {
+        } else if(output < 0) {
           if(output < slewOutput - rate) {
             slewOutput -= rate;
           } else {
@@ -163,8 +165,8 @@ void Chassis::run() {
         if(slewOutput < -speed) slewOutput = -speed;
 
         if(output > -tolerance && output < tolerance) {
-          withTol().withSlop().reset();
           isSettled = true;
+          withTol().withSlop().reset();
           break;
         }
 
@@ -182,7 +184,7 @@ void Chassis::run() {
       case TURNING: { // Turning
         deltaL = LF.get_position();
         deltaR = RF.get_position();
-        current = -1 * ( deltaR - deltaL ) / 2;
+        current = ( deltaL + deltaR ) / 2;
 
         error = target - current;
 
@@ -196,9 +198,7 @@ void Chassis::run() {
           } else {
             slewOutput = output;
           }
-        }
-
-        if(output < 0) {
+        } else if(output < 0) {
           if(output < slewOutput - rate) {
             slewOutput -= rate;
           } else {
@@ -210,8 +210,8 @@ void Chassis::run() {
         if(slewOutput < -speed) slewOutput = speed;
 
         if(output > -tolerance && output < tolerance) {
-          withTol().withSlop().reset();
           isSettled = true;
+          withTol().withSlop().reset();
           break;
         }
 
@@ -221,21 +221,18 @@ void Chassis::run() {
       }
 
       case ALIGNING: { // Aligning
-        nowTime = clock();
-        elapsed = nowTime - lastTime;
-
         deltaL = target - LSonic.get_value();
         deltaR = target - RSonic.get_value();
 
-        outputL = deltaL * kP + ( deltaL - lastL ) * elapsed * kD;
-        outputR = deltaR * kP + ( deltaR - lastR ) * elapsed * kD;
+        outputL = deltaL * ( kP / 10 ) + ( deltaL - lastL ) * kD;
+        outputR = deltaR * ( kP / 10 ) + ( deltaR - lastR ) * kD;
 
         lastL = deltaL;
         lastR = deltaR;
 
         if(deltaL > -tolerance && deltaL < tolerance && deltaR > -tolerance && deltaR < tolerance) {
-          withTol().withSlop().reset();
           isSettled = true;
+          withTol().withSlop().reset();
           break;
         }
 
@@ -249,7 +246,9 @@ void Chassis::run() {
       }
     }
 
+    #ifdef DEBUG
     std::cout << LF.get_position() << std::endl;
+    #endif
 
     pros::delay(20);
   }
@@ -269,15 +268,20 @@ void Chassis::stop() {
 }
 
 void Chassis::left(int speed) {
-  LF.move(-speed);
-  LB.move(-speed);
+  LF.move(speed);
+  LB.move(speed);
 }
 
 void Chassis::right(int speed) {
-  RF.move(speed);
-  RB.move(speed);
+  RF.move(-speed);
+  RB.move(-speed);
 }
 
 double Chassis::slop(int mode) {
-  return ( deltaL + deltaR + offset) * amp;
+  switch(mode) {
+    case 0: return ( deltaL + deltaR + offset) * amp; break;
+    case 1: return ( deltaL - deltaR ) * amp; break;
+
+    default: return ( deltaL + deltaR + offset ) * amp; break;
+  }
 }
