@@ -27,7 +27,7 @@ class Chassis {
 
     Chassis& calibrateGyro();
 
-    Chassis& withTol(double tolerance_ = 1);
+    Chassis& withTol(double tolerance_ = 6);
     Chassis& withSlop(double amp_ = 100, double offset_ = 0);
     Chassis& withGyro(double angle_, double gyroAmp_ = 2);
 

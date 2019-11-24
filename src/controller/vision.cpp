@@ -47,23 +47,23 @@ std::map<int, vision_object_s_t> Camera::getFeed() {
 
 void Camera::target(int sig, int size, int low, int high, double tolerance) {
 
-  const double kP = 0.6;
-
-  vision_object_s_t rtn;
-  double output;
-  Chassis chassis;
-
-  while(true) {
-    rtn = withSig(sig).withArea(low, high).getFeed()[size];
-    output = (150 - rtn.x_middle_coord) * kP;
-
-    chassis.left(output);
-    chassis.right(-output);
-
-    if(-tolerance < output < tolerance) break;
-    pros::delay(20);
-  }
-
-  chassis.left(0);
-  chassis.right(0);
+  // const double kP = 0.6;
+  //
+  // vision_object_s_t rtn;
+  // double output;
+  // Chassis chassis;
+  //
+  // while(true) {
+  //   rtn = withSig(sig).withArea(low, high).getFeed()[size];
+  //   output = (150 - rtn.x_middle_coord) * kP;
+  //
+  //   chassis.left(output);
+  //   chassis.right(-output);
+  //
+  //   if(-tolerance < output < tolerance) break;
+  //   pros::delay(20);
+  // }
+  //
+  // chassis.left(0);
+  // chassis.right(0);
 }

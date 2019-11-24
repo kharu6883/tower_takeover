@@ -1,9 +1,9 @@
 #include "controller/chassis.h"
 
-pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS),
-LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS),
-RF(RFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS),
-RB(RBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_ROTATIONS);
+pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
+LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
+RF(RFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
+RB(RBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS);
 
 pros::ADIUltrasonic LSonic(SONIC_L_PING, SONIC_L_ECHO);
 pros::ADIUltrasonic RSonic(SONIC_R_PING, SONIC_R_ECHO);
@@ -15,9 +15,9 @@ Chassis::usingGyro = false;
 
 int Chassis::mode = IDLE;
 
-double Chassis::kP = 40, Chassis::kD = 5;
+double Chassis::kP = 0.5, Chassis::kD = 0.6;
 
-double Chassis::tolerance = 2, Chassis::amp = 100, Chassis::offset = 0, Chassis::target = 0;
+double Chassis::tolerance = 6, Chassis::amp = 100, Chassis::offset = 0, Chassis::target = 0;
 int Chassis::speed = 0, Chassis::rate = 4;
 
 double Chassis::angle = 0, Chassis::gyroAmp = 2;
