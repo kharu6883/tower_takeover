@@ -63,7 +63,7 @@ LV_IMG_DECLARE(michael2);
 #define ULTRALPING 5
 #define ULTRALECHO 6
 
-#define GYRO 8
+#define GYRO 7
 
 // Vision Constants
 #define FRONTVISION 11

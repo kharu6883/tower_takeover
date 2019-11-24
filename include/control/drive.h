@@ -10,7 +10,7 @@ void calibrategyro();
 // drives using gyro slop
 void drivegyro(double target, int speed, double rate, double angle, double gyroamp, double tol);
 // drives using gyro slop and has two points
-void drivegyro(double target, int speed, double rate, double angle, double gyroamp,double target2, int speed2, double rate2, double angle2, double gyroamp2);
+void drivegyro(double target, int speed, double rate, double angle, double gyroamp,double target2, int speed2, double rate2, double angle2, double gyroamp2, double tolerance);
 // Drives the robot in a straight line to the target in rotations, in a given speed(rpm). Uses PD loop. Rate controls the slew constant.
 void drive(double target, int speed, double rate);
 

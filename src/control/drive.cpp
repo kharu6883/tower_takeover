@@ -21,7 +21,7 @@ void calibrategyro() {
 void drivegyro(double target, int speed, double rate, double angle, double gyroamp, double tol) {
   double current, error, last, derivative, output;
   target=-target;
-  const double kP = 0.6;
+  const double kP = 0.7;
   const double kD = 0.6;
 
   double deltaL, deltaR;
@@ -49,8 +49,8 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
     if(isSettled(error, 9+tol)) break;
 
-    left(slewOutput -  ((Gyro.get_value() / 5)+angle*2*gyroamp));
-    right(slewOutput +  ((Gyro.get_value() / 5)+angle*2*gyroamp));
+    left(slewOutput +  ((Gyro.get_value() / 5)+angle*2*gyroamp));
+    right(slewOutput -  ((Gyro.get_value() / 5)+angle*2*gyroamp));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -76,8 +76,8 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
     if(isSettled(abs(error), 9)) break;
 
-    left(-slewOutput -  ((Gyro.get_value() / 5) + angle * 2 * gyroamp));
-    right(-slewOutput +  ((Gyro.get_value() / 5) + angle * 2 * gyroamp));
+    left(-slewOutput +  ((Gyro.get_value() / 5) + angle * 2 * gyroamp));
+    right(-slewOutput -  ((Gyro.get_value() / 5) + angle * 2 * gyroamp));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -86,9 +86,10 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
   reset();
 }
 
-void drivegyro(double target, int speed, double rate, double angle, double gyroamp, double target2, int speed2, double rate2, double angle2, double gyroamp2) {
+void drivegyro(double target, int speed, double rate, double angle, double gyroamp, double target2, int speed2, double rate2, double angle2, double gyroamp2, double tolerance) {
   double current, error, last, derivative, output;
- target=-target;
+  target = -target;
+  target2 = -target2;
   const double kP = 0.6;
   const double kD = 0.6;
 
@@ -111,10 +112,10 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
     if(slewOutput > speed) slewOutput = speed;
 
-    if(isSettled(error, 9)) break;
+    if(isSettled(error, 9+tolerance)) break;
 
-    left(slewOutput -  (((Gyro.get_value() / 10)+angle)*gyroamp));
-    right(slewOutput +  (((Gyro.get_value() / 10)+angle)*gyroamp));
+    left(slewOutput +  (((Gyro.get_value() / 10)+angle)*gyroamp));
+    right(slewOutput -  (((Gyro.get_value() / 10)+angle)*gyroamp));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
@@ -135,22 +136,22 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
     if(slewOutput > speed) slewOutput = speed;
 
-    if(isSettled(abs(error), 9)) break;
+    if(isSettled(abs(error), 9+tolerance)) break;
 
-    left(-slewOutput -  (((Gyro.get_value() / 10)+angle)*gyroamp));
-    right(-slewOutput +  (((Gyro.get_value() /10)+angle)*gyroamp));
+    left(-slewOutput +  (((Gyro.get_value() / 10)+angle)*gyroamp));
+    right(-slewOutput -  (((Gyro.get_value() /10)+angle)*gyroamp));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
   }
 
-  reset();
+
 
   while(target2 > 0) {
     deltaL = LF.get_position();
     deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
-    error = target - current;
+    error = target2 - current;
 
     output = pTerm(target2, current, kP) + dTerm(error, last) * kD;
 
@@ -164,20 +165,20 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
     if(slewOutput > speed2) slewOutput = speed;
 
-    if(isSettled(error, 9)) break;
+    if(isSettled(error, 9+tolerance)) break;
 
-    left(slewOutput -  ((Gyro.get_value() / 5)+angle*2*gyroamp2));
-    right(slewOutput +  ((Gyro.get_value() / 5)+angle*2*gyroamp2));
+    left(slewOutput +  (((Gyro.get_value() / 5)+angle2)*2*gyroamp2));
+    right(slewOutput -  (((Gyro.get_value() / 5)+angle2)*2*gyroamp2));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);
   }
 
-  while(target < 0) {
+  while(target2 < 0) {
     deltaL = LF.get_position();
     deltaR = RF.get_position();
     current = ( deltaL + deltaR ) / 2;
-    error = target - current;
+    error = target2 - current;
 
     output = pTerm(target2, current, kP) + dTerm(error, last) * kD;
 
@@ -191,10 +192,10 @@ void drivegyro(double target, int speed, double rate, double angle, double gyroa
 
     if(slewOutput > speed2) slewOutput = speed;
 
-    if(isSettled(abs(error), 9)) break;
+    if(isSettled(abs(error), 9+tolerance)) break;
 
-    left(-slewOutput -  ((Gyro.get_value() / 5)+angle*2*gyroamp2));
-    right(-slewOutput +  ((Gyro.get_value() /5)+angle*2*gyroamp2));
+    left(-slewOutput +  (((Gyro.get_value() / 5)+angle2)*2*gyroamp2));
+    right(-slewOutput -  (((Gyro.get_value() /5)+angle2)*2*gyroamp2));
 
     std::cout << LF.get_position() << ", " << RF.get_position() << std::endl;
     wait(20);

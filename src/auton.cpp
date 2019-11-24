@@ -21,9 +21,9 @@ void tester() {
 ===========================================*/
 void start() {            // Deploy and zero arm
   lockChassis();
-  roller(-0.5,-200);
-  arm(0.4,200,2);
-  roller(0.5,200);
+  arm(0.6,200,2);
+  roller(-0.3,-200);
+  wait(100);
   armReset();
   wait(100);
   unlockChassis();
@@ -33,33 +33,68 @@ void start() {            // Deploy and zero arm
   RED MATCH AUTONOMOUSES
 ===========================================*/
 void r_s_7() {        //red small 7
-  calibrategyro();
-  wait(800);
+  // calibrategyro();
+  // wait(500);
   start();
   roller(200);
-  drivegyro(1100, 150, 9, 0 , 2 , 0);
+  drive(1000, 100, 9);
   //pick up first 3 cubes
-  drivegyro(-1250, 200, 15, 65 , 1 , 5);
-  drivegyro(1400, 135, 4, 0,3,10);
-  //pick up 4 cubes
-  Thread.disable_arm();
-  drivegyro(-1080,200,4,0,2,10);
-  //drive back to corner
-  lockChassis();
-  roller(-0.5,70);
-  Thread.rack(1900, 200, 7);
-  unlockChassis();
-  drivegyro(440,200,2,-130,1,20);
-  //driveinto corner
-  roller(-20);
-  Thread.disable_rack();
-  rack(RACK_UP, 200, 10);
-  //Thread.drive(10,200,9);
-  wait(100);
+  //Thread.rack(RACK_TOWER,100,7);
+  drive(-700, 100, 5);
+
+  turn(280,100,3);
+  //Thread.disable_rack();
+  Thread.drive(-300, 200, 5);
+  roller(-0.5,100);
+  rack(RACK_UP, 150, 10);
   Thread.disable_drive();
   roller(-120);
-  Thread.drive(-300, 200, 10);
+  Thread.drive(300, 300, 10);
   rack(RACK_DOWN, 200, 15);
+
+
+  // turn(100,400,9);
+  //
+  // drivegyro(950, 140, 8, 0 , 0.3 , 0);
+  // drivegyro(-850, 200, 8, 0 , 0.3 , 10);
+  // roller(-0.3,70);
+  // Thread.rack(RACK_TOWER, 200, 2);
+  // unlockChassis();
+  // drivegyro(150,200,7,-130,1,20);
+  // //driveinto corner
+  // roller(-20);
+  // Thread.disable_rack();
+  // rack(RACK_UP, 200, 10);
+  // //Thread.drive(10,200,9);
+  // wait(100);
+  // Thread.disable_drive();
+  // roller(-120);
+  // Thread.drive(300, 300, 10);
+  // rack(RACK_DOWN, 200, 15);
+
+
+
+
+  // drivegyro(850, 145, 7, 0,0.8,10);
+  // //pick up 4 cubes
+  // Thread.disable_arm();
+  // drivegyro(-800,600,4,0,2,10);
+  // //drive back to corner
+  // lockChassis();
+  // roller(-0.3,70);
+  // Thread.rack(RACK_TOWER, 200, 2);
+  // unlockChassis();
+  // drivegyro(150,200,7,-130,1,20);
+  // //driveinto corner
+  // roller(-20);
+  // Thread.disable_rack();
+  // rack(RACK_UP, 200, 10);
+  // //Thread.drive(10,200,9);
+  // wait(100);
+  // Thread.disable_drive();
+  // roller(-120);
+  // Thread.drive(300, 300, 10);
+  // rack(RACK_DOWN, 200, 15);
 }
 void r_b_9() {       // red big 9
   calibrategyro();
@@ -137,6 +172,11 @@ void b_b_9() {        // blue big 9
   SKILLS AUTONOMOUSES
 ===========================================*/
 void skills1() {          // official skills
+  calibrategyro();
+  wait(1000);
+//  drivegyro(300, 100, 1, 45, 1, 1700, 600, 10, 0, 0.1);
+
+  wait(100000);
   calibrategyro();
   wait(1000);
   start();
