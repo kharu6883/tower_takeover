@@ -1,56 +1,63 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/rack.h"
-#include "controller/arm.h"
-#include "controller/misc.h"
+#include "config/io.h"
+#include "config/motor.h"
 
-#include "controller/displayController.h"
-#include "controller/autonController.h"
+#include "control/displayController.h"
+#include "control/autonController.h"
+#include "control/asyncController.h"
+#include "control/macro.h"
+#include "control/path.h"
+using namespace Display;
+
+static ControlAsync Control;
+pros::Task armAsync(macroTask, NULL, "Opcontrol Arm Task");
 
 void initialize() {
-  macro::print("Starting Init Routine");
+  print("Starting Init Routine");
 
   Autonomous Auton;
-  macro::print("Auton Set!");
+  print("Auton Set!");
+
+  armAsync.suspend();
 
   // Motor Initialization
-  Rack rack;
-  Arm arm;
+  Arm.tare_position();
 
-  arm.tarePos();
+  Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
+  Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 
-  rack.setBrakeType(MOTOR_BRAKE_HOLD);
-  arm.setBrakeType(MOTOR_BRAKE_HOLD);
-
-  io::RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
-	io::RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
-  macro::print("Motors Initialized!");
+  RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
+	RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
+  print("Motors Initialized!");
 
   // Threads
-  Chassis chassis;
-  pros::Task baseController(chassis.start, NULL, "Chassis Controller");
-  macro::print("Chassis Initialized!");
+  pros::Task asyncController(Control.run, NULL, "Async Controller");
+  Control.pause();
+  print("Task Controller Initialized!");
 
-  pros::Task rackController(rack.start, NULL, "Rack Controller");
-  macro::print("Rack Initialized!");
-
-  pros::Task armController(arm.start, NULL, "Arm Controller");
-  macro::print("Arm Initialized!");
-
-  Display Disp;
-  pros::Task b_display(Disp.start, NULL, "Brain Display");
+  BrainDisplay Brain;
+  Brain.main();
+  pros::Task b_display(Brain.run, NULL, "Brain Display");
   b_display.set_priority(TASK_PRIORITY_MIN);
-  macro::print("Display Initialized!");
+  print("Display Initialized!");
 
-  // Path Pathmaker;
-  // pros::Task pathMaker(Pathmaker.start, NULL, "PathMaker");
+  RemoteDisplay Remote;
+  pros::Task r_display(Remote.run, NULL, "Remote Display");
+  r_display.set_priority(TASK_PRIORITY_MIN);
+  print("Remote Initialized!");
+
+  // Path path;
+  // pros::Task pathMaker(path.start, NULL, "Path Maker");
   // pathMaker.set_priority(TASK_PRIORITY_MIN);
-  // print("PathMaker Initialized!");
+  // print("Pathmaker Initialized!");
 
   std::cout << "Initialization Done!" << std::endl;
 }
 
-void disabled() { }
+void disabled() {
+  Control.pause();
+  armAsync.suspend();
+}
 
 void competition_initialize() { }

@@ -2,10 +2,6 @@
 #include <iostream>
 #include <map>
 
-#define SLOT_RED 1
-#define SLOT_BLUE 2
-#define SLOT_SKILLS 3
-
 struct typeName {
   std::string red;
   std::string blue;
@@ -28,9 +24,6 @@ class Autonomous {
     std::string getName(int type_, int slot_);
     std::string getAbbv(int type_, int slot_);
 
-    void run();
-    static void start(void* ignore);
-
   private:
     static bool isInitialized;
     static int type, slot;
@@ -46,13 +39,14 @@ class Autonomous {
   AUTON DECLARATIONS
 ===========================================*/
 
-void tester();
-
 // Red
-void red1();
+void r_s_7();
+void r_b_9();
 
 // Blue
-void blue1();
+void b_s_7();
+void b_b_9();
 
 // Skills
+void tester();
 void skills1();

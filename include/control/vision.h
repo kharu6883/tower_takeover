@@ -2,14 +2,6 @@
 #include <map>
 using namespace pros;
 
-#define FRONTVISION 11
-
-#define CUBE_PURPLE 1
-#define CUBE_ORANGE 2
-#define CUBE_GREEN 3
-#define BLUE_ZONE 4
-#define RED_ZONE 5
-
 class Camera {
   public:
     Camera(int cameraID_);

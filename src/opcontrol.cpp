@@ -1,35 +1,30 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/rack.h"
-#include "controller/arm.h"
-#include "controller/misc.h"
+#include "config/motor.h"
+#include "config/io.h"
 
-#include "controller/displayController.h"
+#include "control/macro.h"
+#include "control/displayController.h"
+
+static int towerMode = 0, lastPos = 0;
+
+static bool isTrack = false, isReset = false;
 
 void opcontrol() {
-	using namespace io;
+	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
+	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 
-	int towerMode = 0, lastPos = 0;
-	bool isTrack = false;
+	armAsync.resume();
 
-	Rack rack;
-	Arm arm;
-
-	Display display;
-
-	macro::Slew roller(60, 80); // Accel, Decel
-	macro::Slew rackSlew(10, 30, true); // Accel, Decel
-	macro::PID rackPID(0.13); // kP
-
-	rack.setBrakeType(MOTOR_BRAKE_HOLD);
-	arm.setBrakeType(MOTOR_BRAKE_HOLD);
+	Slew roller(60, 80); // Accel, Decel
+	Slew rackSlew(30, 60, true); // Accel, Decel
+	PID rackPID(0.09); // kP
 
 	while (true) {
-		LF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		LB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 - master.get_analog(ANALOG_RIGHT_X) / 1.57 );
+		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 - master.get_analog(ANALOG_RIGHT_X) / 1.57 );
+		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 + master.get_analog(ANALOG_RIGHT_X) / 1.57 );
+		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 + master.get_analog(ANALOG_RIGHT_X) / 1.57 );
 
 		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;
@@ -45,13 +40,13 @@ void opcontrol() {
 			if(!isTrack) { // Put up Rack
 				lastPos = 2;
 
-				rackPID.withConst(0.09).calculate(RACK_UP, rack.getPot());
+				rackPID.withConst(0.13).calculate(RACK_UP, rackPot.get_value());
 				rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		  } else { // Tower Placement
 				lastPos = 1;
 
-				rackPID.withConst(0.4).calculate(RACK_TOWER, rack.getPot());
+				rackPID.withConst(0.4).calculate(RACK_TOWER, rackPot.get_value());
 				rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 			}
@@ -59,38 +54,78 @@ void opcontrol() {
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) { // Goin' Down
 			lastPos = 0;
 
-			rackPID.withConst(0.43).calculate(RACK_DOWN, rack.getPot());
+			rackPID.withConst(0.43).calculate(RACK_DOWN, rackPot.get_value());
 			rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		} else { // Stop
 
 			if(lastPos == 2) {
-				rackPID.calculate(RACK_UP, rack.getPot());
+				rackPID.calculate(RACK_UP, rackPot.get_value());
 			} else if(lastPos == 1) {
-				rackPID.calculate(RACK_TOWER, rack.getPot());
+				rackPID.calculate(RACK_TOWER, rackPot.get_value());
 			} else if(lastPos == 0) {
-				rackPID.calculate(RACK_DOWN, rack.getPot());
+				rackPID.calculate(RACK_DOWN, rackPot.get_value());
 			}
 
 			rackSlew.withLimit(rackPID.getOutput()).calculate(0);
 
 		}
 
-		rack.move(rackSlew.getOutput());
+		Rack.move_velocity(rackSlew.getOutput());
 
 		/*--------------------------------
-				ARM CONTROL
+				ROLLERS
 		--------------------------------*/
-		if(master.get_digital_new_press(DIGITAL_DOWN)) { towerMode = 0; arm.zero(); }
+		if(master.get_digital(DIGITAL_R1)) {
 
-		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rack.getPot() <= 1400) towerMode = 1;
+			roller.calculate(200);
 
-		if(master.get_digital_new_press(DIGITAL_B) && rack.getPot() <= 1400) towerMode = 4;
-		if(master.get_digital_new_press(DIGITAL_Y) && rack.getPot() <= 1400) towerMode = 5;
-		if(master.get_digital_new_press(DIGITAL_X) && rack.getPot() <= 1400) towerMode = 6;
-		if(master.get_digital_new_press(DIGITAL_A) && rack.getPot() <= 1400) towerMode = 7;
+		} else if(master.get_digital(DIGITAL_R2)) {
 
-		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) towerMode = 10;
+			roller.calculate(-150);
+
+		} else {
+
+			roller.calculate(0);
+
+		}
+
+		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6 || towerMode == 420) ::roller(roller.getOutput());
+
+		#ifdef DEBUG
+		std::cout << "Rack: " << Rack.get_current_draw() << "mA, Arm: " << Arm.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
+		#endif
+
+		// Yeet
+		pros::delay(20);
+	}
+}
+
+/*--------------------------------
+    ARM
+--------------------------------*/
+void macroTask(void* ignore) {
+
+	double armTarget, tolerance = 3;
+	const double kP = 210;
+
+	bool disconnected = false;
+
+	towerMode = 0;
+
+	while (true) {
+		if(!master.is_connected()) { disconnected = true; pros::delay(20); continue; }
+		if(master.get_digital_new_press(DIGITAL_DOWN)) { towerMode = 0; isReset = false; disconnected = false; armReset(); pros::delay(20); continue; }
+		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && rackPot.get_value() <= 1400 && !disconnected) {
+				arm(0);
+				towerMode = 1;
+		}
+
+		if(master.get_digital_new_press(DIGITAL_B) && rackPot.get_value() <= 1400) towerMode = 4;
+		if(master.get_digital_new_press(DIGITAL_Y) && rackPot.get_value() <= 1400) towerMode = 5;
+		if(master.get_digital_new_press(DIGITAL_X) && rackPot.get_value() <= 1400) towerMode = 6;
+
+		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) towerMode = 0;
 
 		switch(towerMode) {
 			case 1: {
@@ -100,82 +135,66 @@ void opcontrol() {
 			}
 
 			case 2: {
-				arm.tower(1);
-				towerMode = 11;
+				Arm.set_current_limit(7000);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+				tower(1);
+				towerMode = 420;
 				break;
 			}
 
 			case 3: {
-				arm.tower(2);
-				towerMode = 11;
+				Arm.set_current_limit(7000);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+				tower(2);
+				towerMode = 420;
 				break;
 			}
 
 			case 4: {
-				arm.tower(3);
-				towerMode = 11;
+				Arm.set_current_limit(7000);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+				tower(3);
+				towerMode = 420;
 				break;
 			}
 
 			case 5: {
-				arm.tower(4);
-				towerMode = 11;
+				Arm.set_current_limit(7000);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+				tower(4);
+				towerMode = 420;
 				break;
 			}
 
 			case 6: {
-				arm.tower(5);
-				towerMode = 11;
+				Arm.set_current_limit(7000);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+				tower(5);
+				towerMode = 420;
 				break;
 			}
 
-			case 7: {
-				arm.tower(7);
-				towerMode = 11;
-				break;
-			}
-
-			case 10: {
-				arm.move(ARM_BOTTOM, 127);
-				towerMode = 11;
-				break;
-			}
-
-			case 11: {
-				if(arm.getState()) { towerMode = 0; break; }
+			case 420: {
+				Arm.set_current_limit(500);
+				Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 				break;
 			}
 
 			default: {
+				disconnected = false;
+
+				Arm.set_current_limit(5000);
+				Arm.set_brake_mode(MOTOR_BRAKE_COAST);
+
+				armTarget = pTerm(ARM_BOTTOM, Arm.get_position(), kP + 400);
+				arm(armTarget);
+
 				break;
 			}
 		}
 
-
-		/*--------------------------------
-				ROLLERS
-		--------------------------------*/
-		if(master.get_digital(DIGITAL_R1)) {
-
-			roller.calculate(127);
-
-		} else if(master.get_digital(DIGITAL_R2)) {
-
-			roller.calculate(-100);
-
-		} else {
-
-			roller.calculate(0);
-
-		}
-
-		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6) io::roller(roller.getOutput());
-
-		#ifdef DEBUG
-		std::cout << "Rack: " << RackMotor.get_current_draw() << "mA, Arm: " << ArmMotor.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
-		#endif
-
-		// Yeet
 		pros::delay(20);
 	}
 }
+
+void setReset(bool set) { isReset = set; }

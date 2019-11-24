@@ -1,10 +1,11 @@
 #include "main.h"
 
-#include "controller/autonController.h"
-#include "controller/misc.h"
-
+#include "control/asyncController.h"
+#include "control/autonController.h"
 using namespace okapi;
 using namespace std;
+
+static ControlAsync Control;
 
 bool Autonomous::isInitialized = false;
 int Autonomous::type = SLOT_RED,
@@ -17,7 +18,7 @@ std::map<int, typeName> Autonomous::slotName;
 std::map<int, typeName> Autonomous::slotAbbv;
 
 void autonomous() {
-  macro::print("Starting Autonomous");
+  Control.resume();
   Autonomous Auton;
   Auton.runAuton();
 }
@@ -25,15 +26,17 @@ void autonomous() {
 Autonomous::Autonomous() { // The autons will be stored in this order, starting from 0.
   if(!isInitialized) {
 
-    // RED
-    addAuton(SLOT_RED, "Red Big zone", "RBZ", red1);
+    // Red
+    addAuton(SLOT_RED, "Small zone 7 cubes", "Red S 7", r_s_7);
+    addAuton(SLOT_RED, "RED No place 9 cubes", "Red B 9", r_b_9);
 
-    // BLUE
-    addAuton(SLOT_BLUE, "placeholder", "placeholder", blue1);
+    // Blue
+    addAuton(SLOT_BLUE, "Small zone 7 cubes", "Blue S 7", b_s_7);
+    addAuton(SLOT_BLUE, "BLUE No place 9 cubes", "Blue B 9", b_b_9);
 
     // Skills
     addAuton(SLOT_SKILLS, "Tester", "Tester", tester); // Slot 0
-    addAuton(SLOT_SKILLS, "Skills 1", "Skills1", skills1);
+    addAuton(SLOT_SKILLS, "Official Skills 1", "Skills", skills1);
 
     isInitialized = true;
   }
@@ -45,7 +48,7 @@ void Autonomous::runAuton() {
     case SLOT_BLUE: blueAuton[slot](); break;
     case SLOT_SKILLS: skillsAuton[slot](); break;
 
-    default: cout << "Auton not selected" << endl; break;
+    default: print("Slot Not Selected"); break;
   }
 }
 
@@ -152,12 +155,4 @@ std::string Autonomous::getAbbv(int type_, int slot_) {
       break;
     }
   }
-}
-
-void Autonomous::run() { }
-
-void Autonomous::start(void* ignore) {
-  pros::delay(500);
-  Autonomous* that = static_cast<Autonomous*>(ignore);
-  that -> run();
 }

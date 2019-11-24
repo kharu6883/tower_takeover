@@ -1,21 +1,18 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/arm.h"
-#include "controller/displayController.h"
-#include "controller/autonController.h"
-#include "controller/misc.h"
-#include "controller/vision.h"
+#include "config/motor.h"
+#include "config/io.h"
+
+#include "control/displayController.h"
+#include "control/autonController.h"
+#include "control/macro.h"
+#include "control/vision.h"
+
+using namespace Display;
 
 Autonomous Auton;
 Vision CamFront(FRONTVISION);
 Camera Feed(FRONTVISION);
-
-Chassis chassis;
-Arm arm;
-
-std::string Display::setText = "",
-Display::lastText = "";
 
 static int screen = 0;
 static int auton_type = 1;
@@ -59,7 +56,7 @@ static lv_res_t main_click_action(lv_obj_t * btn) {
 
   lv_page_clean(scr);
 
-  Display display;
+  BrainDisplay display;
 
   if(id == 1) { display.auton(); }
   if(id == 2) { display.sensor(); }
@@ -96,8 +93,8 @@ static lv_res_t settings_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
   switch(id) {
-    case 1: arm.reset(); break;
-    case 2: chassis.calibrateGyro(); break;
+    case 1: setReset(true); break;
+    case 2: Gyro.reset(); break;
   }
 
   return LV_RES_OK;
@@ -108,7 +105,7 @@ static lv_res_t system_action(lv_obj_t * btn) {
 
   lv_page_clean(scr);
 
-  Display display;
+  BrainDisplay display;
 
   switch(id) {
     case 1: auton_type = 1; display.auton(); break;
@@ -121,7 +118,7 @@ static lv_res_t system_action(lv_obj_t * btn) {
   return LV_RES_OK;
 }
 
-Display::Display() {
+BrainDisplay::BrainDisplay() {
   if(!initialized) {
     // Theme & Style init
     lv_theme_t *th = lv_theme_alien_init(120, NULL);
@@ -214,7 +211,7 @@ Display::Display() {
   }
 }
 
-void Display::main() {
+void BrainDisplay::main() {
   screen = 0;
 
   lv_obj_t *img = lv_img_create(scr, NULL);
@@ -225,15 +222,15 @@ void Display::main() {
   lv_obj_set_x(btnBlue, -100);
   lv_obj_set_x(btnSkills, -100);
 
-  lv_obj_t * btnAuton = createButton(1, 250, 30, 200, 40, SYMBOL_LIST" Autonomous", scr, main_click_action);
-  lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_GPS" Sensors", scr, main_click_action);
-  lv_obj_t * btnCamera = createButton(3, 250, 140, 200, 40, SYMBOL_IMAGE" Camera", scr, main_click_action);
-  lv_obj_t * btnSetting = createButton(4, 250, 185, 200, 40, SYMBOL_SETTINGS" Settings", scr, main_click_action);
+  lv_obj_t * btnAuton = createButton(1, 250, 30, 200, 40, SYMBOL_LIST" Autonomous", lv_scr_act(), main_click_action);
+  lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_GPS" Sensors", lv_scr_act(), main_click_action);
+  lv_obj_t * btnCamera = createButton(3, 250, 140, 200, 40, SYMBOL_IMAGE" Camera", lv_scr_act(), main_click_action);
+  lv_obj_t * btnSetting = createButton(4, 250, 185, 200, 40, SYMBOL_SETTINGS" Settings", lv_scr_act(), main_click_action);
 
   lv_scr_load(scr);
 }
 
-void Display::auton() {
+void BrainDisplay::auton() {
   screen = 1;
 
   lv_obj_set_x(btnBack, 5);
@@ -312,7 +309,7 @@ void Display::auton() {
   lv_scr_load(scr);
 }
 
-void Display::sensor() {
+void BrainDisplay::sensor() {
   screen = 2;
   lv_obj_set_x(btnBack, 5);
 
@@ -321,7 +318,7 @@ void Display::sensor() {
   lv_scr_load(scr);
 }
 
-void Display::camera() {
+void BrainDisplay::camera() {
   screen = 3;
 
   lv_obj_set_x(btnBack, 5);
@@ -338,7 +335,7 @@ void Display::camera() {
   lv_scr_load(scr);
 }
 
-void Display::setting() {
+void BrainDisplay::setting() {
   screen = 4;
 
   lv_obj_set_x(btnBack, 5);
@@ -354,7 +351,7 @@ void Display::setting() {
   lv_scr_load(scr);
 }
 
-void Display::run() {
+void BrainDisplay::update() {
   int nowType, lastType, nowSlot, lastSlot;
   std::string name;
   const char * c;
@@ -384,7 +381,7 @@ void Display::run() {
 
       case 2: { // Sensor
         std::string gyro;
-        gyro = "Limit Switch: " +  std::to_string(arm.getLimit());
+        gyro = "Gyro: " + std::to_string(Gyro.get_value() / 10);
         lv_label_set_text(gyroVal, gyro.c_str());
         break;
       }
@@ -471,30 +468,19 @@ void Display::run() {
     lastType = nowType;
     lastSlot = nowSlot;
 
-    remoteUpdate();
-
     pros::delay(20);
   }
 }
 
-void Display::start(void* ignore) {
+void BrainDisplay::run(void* ignore) {
   pros::delay(500);
-  Display* that = static_cast<Display*>(ignore);
-  that -> run();
+  BrainDisplay* that = static_cast<BrainDisplay*>(ignore);
+  that -> update();
 }
 
-void Display::setRemoteText(std::string text_) {
-  setText = text_;
-}
+// Macros
 
-void Display::remoteUpdate() {
-  if(setText != lastText) {
-    io::master.set_text(0, 0, setText.c_str());
-    lastText = setText;
-  }
-}
-
-lv_obj_t * Display::createLabel(int x, int y, std::string text_, lv_obj_t * parent) {
+lv_obj_t * BrainDisplay::createLabel(int x, int y, std::string text_, lv_obj_t * parent) {
   lv_obj_t * label = lv_label_create(parent, NULL);
   lv_obj_set_pos(label, x, y);
   const char * text;
@@ -504,7 +490,7 @@ lv_obj_t * Display::createLabel(int x, int y, std::string text_, lv_obj_t * pare
   return label;
 }
 
-lv_obj_t * Display::createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action) {
+lv_obj_t * BrainDisplay::createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action) {
   lv_obj_t * button = lv_btn_create(parent, NULL);
   lv_obj_set_pos(button, x, y);
   lv_obj_set_size(button, width, height);
@@ -516,7 +502,7 @@ lv_obj_t * Display::createButton(int id, int x, int y, int width, int height, st
   return button;
 }
 
-lv_obj_t * Display::drawRectangle(int x, int y, int width, int height, lv_color_t stroke, lv_color_t fill, lv_obj_t * parent) {
+lv_obj_t * BrainDisplay::drawRectangle(int x, int y, int width, int height, lv_color_t stroke, lv_color_t fill, lv_obj_t * parent) {
   lv_obj_t * obj = lv_obj_create(parent, NULL);
 
   lv_style_t *style1 = (lv_style_t *)malloc( sizeof( lv_style_t ));
