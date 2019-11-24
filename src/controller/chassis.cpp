@@ -1,9 +1,9 @@
 #include "controller/chassis.h"
 
-pros::Motor LF(LFPORT, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
-LB(LBPORT, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
-RF(RFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-RB(RBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS);
+pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
+LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
+RF(RFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
+RB(RBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS);
 
 pros::ADIUltrasonic LSonic(SONIC_L_PING, SONIC_L_ECHO), RSonic(SONIC_R_PING, SONIC_R_ECHO);
 pros::ADIGyro Gyro(GYRO);
@@ -133,9 +133,9 @@ void Chassis::run() {
 
     switch(mode) {
       case DRIVING: { // Driving
-        deltaL = ( LF.get_position() + LB.get_position() ) / 2;
-        deltaR = ( RF.get_position() + RB.get_position() ) / 2;
-        current = ( deltaL - deltaR ) / 2;
+        deltaL = LF.get_position();
+        deltaR = RF.get_position();
+        current = ( deltaR - deltaL ) / 2;
 
         error = target - current;
 
@@ -180,9 +180,9 @@ void Chassis::run() {
       }
 
       case TURNING: { // Turning
-        deltaL = ( LF.get_position() + LB.get_position() ) / 2;
-        deltaR = ( RF.get_position() + RB.get_position() ) / 2;
-        current = ( deltaL + deltaR ) / 2;
+        deltaL = LF.get_position();
+        deltaR = RF.get_position();
+        current = -1 * ( deltaR - deltaL ) / 2;
 
         error = target - current;
 
@@ -269,8 +269,8 @@ void Chassis::stop() {
 }
 
 void Chassis::left(int speed) {
-  LF.move(speed);
-  LB.move(speed);
+  LF.move(-speed);
+  LB.move(-speed);
 }
 
 void Chassis::right(int speed) {
