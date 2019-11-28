@@ -1,3 +1,4 @@
+#pragma once
 #include "api.h"
 
 #define ROLLERL 12 // 12
