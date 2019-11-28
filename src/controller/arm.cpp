@@ -171,13 +171,6 @@ void Arm::run() {
         break;
       }
 
-      // 2 Cube Height
-      case 7: {
-        target = ARM_TWO_CUBE;
-        mode = 11;
-        break;
-      }
-
       // Reset
       case 10: {
         move(-100);

@@ -88,7 +88,6 @@ void opcontrol() {
 		if(master.get_digital_new_press(DIGITAL_B) && rack.getPot() <= 1400) towerMode = 4;
 		if(master.get_digital_new_press(DIGITAL_Y) && rack.getPot() <= 1400) towerMode = 5;
 		if(master.get_digital_new_press(DIGITAL_X) && rack.getPot() <= 1400) towerMode = 6;
-		if(master.get_digital_new_press(DIGITAL_A) && rack.getPot() <= 1400) towerMode = 7;
 
 		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) towerMode = 10;
 
@@ -113,25 +112,19 @@ void opcontrol() {
 
 			case 4: {
 				arm.tower(3);
-				towerMode = 11;
+				towerMode = 0;
 				break;
 			}
 
 			case 5: {
 				arm.tower(4);
-				towerMode = 11;
+				towerMode = 0;
 				break;
 			}
 
 			case 6: {
 				arm.tower(5);
-				towerMode = 11;
-				break;
-			}
-
-			case 7: {
-				arm.tower(7);
-				towerMode = 11;
+				towerMode = 0;
 				break;
 			}
 

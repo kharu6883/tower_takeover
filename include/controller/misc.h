@@ -56,6 +56,14 @@ namespace macro {
       double current, error, last, derivative, output;
   };
 
+  struct ChassisTarget {
+    double length;
+    unsigned int speed;
+    double angle;
+    double gyroAmp;
+    double rate;
+  };
+
   void wait(int ms);
   void print(const char * text);
 }

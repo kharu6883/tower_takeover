@@ -1,4 +1,5 @@
 #include "controller/chassis.h"
+#include "controller/misc.h"
 
 pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
 LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
@@ -17,8 +18,9 @@ int Chassis::mode = IDLE;
 
 double Chassis::kP = 0.1, Chassis::kD = 0.3;
 
-double Chassis::tolerance = 6, Chassis::amp = 0.2, Chassis::offset = 0, Chassis::target = 0;
-int Chassis::speed = 0, Chassis::rate = 4;
+double Chassis::tolerance = 6, Chassis::amp = 0.2, Chassis::offset = 0;
+std::vector<macro::ChassisTarget> Chassis::target;
+int Chassis::currentTarget = 0;
 
 double Chassis::angle = 0, Chassis::gyroAmp = 2;
 
@@ -57,20 +59,40 @@ Chassis& Chassis::withGyro(double angle_, double gyroAmp_) {
   return *this;
 }
 
-Chassis& Chassis::drive(double target_, int speed_, int rate_) {
-  target = target_;
-  speed = speed_;
-  rate = rate_;
+Chassis& Chassis::withTarget(double target_, unsigned int speed_, double angle_, double gyroAmp_, double rate_) {
+  target[target.size()].length = target_;
+  target[target.size()].speed = speed_;
+  target[target.size()].angle = angle_;
+  target[target.size()].gyroAmp = gyroAmp_;
+  target[target.size()].rate = rate_;
+  return *this;
+}
+
+Chassis& Chassis::drive() {
+  currentTarget = 0;
+  usingGyro = true;
   isSettled = false;
   reset();
   mode = DRIVING;
   return *this;
 }
 
-Chassis& Chassis::turn(double target_, int speed_, int rate_) {
-  target = target_;
-  speed = speed_;
-  rate = rate_;
+Chassis& Chassis::drive(double target_, unsigned int speed_, int rate_) {
+  currentTarget = 0;
+  target[0].length = target_;
+  target[0].speed = speed_;
+  target[0].rate = rate_;
+  isSettled = false;
+  reset();
+  mode = DRIVING;
+  return *this;
+}
+
+Chassis& Chassis::turn(double target_, unsigned int speed_, int rate_) {
+  currentTarget = 0;
+  target[0].length = target_;
+  target[0].speed = speed_;
+  target[0].rate = rate_;
   isSettled = false;
   reset();
   mode = TURNING;
@@ -78,7 +100,8 @@ Chassis& Chassis::turn(double target_, int speed_, int rate_) {
 }
 
 Chassis& Chassis::align(double target_) {
-  target = target_;
+  currentTarget = 0;
+  target[0].length = target_;
   isSettled = false;
   reset();
   mode = ALIGNING;
@@ -144,41 +167,52 @@ void Chassis::run() {
         deltaR = RF.get_position();
         current = ( deltaR - deltaL ) / 2;
 
-        error = target - current;
+        error = target[currentTarget].length - current;
 
         output = (error * kP) + (error - last) * kD;
 
         last = error;
 
-        if(output > 0) {
-          if(output > slewOutput + rate) {
-            slewOutput += rate;
-          } else {
-            slewOutput = output;
+        if(target.size() - 1 == currentTarget) { // Is it last target?
+          if(output > 0) {
+            if(output > slewOutput + target[currentTarget].rate) {
+              slewOutput += target[currentTarget].length;
+            } else {
+              slewOutput = output;
+            }
+          } else if(output < 0) {
+            if(output < slewOutput - target[currentTarget].rate) {
+              slewOutput -= target[currentTarget].rate;
+            } else {
+              slewOutput = output;
+            }
           }
-        } else if(output < 0) {
-          if(output < slewOutput - rate) {
-            slewOutput -= rate;
-          } else {
-            slewOutput = output;
-          }
+        } else {
+          if(output > 0) slewOutput += target[currentTarget].rate;
+          if(output < 0) slewOutput -= target[currentTarget].rate;
         }
 
-        if(slewOutput > speed) slewOutput = speed;
-        if(slewOutput < -speed) slewOutput = -speed;
+        if(slewOutput > target[currentTarget].speed) slewOutput = target[currentTarget].speed;
+        if(slewOutput < -target[currentTarget].speed) slewOutput = -target[currentTarget].speed;
 
         if(output > -tolerance && output < tolerance) {
-          isSettled = true;
-          withTol().withSlop().reset();
-          break;
+          if(target.size() > 1 && target.size() - 1 > currentTarget) {
+            currentTarget++;
+            break;
+          } else {
+            isSettled = true;
+            target.clear();
+            withTol().withSlop().reset();
+            break;
+          }
         }
 
         if(!usingGyro) {
           left(slewOutput + slop());
           right(slewOutput - slop());
         } else {
-          left(slewOutput - (((Gyro.get_value() / 5) + angle) * 2 * gyroAmp));
-          right(slewOutput + (((Gyro.get_value() / 5) + angle) * 2 * gyroAmp));
+          left(slewOutput - (((Gyro.get_value() / 5) + target[currentTarget].angle) * 2 * target[currentTarget].gyroAmp));
+          right(slewOutput + (((Gyro.get_value() / 5) + target[currentTarget].angle) * 2 * target[currentTarget].gyroAmp));
         }
 
         break;
@@ -189,28 +223,28 @@ void Chassis::run() {
         deltaR = RF.get_position();
         current = -1 * ( deltaR + deltaL ) / 2;
 
-        error = target - current;
+        error = target[0].length - current;
 
-        output = (error * (kP + 60)) + (error - last) * kD;
+        output = ( error * kP ) + ( error - last ) * kD;
 
         last = error;
 
         if(output > 0) {
-          if(output > slewOutput + rate) {
-            slewOutput += rate;
+          if(output > slewOutput + target[0].rate) {
+            slewOutput += target[0].rate;
           } else {
             slewOutput = output;
           }
         } else if(output < 0) {
-          if(output < slewOutput - rate) {
-            slewOutput -= rate;
+          if(output < slewOutput - target[0].rate) {
+            slewOutput -= target[0].rate;
           } else {
             slewOutput = output;
           }
         }
 
-        if(slewOutput > speed) slewOutput = speed;
-        if(slewOutput < -speed) slewOutput = -speed;
+        if(slewOutput > target[0].speed) slewOutput = target[0].speed;
+        if(slewOutput < -target[0].speed) slewOutput = -target[0].speed;
 
         if(output > -tolerance && output < tolerance) {
           isSettled = true;
@@ -224,11 +258,11 @@ void Chassis::run() {
       }
 
       case ALIGNING: { // Aligning
-        deltaL = target - LSonic.get_value();
-        deltaR = target - RSonic.get_value();
+        deltaL = target[0].length - LSonic.get_value();
+        deltaR = target[0].length - RSonic.get_value();
 
-        outputL = deltaL * ( kP - 30 ) + ( deltaL - lastL ) * kD;
-        outputR = deltaR * ( kP - 30 ) + ( deltaR - lastR ) * kD;
+        outputL = ( deltaL * kP ) + ( deltaL - lastL ) * kD;
+        outputR = ( deltaR * kP ) + ( deltaR - lastR ) * kD;
 
         lastL = deltaL;
         lastR = deltaR;

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "controller/misc.h"
 
 extern pros::Motor LF, LB, RF, RB;
 extern pros::ADIUltrasonic LSonic, RSonic;
@@ -28,11 +29,13 @@ class Chassis {
     Chassis& calibrateGyro();
 
     Chassis& withTol(double tolerance_ = 6);
-    Chassis& withSlop(double amp_ = 6, double offset_ = 0);
+    Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
     Chassis& withGyro(double angle_, double gyroAmp_ = 2);
+    Chassis& withTarget(double target_, unsigned int speed_, double angle_, double gyroAmp_ = 2, double rate_ = 4);
 
-    Chassis& drive(double target_, int speed_, int rate_ = 4);
-    Chassis& turn(double target_, int speed_, int rate_ = 4);
+    Chassis& drive();
+    Chassis& drive(double target_, unsigned int speed_, int rate_ = 4);
+    Chassis& turn(double target_, unsigned int speed_, int rate_ = 4);
 
     Chassis& align(double target_);
 
@@ -66,8 +69,8 @@ class Chassis {
 
     static double kP, kD;
     static double tolerance, amp, offset;
-    static double target;
-    static int speed, rate;
+    static std::vector<macro::ChassisTarget> target;
+    static int currentTarget;
 
     static double angle, gyroAmp;
 
