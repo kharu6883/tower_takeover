@@ -16,7 +16,7 @@ Chassis::usingGyro = false;
 
 int Chassis::mode = IDLE;
 
-double Chassis::kP = 0.1, Chassis::kD = 0.3;
+double Chassis::kP = 0.2, Chassis::kD = 0.3;
 
 double Chassis::tolerance = 6, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<macro::ChassisTarget> Chassis::target;
@@ -211,8 +211,8 @@ void Chassis::run() {
           left(slewOutput + slop());
           right(slewOutput - slop());
         } else {
-          left(slewOutput - (((Gyro.get_value() / 5) + target[currentTarget].angle) * 2 * target[currentTarget].gyroAmp));
-          right(slewOutput + (((Gyro.get_value() / 5) + target[currentTarget].angle) * 2 * target[currentTarget].gyroAmp));
+          left(slewOutput - (((Gyro.get_value() / 10) + target[currentTarget].angle) * 2 * target[currentTarget].gyroAmp));
+          right(slewOutput + (((Gyro.get_value() / 10) + target[currentTarget].angle) * 2 * target[currentTarget].gyroAmp));
         }
 
         break;

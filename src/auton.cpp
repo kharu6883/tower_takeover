@@ -25,9 +25,9 @@ void tester() {
 ===========================================*/
 
 void deploy() {
-  arm.move(ARM_LOW_TOWER, 127).waitUntilSettled();
-  roller(-0.2,200);
-  arm.zero().waitUntilSettled();
+  //arm.move(0.2, 127).waitUntilSettled();
+  roller(-0.4,200);
+  //arm.zero().waitUntilSettled();
 }
 
 /*===========================================
@@ -35,20 +35,41 @@ void deploy() {
 ===========================================*/
 void red1() {
   chassis.calibrateGyro();
-  delay(700);
-  deploy();
-  roller(127);
-  chassis.drive(200, 80).waitUntilSettled();
+   delay(500);
+   deploy();
+   delay(200);
+   roller(127);
+   chassis.drive(2300, 50).withTol(5).waitUntilSettled();
+   chassis.withGyro(-45,1.1).drive(-1900, 127,10).waitUntilSettled();
+   chassis.withGyro(0,2).drive(1100, 70,1).waitUntilSettled();
+   roller(127);
+   chassis.withGyro(-131,0.5).drive(2500, 100,1).waitUntilSettled();
+   roller(-0.3,70);
+   rack.move(RACK_UP,127,13).withTol(10).waitUntilSettled();
+   roller(-100);
+   chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
 
-  chassis.turn(100, 80).waitUntilSettled();
-  chassis.withGyro(-90, 2).drive(200, 40).waitUntilSettled();
+   io::master.rumble(" .");
 }
 
 /*===========================================
   BLUE MATCH AUTONOMOUSES
 ===========================================*/
 void blue1() {
+  chassis.calibrateGyro();
+   delay(500);
+   deploy();
+   roller(127);
+   chassis.drive(2300, 70).withTol(5).waitUntilSettled();
+   chassis.withGyro(45,0.5).drive(-1800, 100,8).waitUntilSettled();
+   chassis.withGyro(0,3).drive(1200, 40,1).waitUntilSettled();
+   chassis.withGyro(135,2).drive(2400, 70,5).waitUntilSettled();
+   roller(-0.2,100);
+   rack.move(RACK_UP,127,13).withTol(10).waitUntilSettled();
+   roller(-127);
+   chassis.drive(-500, 70,15).withTol(5).waitUntilSettled();
 
+   io::master.rumble(" .");
 }
 
 /*===========================================
