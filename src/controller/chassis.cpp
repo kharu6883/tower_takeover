@@ -15,9 +15,9 @@ Chassis::usingGyro = false;
 
 int Chassis::mode = IDLE;
 
-double Chassis::kP = 0.5, Chassis::kD = 0.6;
+double Chassis::kP = 0.2, Chassis::kD = 0.3;
 
-double Chassis::tolerance = 6, Chassis::amp = 100, Chassis::offset = 0, Chassis::target = 0;
+double Chassis::tolerance = 6, Chassis::amp = 6, Chassis::offset = 0, Chassis::target = 0;
 int Chassis::speed = 0, Chassis::rate = 4;
 
 double Chassis::angle = 0, Chassis::gyroAmp = 2;
