@@ -15,7 +15,7 @@ Chassis::usingGyro = false;
 
 int Chassis::mode = IDLE;
 
-double Chassis::kP = 0.1, Chassis::kD = 0.3;
+double Chassis::kP = 0.2, Chassis::kD = 0.3;
 
 double Chassis::tolerance = 6, Chassis::amp = 0.2, Chassis::offset = 0, Chassis::target = 0;
 int Chassis::speed = 0, Chassis::rate = 4;
@@ -177,8 +177,8 @@ void Chassis::run() {
           left(slewOutput + slop());
           right(slewOutput - slop());
         } else {
-          left(slewOutput - (((Gyro.get_value() / 5) + angle) * 2 * gyroAmp));
-          right(slewOutput + (((Gyro.get_value() / 5) + angle) * 2 * gyroAmp));
+          left(slewOutput - (((Gyro.get_value() / 10) + angle) * 2 * gyroAmp));
+          right(slewOutput + (((Gyro.get_value() / 10) + angle) * 2 * gyroAmp));
         }
 
         break;
