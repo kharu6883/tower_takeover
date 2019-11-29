@@ -21,6 +21,7 @@ double Chassis::kP = 0.2, Chassis::kD = 0.3;
 double Chassis::tolerance = 6, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<macro::ChassisTarget> Chassis::target;
 int Chassis::currentTarget = 0;
+bool Chassis::isMultiTarget = false;
 
 double Chassis::angle = 0, Chassis::gyroAmp = 2;
 
@@ -53,23 +54,26 @@ Chassis& Chassis::withSlop(double amp_, double offset_) {
 }
 
 Chassis& Chassis::withGyro(double angle_, double gyroAmp_) {
-  angle = angle_;
-  gyroAmp = gyroAmp_;
+  if(target.size() != 1) target.resize(1);
+  target[0].angle = angle_;
+  target[0].gyroAmp = gyroAmp_;
   usingGyro = true;
   return *this;
 }
 
-Chassis& Chassis::withTarget(double target_, unsigned int speed_, double angle_, double gyroAmp_, double rate_) {
-  target[target.size()].length = target_;
-  target[target.size()].speed = speed_;
-  target[target.size()].angle = angle_;
-  target[target.size()].gyroAmp = gyroAmp_;
-  target[target.size()].rate = rate_;
+Chassis& Chassis::withTarget(double target_, int speed_, double angle_, double gyroAmp_, double rate_) {
+  target.push_back(macro::ChassisTarget());
+  target[target.size() - 1].length = target_;
+  target[target.size() - 1].speed = speed_;
+  target[target.size() - 1].angle = angle_;
+  target[target.size() - 1].gyroAmp = gyroAmp_;
+  target[target.size() - 1].rate = rate_;
   return *this;
 }
 
 Chassis& Chassis::drive() {
   currentTarget = 0;
+  isMultiTarget = true;
   usingGyro = true;
   isSettled = false;
   reset();
@@ -77,8 +81,9 @@ Chassis& Chassis::drive() {
   return *this;
 }
 
-Chassis& Chassis::drive(double target_, unsigned int speed_, int rate_) {
+Chassis& Chassis::drive(double target_, int speed_, int rate_) {
   currentTarget = 0;
+  if(target.size() != 1) target.resize(1);
   target[0].length = target_;
   target[0].speed = speed_;
   target[0].rate = rate_;
@@ -88,8 +93,9 @@ Chassis& Chassis::drive(double target_, unsigned int speed_, int rate_) {
   return *this;
 }
 
-Chassis& Chassis::turn(double target_, unsigned int speed_, int rate_) {
+Chassis& Chassis::turn(double target_, int speed_, int rate_) {
   currentTarget = 0;
+  if(target.size() != 1) target.resize(1);
   target[0].length = target_;
   target[0].speed = speed_;
   target[0].rate = rate_;
@@ -101,6 +107,7 @@ Chassis& Chassis::turn(double target_, unsigned int speed_, int rate_) {
 
 Chassis& Chassis::align(double target_) {
   currentTarget = 0;
+  if(target.size() != 1) target.resize(1);
   target[0].length = target_;
   isSettled = false;
   reset();
@@ -110,6 +117,13 @@ Chassis& Chassis::align(double target_) {
 
 void Chassis::waitUntilSettled() {
   while(!isSettled) pros::delay(20);
+}
+
+void Chassis::tarePos() {
+  LF.tare_position();
+  LB.tare_position();
+  RF.tare_position();
+  RB.tare_position();
 }
 
 void Chassis::reset() {
@@ -163,6 +177,7 @@ void Chassis::run() {
 
     switch(mode) {
       case DRIVING: { // Driving
+        std::cout << ": " << target.size() << ", currentTarget: " << currentTarget << ", Output: " << output << ", SlewOutput: " << slewOutput << ", yeet: " << target[currentTarget].rate << std::endl;
         deltaL = LF.get_position();
         deltaR = RF.get_position();
         current = ( deltaR - deltaL ) / 2;
@@ -173,10 +188,10 @@ void Chassis::run() {
 
         last = error;
 
-        if(target.size() - 1 == currentTarget) { // Is it last target?
+        if(!isMultiTarget || currentTarget == target.size() - 1) { // Is it last target?
           if(output > 0) {
             if(output > slewOutput + target[currentTarget].rate) {
-              slewOutput += target[currentTarget].length;
+              slewOutput += target[currentTarget].rate;
             } else {
               slewOutput = output;
             }
@@ -188,8 +203,15 @@ void Chassis::run() {
             }
           }
         } else {
-          if(output > 0) slewOutput += target[currentTarget].rate;
-          if(output < 0) slewOutput -= target[currentTarget].rate;
+          if(output > 0) {
+            if(target[currentTarget].speed > slewOutput) slewOutput += target[currentTarget].rate;
+            if(target[currentTarget].speed < slewOutput) slewOutput -= target[currentTarget].rate;
+          }
+
+          if(output < 0) {
+            if(-target[currentTarget].speed > slewOutput) slewOutput += target[currentTarget].rate;
+            if(-target[currentTarget].speed < slewOutput) slewOutput -= target[currentTarget].rate;
+          }
         }
 
         if(slewOutput > target[currentTarget].speed) slewOutput = target[currentTarget].speed;
@@ -197,6 +219,7 @@ void Chassis::run() {
 
         if(output > -tolerance && output < tolerance) {
           if(target.size() > 1 && target.size() - 1 > currentTarget) {
+            tarePos();
             currentTarget++;
             break;
           } else {
@@ -225,7 +248,7 @@ void Chassis::run() {
 
         error = target[0].length - current;
 
-        output = ( error * kP ) + ( error - last ) * kD;
+        output = ( error * (kP+0.6) ) + ( error - last ) * kD;
 
         last = error;
 

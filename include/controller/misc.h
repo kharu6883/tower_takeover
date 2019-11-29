@@ -59,7 +59,7 @@ namespace macro {
 
   struct ChassisTarget {
     double length;
-    unsigned int speed;
+    int speed;
     double angle;
     double gyroAmp;
     double rate;
