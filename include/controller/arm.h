@@ -1,6 +1,6 @@
 #include "main.h"
 
-#define ARM 13 // 13
+#define ARM 11 // 11
 #define ARMLIMIT 2
 
 #define ARM_BOTTOM 0
@@ -8,7 +8,7 @@
 #define ARM_LOW_TOWER_MANUAL 0.95
 #define ARM_LOW_TOWER_DESCORE 0.9
 #define ARM_MID_TOWER 1.3
-#define ARM_MID_TOWER_DESCORE 1.3 
+#define ARM_MID_TOWER_DESCORE 1.3
 #define ARM_TWO_CUBE 0.25
 
 extern pros::Motor ArmMotor;
