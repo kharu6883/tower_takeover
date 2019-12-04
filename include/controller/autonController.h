@@ -50,9 +50,10 @@ void tester();
 
 // Red
 void red1();
-
+void redbigzone();
 // Blue
 void blue1();
+void bluebigzone();
 
 // Skills
 void skills1();

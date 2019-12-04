@@ -16,7 +16,7 @@ Chassis::usingGyro = false;
 
 int Chassis::mode = IDLE;
 
-double Chassis::kP = 0.2, Chassis::kD = 0.3;
+double Chassis::kP = 0.3, Chassis::kD = 0.3;
 
 double Chassis::tolerance = 6, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<macro::ChassisTarget> Chassis::target;
