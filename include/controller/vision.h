@@ -2,7 +2,7 @@
 #include <map>
 using namespace pros;
 
-#define FRONTVISION 11
+#define FRONTVISION 5
 
 #define CUBE_PURPLE 1
 #define CUBE_ORANGE 2
