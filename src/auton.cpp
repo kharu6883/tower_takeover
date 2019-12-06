@@ -14,10 +14,23 @@ static Camera CamFront(FRONTVISION);
 
 using namespace io;
 
+/*===========================================
+  DICTIONARY
+===========================================*/
+// IDLE = 0
+// DRIVING = 1
+// TURNING = 2
+// ALIGNING = 3
+
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  chassis.drive(5, 127).waitUntilSettled();
+  chassis.drive(1000, 127);
+  delay(100);
+  chassis.clearArr();
+  chassis.setMode(IDLE);
+  chassis.withTarget(-500, 100, 0).drive().waitUntilSettled();
+  io::master.rumble(" .");
 }
 
 /*===========================================
@@ -80,6 +93,31 @@ void redbigzone() {
 ===========================================*/
 void blue1() {
 
+  chassis.calibrateGyro();
+   delay(500);
+   deploy(0.7);
+   delay(200);
+   roller(127);
+   chassis.drive(2300, 50,7).withTol(5).waitUntilSettled();
+   chassis.withGyro(45,1).drive(-1900, 127,10).waitUntilSettled();
+   chassis.withGyro(0,2).drive(1300, 70,1).waitUntilSettled();
+   roller(127);
+   chassis.unlock();
+   chassis.withGyro(0,0.7).drive(-1400, 127,1).waitUntilSettled();
+   chassis.withGyro(105,2).drive(1400, 127,1).waitUntilSettled();
+
+   roller(-0.3,70);
+   rack.move(RACK_UP,127,13).withTol(10).waitUntilSettled();
+   roller(-100);
+   chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+
+   io::master.rumble(" .");
+
+   delay(10000);
+
+
+
+
     chassis.calibrateGyro();
      delay(500);
      deploy(0.7);
@@ -138,36 +176,124 @@ void skills1() {
   //score red tower
 
   roller(127);
-  chassis.withGyro(-40, 0.5).drive(-1150, 100, 6).waitUntilSettled();
-  arm.zero();
+  chassis.withGyro(-35, 0.5).drive(-900, 100, 9);
+  arm.zero().waitUntilSettled();
+  chassis.waitUntilSettled();
   delay(300);
   chassis.unlock();
   chassis.waitUntilSettled();
-  //re align to row of 9 cubes
-  chassis.withGyro(0).drive(1700, 70).waitUntilSettled();
-  arm.tower(1);
+
+  chassis.withTarget(1500, 60, 0, 1.3,1).withTarget(400, 60, -35, 0.5).withTarget(800, 60, 0, 1.3).withTarget(600, 60, 35, 0.5).withTarget(2450, 60, 0, 1.3).withTarget(900, 60, -45, 1.3).drive().waitUntilSettled();
+  roller(100);
+  rack.move(RACK_UP,127,13).withTol(10).waitUntilSettled();
+  roller(-120);
+  rack.move(RACK_DOWN,127,13).withTol(10);
+
+  chassis.drive(-300, 100,8).withTol(5).waitUntilSettled();
+  chassis.turn(140, 100,8).withTol(5).waitUntilSettled();
+
+  chassis.drive(-1400, 80,6).withTol(5).waitUntilSettled();
+  chassis.turn(500, 100,8).waitUntilSettled();
+  chassis.left(-80);
+  chassis.right(-80);
+  delay(1100);
+  chassis.left(0);
+  chassis.right(0);
+  roller(0);
+  chassis.calibrateGyro();
   delay(500);
-  arm.move(1.05, 127);
-  chassis.lock();
-  chassis.withGyro(50, 1).drive(600, 70, 3).waitUntilSettled();
-  //deploy, drive to tower
-
-  arm.waitUntilSettled();
-  roller(-60);
-  delay(600);
-  //score red tower
-
   roller(127);
-  chassis.withGyro(50, 0.5).drive(-600, 100, 6).waitUntilSettled();
-  arm.zero();
+  chassis.drive(2400, 80, 6).waitUntilSettled();
   delay(300);
-  chassis.unlock();
+  arm.withTol(20).tower(1);
+  delay(800);
+  chassis.withGyro(55,1).withTol(10).drive(500, 40, 3).waitUntilSettled();
+  roller(-80);
+  delay(1000);
+  roller(0);
+  chassis.withTarget(-400, 100,0,0.5,6).drive();
+  delay(700);
+  arm.zero();
+  roller(127);
   chassis.waitUntilSettled();
-  chassis.turn(200, 100, 7).waitUntilSettled();
-  chassis.withTarget(400, 50, -35, 0.5).withTarget(400, 127, 0, 1.3).withTarget(600, 60, 35, 0.5).withTarget(650, 30, 0, 1.3).drive().waitUntilSettled();
-  //multipoint drive to blue small corner with 9 cubes
-  arm.tower(1);
-  chassis.drive(-500,60).waitUntilSettled();
+  arm.waitUntilSettled();
+  chassis.withGyro(0,2).drive(3500, 60, 1).waitUntilSettled();
+  chassis.withGyro(0,2).drive(-1000, 60, 1).waitUntilSettled();
+  roller(127);
+  chassis.turn(-200, 127,5).withTol(10).waitUntilSettled();
+  chassis.withGyro(45,2).drive(1500, 127, 3).waitUntilSettled();
+  roller(-0.5,60);
+  rack.move(RACK_UP,127,13).withTol(20).waitUntilSettled();
+  roller(-100);
+  rack.move(RACK_DOWN,127,13).withTol(10);
+  chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+
+
+
+
+
+
+  delay(100000);
+  arm.zero();
+  chassis.left(-100);
+  chassis.right(-100);
+  delay(800);
+  chassis.left(0);
+  chassis.right(0);
+  chassis.calibrateGyro();
+  delay(500);
+  roller(127);
+  chassis.withTarget(1900, 50, 0, 1,4).withTarget(2200, 50, 95, 1,4).withTarget(3000, 70, 140, 1,4).drive().waitUntilSettled();//withTarget(400, 50, -35, 0.5).withTarget(400, 127, 0, 1.3).withTarget(600, 80, 35, 0.5).withTarget(2650, 50, 0, 1.3).withTarget(900, 80, -40, 1.3).drive().waitUntilSettled();
+
+  rack.move(RACK_UP,127,13).withTol(10).waitUntilSettled();
+  roller(100);
+  delay(300);
+  roller(-120);
+  rack.move(RACK_DOWN,127,13).withTol(10);
+  chassis.drive(-500, 127,8).withTol(5).waitUntilSettled();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  delay(100000);
+  chassis.calibrateGyro();
+  delay(500);
   arm.move(1.05, 127);
   chassis.lock();
   chassis.withGyro(-50, 1).drive(1250, 70, 3).waitUntilSettled();
@@ -179,19 +305,90 @@ void skills1() {
   //score red tower
 
   roller(127);
-  chassis.withGyro(-40, 0.5).drive(-1150, 100, 6).waitUntilSettled();
+  chassis.withGyro(-30, 0.5).drive(-750, 100, 6);
+  arm.zero().waitUntilSettled();
+  chassis.waitUntilSettled();
+  delay(300);
+  chassis.unlock();
+  chassis.waitUntilSettled();
+  //re align to row of 9 cubes
+  chassis.withGyro(0,2).drive(1700, 50).waitUntilSettled();
+  delay(500);
+  arm.tower(1);
+  delay(1000);
+  arm.move(1.05, 127);
+  chassis.lock();
+  chassis.withGyro(20, 1).drive(400, 70, 3).waitUntilSettled();
+  //deploy, drive to tower
+
+  arm.waitUntilSettled();
+  roller(-80);
+  delay(600);
+  //score red tower
+
+  roller(127);
+  chassis.withGyro(0, 0.5).drive(-1800, 100, 6);
+  delay(300);
+  arm.zero().waitUntilSettled();
+  chassis.waitUntilSettled();
+  chassis.withGyro(90,2).drive(1300, 100,1);
+  delay(500);
+  arm.tower(2);
+  delay(300);
+  arm.move(1.6,127);
+  chassis.waitUntilSettled();
+  delay(500);
+  roller(-100);
+  arm.move(0);
+  delay(600);
+    chassis.withGyro(0,2).drive(-200, 50,3).waitUntilSettled();
+    arm.zero().waitUntilSettled();
+    roller(127);
+    chassis.withGyro(0,2).drive(5000, 100,3).waitUntilSettled();
+    delay(200);
+    arm.tower(2);
+    delay(300);
+    arm.move(1.6,127);
+    chassis.withGyro(45,2).drive(500, 100,3).waitUntilSettled();
+    arm.move(0);
+    roller(-100);
+  delay(10000);
   arm.zero();
   delay(300);
   chassis.unlock();
   chassis.waitUntilSettled();
-  chassis.withGyro(0, 0.5).drive(2000, 100, 6).waitUntilSettled();
+  chassis.turn(300, 100, 7).withTol(10).waitUntilSettled();
+  chassis.withTarget(200, 30, 0, 2).withTarget(400, 50, -35, 0.5).withTarget(400, 127, 0, 1.3).withTarget(600, 60, 35, 0.5).withTarget(550, 30, 0, 1.3).drive().waitUntilSettled();
+  //multipoint drive to blue small corner with 9 cubes
+  delay(900);
+  arm.tower(1);
+  delay(500);
+  arm.move(1.05, 127);
+  chassis.lock();
+  chassis.withGyro(-50, 1).drive(650, 70, 3).waitUntilSettled();
+  //deploy, drive to tower
+
+  arm.waitUntilSettled();
+  roller(-60);
+  delay(600);
+  //score red tower
+
+  roller(127);
+  chassis.withGyro(-70, 1).drive(-750, 100, 6).waitUntilSettled();
+  arm.zero();
+  delay(300);
+  chassis.unlock();
+  chassis.waitUntilSettled();
+  chassis.withTarget(300, 60, 40).withTarget(1600, 60, 0).drive().waitUntilSettled();
   chassis.turn(200, 100, 7).waitUntilSettled();
-  chassis.drive(1000, 100);
+  chassis.withGyro(-45,2).drive(300, 100);
   roller(-0.5,60);
   delay(500);
   rack.move(RACK_UP,127,13).withTol(20).waitUntilSettled();
+  chassis.setMode(IDLE);
+  chassis.clearArr();
   roller(-100);
-  rack.move(RACK_DOWN,127,13).withTol(10);
+  rack.move(RACK_DOWN,127,13);
   chassis.withTarget(-500, 100, 0, 0,6).withTarget(-500, 80, -90).drive().waitUntilSettled();
   chassis.turn(300,70,5).waitUntilSettled();
 

@@ -41,19 +41,25 @@ class Chassis {
 
     void waitUntilSettled();
 
+    // Chassis Motors
     void tarePos();
     void reset();
 
     void lock();
     void unlock();
 
-    // Getters & Setters
-
+    // Sensors
     int getGyro();
 
+    // States
     bool getState();
     int getMode();
 
+    void setMode(int mode);
+
+    void clearArr();
+
+    // Task
     void run();
     static void start(void* ignore);
     void stop();

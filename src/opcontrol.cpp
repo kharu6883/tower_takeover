@@ -25,6 +25,11 @@ void opcontrol() {
 	rack.setBrakeType(MOTOR_BRAKE_HOLD);
 	arm.setBrakeType(MOTOR_BRAKE_HOLD);
 
+	LF.set_brake_mode(MOTOR_BRAKE_COAST);
+	LB.set_brake_mode(MOTOR_BRAKE_COAST);
+	RF.set_brake_mode(MOTOR_BRAKE_COAST);
+	RB.set_brake_mode(MOTOR_BRAKE_COAST);
+
 	while (true) {
 		LF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
 		LB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);

@@ -169,6 +169,14 @@ int Chassis::getMode() {
   return mode;
 }
 
+void Chassis::setMode(int mode_) {
+  mode = mode_;
+}
+
+void Chassis::clearArr() {
+  target.clear();
+}
+
 void Chassis::run() {
   isRunning = true;
 
