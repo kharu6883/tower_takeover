@@ -1,12 +1,14 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/rack.h"
-#include "controller/arm.h"
-#include "controller/misc.h"
+#include "lib_7k/control/chassis.h"
+#include "lib_7k/control/rack.h"
+#include "lib_7k/control/arm.h"
 
-#include "controller/displayController.h"
-#include "controller/autonController.h"
+#include "lib_7k/util/odometry.h"
+#include "lib_7k/util/misc.h"
+
+#include "lib_7k/displayController.h"
+#include "lib_7k/autonController.h"
 
 void initialize() {
   macro::print("Starting Init Routine");
@@ -14,10 +16,15 @@ void initialize() {
   Autonomous Auton;
   macro::print("Auton Set!");
 
-  // Motor Initialization
+  // Class Initialization
+  Odometry odom;
+  Chassis chassis;
   Rack rack;
   Arm arm;
 
+  Display Disp;
+
+  // Motor Initialization
   arm.tarePos();
 
   rack.setBrakeType(MOTOR_BRAKE_HOLD);
@@ -28,7 +35,9 @@ void initialize() {
   macro::print("Motors Initialized!");
 
   // Threads
-  Chassis chassis;
+  pros::Task odomController(odom.start, NULL, "Odometry Tracker");
+  macro::print("Odometry Initialized!");
+
   pros::Task baseController(chassis.start, NULL, "Chassis Controller");
   macro::print("Chassis Initialized!");
 
@@ -38,8 +47,7 @@ void initialize() {
   pros::Task armController(arm.start, NULL, "Arm Controller");
   macro::print("Arm Initialized!");
 
-  Display Disp;
-  pros::Task b_display(Disp.start, NULL, "Brain Display");
+  pros::Task b_display(Disp.start, NULL, "Display Controller");
   b_display.set_priority(TASK_PRIORITY_MIN);
   macro::print("Display Initialized!");
 

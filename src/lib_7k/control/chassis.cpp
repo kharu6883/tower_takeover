@@ -42,6 +42,12 @@ Chassis& Chassis::calibrateGyro() {
   return *this;
 }
 
+Chassis& Chassis::withConst(double kP_, double kD_) {
+  kP = kP_;
+  kD = kD_;
+  return *this;
+}
+
 Chassis& Chassis::withTol(double tolerance_) {
   tolerance = tolerance_;
   return *this;
@@ -169,6 +175,14 @@ int Chassis::getMode() {
   return mode;
 }
 
+void Chassis::start(void* ignore) {
+  if(!isRunning) {
+    pros::delay(500);
+    Chassis *that = static_cast<Chassis*>(ignore);
+    that -> run();
+  }
+}
+
 void Chassis::run() {
   isRunning = true;
 
@@ -225,7 +239,7 @@ void Chassis::run() {
           } else {
             isSettled = true;
             target.clear();
-            withTol().withSlop().reset();
+            withConst().withTol().withSlop().reset();
             break;
           }
         }
@@ -271,7 +285,7 @@ void Chassis::run() {
 
         if(output > -tolerance && output < tolerance) {
           isSettled = true;
-          withTol().withSlop().reset();
+          withConst().withTol().withSlop().reset();
           break;
         }
 
@@ -292,7 +306,7 @@ void Chassis::run() {
 
         if(deltaL > -tolerance && deltaL < tolerance && deltaR > -tolerance && deltaR < tolerance) {
           isSettled = true;
-          withTol().withSlop().reset();
+          withConst().withTol().withSlop().reset();
           break;
         }
 
@@ -312,14 +326,6 @@ void Chassis::run() {
 
     end:
     pros::delay(20);
-  }
-}
-
-void Chassis::start(void* ignore) {
-  if(!isRunning) {
-    pros::delay(500);
-    Chassis *that = static_cast<Chassis*>(ignore);
-    that -> run();
   }
 }
 

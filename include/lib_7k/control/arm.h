@@ -8,7 +8,7 @@
 #define ARM_LOW_TOWER_MANUAL 0.95
 #define ARM_LOW_TOWER_DESCORE 0.9
 #define ARM_MID_TOWER 1.3
-#define ARM_MID_TOWER_DESCORE 1.3 
+#define ARM_MID_TOWER_DESCORE 1.3
 #define ARM_TWO_CUBE 0.25
 
 extern pros::Motor ArmMotor;
@@ -41,8 +41,8 @@ class Arm {
     // Sensors
     bool getLimit();
 
-    void run();
     static void start(void *ignore);
+    void run();
     void stop();
 
     void move(int speed);

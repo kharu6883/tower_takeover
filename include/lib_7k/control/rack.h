@@ -28,8 +28,8 @@ class Rack {
     bool getState();
     int getPot();
 
-    void run();
     static void start(void *ignore);
+    void run();
     void stop();
 
     void move(int speed);
