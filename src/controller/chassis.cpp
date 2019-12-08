@@ -42,6 +42,12 @@ Chassis& Chassis::calibrateGyro() {
   return *this;
 }
 
+Chassis& Chassis::withConst(double kP_, double kD_) {
+  kP = kP_;
+  kD = kD_;
+  return *this;
+}
+
 Chassis& Chassis::withTol(double tolerance_) {
   tolerance = tolerance_;
   return *this;
@@ -233,7 +239,7 @@ void Chassis::run() {
           } else {
             isSettled = true;
             target.clear();
-            withTol().withSlop().reset();
+            withConst().withTol().withSlop().reset();
             break;
           }
         }
@@ -256,7 +262,7 @@ void Chassis::run() {
 
         error = target[0].length - current;
 
-        output = ( error * (kP+0.6) ) + ( error - last ) * kD;
+        output = ( error * (kP+0.8) ) + ( error - last ) * kD;
 
         last = error;
 
@@ -279,7 +285,7 @@ void Chassis::run() {
 
         if(output > -tolerance && output < tolerance) {
           isSettled = true;
-          withTol().withSlop().reset();
+          withConst().withTol().withSlop().reset();
           break;
         }
 
@@ -300,7 +306,7 @@ void Chassis::run() {
 
         if(deltaL > -tolerance && deltaL < tolerance && deltaR > -tolerance && deltaR < tolerance) {
           isSettled = true;
-          withTol().withSlop().reset();
+          withConst().withTol().withSlop().reset();
           break;
         }
 

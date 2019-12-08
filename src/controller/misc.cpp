@@ -5,8 +5,8 @@
 namespace io {
   pros::Controller master(CONTROLLER_MASTER);
 
-  pros::Motor RollerL(ROLLERL, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);
-  pros::Motor RollerR(ROLLERR, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
+  pros::Motor RollerL(ROLLERL, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);//left roller
+  pros::Motor RollerR(ROLLERR, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);//right roller
 
   void roller(int speed) {
     RollerL.move(speed);
