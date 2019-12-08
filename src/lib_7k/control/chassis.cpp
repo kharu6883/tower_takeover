@@ -1,5 +1,5 @@
-#include "controller/chassis.h"
-#include "controller/misc.h"
+#include "lib_7k/control/chassis.h"
+#include "lib_7k/util/misc.h"
 
 pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
 LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),

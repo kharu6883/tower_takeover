@@ -17,6 +17,16 @@ namespace io {
 }
 
 namespace macro {
+  class Task {
+    public:
+      void start();
+      static void run();
+      void stop();
+
+    protected:
+      static bool isRunning;
+  };
+
   class Slew {
     public:
       Slew(double accel_);

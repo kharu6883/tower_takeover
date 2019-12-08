@@ -1,6 +1,5 @@
 #include "main.h"
-
-#include "controller/misc.h"
+#include "lib_7k/util/misc.h"
 
 namespace io {
   pros::Controller master(CONTROLLER_MASTER);
@@ -22,6 +21,20 @@ namespace io {
 }
 
 namespace macro {
+  bool Task::isRunning = false;
+
+  void Task::start() {
+
+  }
+
+  void Task::run() {
+    
+  }
+
+  void Task::stop() {
+    isRunning = false;
+  }
+
   Slew::Slew(double accel_) : accel(accel_), decel(0) {
     noDecel = true;
   }
