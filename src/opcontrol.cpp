@@ -50,7 +50,7 @@ void opcontrol() {
 			if(!isTrack) { // Put up Rack
 				lastPos = 2;
 
-				rackPID.withConst(0.09).calculate(RACK_UP, rack.getPot());
+				rackPID.withConst(0.12).calculate(RACK_UP, rack.getPot());
 				rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		  } else { // Tower Placement
@@ -64,7 +64,7 @@ void opcontrol() {
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) { // Goin' Down
 			lastPos = 0;
 
-			rackPID.withConst(0.43).calculate(RACK_DOWN, rack.getPot());
+			rackPID.withConst(0.43).calculate(RACK_DOWN, rack.getPot());                   
 			rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		} else { // Stop

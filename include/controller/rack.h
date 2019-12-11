@@ -3,9 +3,9 @@
 #define RACK 18
 #define RACKPOT 1
 
-#define RACK_DOWN 230
-#define RACK_TOWER 1250
-#define RACK_UP 3200
+#define RACK_DOWN 950
+#define RACK_TOWER 1650
+#define RACK_UP 3300
 
 extern pros::Motor RackMotor;
 extern pros::ADIPotentiometer Pot;
