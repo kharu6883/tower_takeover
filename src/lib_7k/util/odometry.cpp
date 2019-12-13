@@ -12,7 +12,7 @@ void Odometry::run() {
   isRunning = true;
 
   while(isRunning) {
-    
+
     pros::delay(20);
   }
 }

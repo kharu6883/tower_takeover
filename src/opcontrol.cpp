@@ -1,11 +1,11 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/rack.h"
-#include "controller/arm.h"
-#include "controller/misc.h"
+#include "lib_7k/control/chassis.h"
+#include "lib_7k/control/rack.h"
+#include "lib_7k/control/arm.h"
+#include "lib_7k/util/misc.h"
 
-#include "controller/displayController.h"
+#include "lib_7k/displayController.h"
 
 void opcontrol() {
 	using namespace io;
