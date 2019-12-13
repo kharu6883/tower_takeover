@@ -210,7 +210,7 @@ void skills1() {
   chassis.unlock();
   chassis.waitUntilSettled();
 
-  chassis.withTarget(1500, 60, 0, 1.3,1).withTarget(400, 50, -35, 0.5).withTarget(600, 127, 0, 1.3).withTarget(600, 80, 35, 0.5).withTarget(2650, 50, 0, 1.3).withTarget(900, 80, -45, 1.3).drive().waitUntilSettled();
+  chassis.withTarget(1500, 60, 0, 1.3,1).withTarget(400, 50, -35, 0.5).withTarget(600, 127, 0, 1.3).withTarget(600, 80, 35, 0.5).withTarget(2550, 50, 0, 1.3).withTarget(900, 80, -45, 1.3).drive().waitUntilSettled();
   roller(100);
   chassis.left(80);
   chassis.right(80);
@@ -219,6 +219,8 @@ void skills1() {
   chassis.left(0);
   chassis.right(0);
   rack.waitUntilSettled();
+  roller(-50);
+  delay(50);
   roller(-100);
   rack.move(RACK_DOWN,127,13).withTol(10);
 
@@ -267,7 +269,7 @@ void skills1() {
   arm.zero().waitUntilSettled();
   roller(127);
   chassis.lock();
-  chassis.withGyro(0,2).drive(2750, 60, 6).waitUntilSettled();
+  chassis.withGyro(0,2).drive(2850, 60, 6).waitUntilSettled();
   delay(300);
   arm.withTol(20).tower(1);
   delay(800);
@@ -282,7 +284,7 @@ void skills1() {
   roller(127);
   chassis.waitUntilSettled();
   arm.waitUntilSettled();
-  chassis.withGyro(0,2).drive(3500, 60, 1).withConst(0.6).waitUntilSettled();
+  chassis.withGyro(0,2).drive(3400, 60, 1).withConst(0.6).waitUntilSettled();
   delay(500);
   chassis.withGyro(0,2).drive(-1500, 60, 1).waitUntilSettled();
   roller(127);
@@ -321,7 +323,7 @@ void skills1() {
   chassis.drive(600, 80, 3).waitUntilSettled();
   roller(-90);
   delay(400);
-  chassis.drive(-1300, 80, 3).waitUntilSettled();
+  chassis.drive(-1400, 80, 3).waitUntilSettled();
   arm.zero();
   roller(127);
   delay(500);
@@ -337,12 +339,6 @@ void skills1() {
   roller(-100);
   rack.move(RACK_DOWN,127,13).withTol(10);
   chassis.drive(-700, 127, 5).waitUntilSettled();
-  chassis.turn(-800, 127,5).withTol(10).waitUntilSettled();
-  chassis.left(-40);
-  chassis.right(-40);
-  delay(1000);
-  roller(127);
-  chassis.left(0);
-  chassis.right(0);
+
 
 }
