@@ -1,11 +1,11 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/rack.h"
-#include "controller/arm.h"
+#include "lib_7k/control/chassis.h"
+#include "lib_7k/control/rack.h"
+#include "lib_7k/control/arm.h"
 
-#include "controller/misc.h"
-#include "controller/vision.h"
+#include "lib_7k/util/misc.h"
+#include "lib_7k/util/vision.h"
 
 static Chassis chassis;
 static Rack rack;
