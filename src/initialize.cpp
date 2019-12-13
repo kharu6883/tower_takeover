@@ -14,10 +14,12 @@ void initialize() {
   Autonomous Auton;
   macro::print("Auton Set!");
 
-  // Motor Initialization
+  // Class Init
+  Chassis chassis;
   Rack rack;
   Arm arm;
 
+  // Motor Init
   arm.tarePos();
 
   rack.setBrakeType(MOTOR_BRAKE_HOLD);
@@ -28,7 +30,6 @@ void initialize() {
   macro::print("Motors Initialized!");
 
   // Threads
-  Chassis chassis;
   pros::Task baseController(chassis.start, NULL, "Chassis Controller");
   macro::print("Chassis Initialized!");
 
@@ -51,6 +52,16 @@ void initialize() {
   std::cout << "Initialization Done!" << std::endl;
 }
 
-void disabled() { }
+void disabled() {
+  Chassis chassis;
+  Rack rack;
+  Arm arm;
+
+  chassis.withConst().withTol().withSlop().reset();
+  chassis.setMode(IDLE);
+  chassis.clearArr();
+  rack.withTol().reset();
+  arm.withTol().reset();
+}
 
 void competition_initialize() { }

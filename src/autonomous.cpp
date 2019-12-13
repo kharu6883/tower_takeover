@@ -7,8 +7,8 @@ using namespace okapi;
 using namespace std;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::type = SLOT_SKILLS,
-Autonomous::slot = 1;
+int Autonomous::type = SLOT_RED,
+Autonomous::slot = 0;
 
 std::map<int, void(*)()> Autonomous::redAuton;
 std::map<int, void(*)()> Autonomous::blueAuton;
@@ -28,7 +28,7 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
     // RED
     addAuton(SLOT_RED, "Red small zone", "RSZ", red1);
     addAuton(SLOT_RED, "Red big zone", "RBZ", redbigzone);
-    addAuton(SLOT_RED, "Red big zone score", "RBZs", redbizonescore);
+    addAuton(SLOT_RED, "Red big zone score", "RBZs", redbigzonescore);
 
     // BLUE
     addAuton(SLOT_BLUE, "blue small zone", "BSZ", blue1);
