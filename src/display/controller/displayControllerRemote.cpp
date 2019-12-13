@@ -21,13 +21,13 @@ void RemoteDisplay::update() {
       lastType = Auton.getType();
       lastSlot = Auton.getSlot();
     }
-    
+
     pros::delay(20);
   }
 }
 
 void RemoteDisplay::setText(std::string text_) {
-  text_.append("");
+  text_.append("   ");
   text = text_.c_str();
 }
 

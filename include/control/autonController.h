@@ -35,18 +35,8 @@ class Autonomous {
     static std::map<int, typeName> slotAbbv;
 };
 
+void tester();
+
 /*===========================================
   AUTON DECLARATIONS
 ===========================================*/
-
-// Red
-void r_s_7();
-void r_b_9();
-
-// Blue
-void b_s_7();
-void b_b_9();
-
-// Skills
-void tester();
-void skills1();
