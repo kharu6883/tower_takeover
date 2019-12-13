@@ -203,6 +203,7 @@ void skills1() {
 
   roller(127);
   chassis.withGyro(-15, 0.5).drive(-900, 100, 9);
+  delay(200);
   arm.zero().waitUntilSettled();
   chassis.waitUntilSettled();
   delay(300);
