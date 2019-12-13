@@ -20,14 +20,26 @@ void tester() {
   PREMADE FUNCTIONS
 ===========================================*/
 void start() {            // Deploy and zero arm
+<<<<<<< HEAD
   lockChassis();
   arm(0.6,200,2);
   roller(-0.3,-200);
   wait(100);
+=======
+
+  roller(-200);
+  wait(50);
+  roller(-200);
+  arm(0.4, 100, 60);
+  wait(50);
+  Thread.drive(-70,100,9);
+  roller(-200);
+>>>>>>> parent of 9e3da2f... calgary comp
   armReset();
   wait(100);
   unlockChassis();
 }
+
 
 /*===========================================
   RED MATCH AUTONOMOUSES
@@ -37,6 +49,7 @@ void r_s_7() {        //red small 7
   // wait(500);
   start();
   roller(200);
+<<<<<<< HEAD
   drive(1000, 100, 9);
   //pick up first 3 cubes
   //Thread.rack(RACK_TOWER,100,7);
@@ -52,6 +65,24 @@ void r_s_7() {        //red small 7
   Thread.drive(300, 300, 10);
   rack(RACK_DOWN, 200, 15);
 
+=======
+  // Pick up 4 cubes
+
+  drive(1100, 105, 9, 10000, 0);
+
+  // Yoink 3 more cubes and turn right facing small red corner
+  path.run("yeety", true);
+  path.del("yeety");
+
+  drive(1200, 140, 9, 10000, 0);
+  Thread.disable_arm();
+  turn(750, 160, 7);
+
+  // Drive to small red corner and place
+  roller(-23);
+  Thread.drive(1400, 150, 9);
+  rack(RACK_UP, 95, 6);
+>>>>>>> parent of 9e3da2f... calgary comp
 
   // turn(100,400,9);
   //
@@ -130,6 +161,7 @@ void b_s_7() {        //blue small 7
   drivegyro(1200, 145, 3, 0,3,10);
   //pick up 4 cubes
   Thread.disable_arm();
+<<<<<<< HEAD
   drivegyro(-1100,200,7,0,2,10);
   //drive back to corner
   lockChassis();
@@ -144,6 +176,17 @@ void b_s_7() {        //blue small 7
   //Thread.drive(10,200,9);
   wait(100);
   Thread.disable_drive();
+=======
+  turn(-650, 160, 7);
+
+  // Drive to small red corner and place
+  roller(-23);
+  Thread.drive(1400, 150, 9);
+  rack(RACK_UP, 95, 6);
+
+  // Yeet outta there
+  Thread.drive(-300, 200, 10);
+>>>>>>> parent of 9e3da2f... calgary comp
   roller(-200);
   wait(100);
   Thread.drive(-300, 200, 10);

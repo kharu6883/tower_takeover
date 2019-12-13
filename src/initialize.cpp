@@ -24,12 +24,21 @@ void initialize() {
   // Motor Initialization
   Arm.tare_position();
 
+<<<<<<< HEAD
   Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
   Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
 
   RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
 	RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
   print("Motors Initialized!");
+=======
+  Gyro.reset();
+
+  // Motor Settings
+  Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
+  Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+  print("Motor Set!");
+>>>>>>> parent of 9e3da2f... calgary comp
 
   // Threads
   pros::Task asyncController(Control.run, NULL, "Async Controller");

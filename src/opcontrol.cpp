@@ -6,19 +6,40 @@
 #include "control/macro.h"
 #include "control/displayController.h"
 
+<<<<<<< HEAD
 static int towerMode = 0, lastPos = 0;
+=======
+const double kP = 0.11;
+
+static int towerMode = 0, lastBtn = 0, lastR = 0, rollerAccel = 28, rollerDecel = 30;
+
+static double target, slewOutput = 0, accel = 9, decel = 20;
+
+static PID rackVar, rollerVar;
+>>>>>>> parent of 9e3da2f... calgary comp
 
 static bool isTrack = false, isReset = false;
 
 void opcontrol() {
 	Rack.set_brake_mode(MOTOR_BRAKE_HOLD);
 	Arm.set_brake_mode(MOTOR_BRAKE_HOLD);
+<<<<<<< HEAD
 
 	armAsync.resume();
 
 	Slew roller(60, 80); // Accel, Decel
 	Slew rackSlew(30, 60, true); // Accel, Decel
 	PID rackPID(0.09); // kP
+=======
+	Arm.set_current_limit(8000);
+
+	RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
+	RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
+
+	armAsync.resume();
+
+	Slew roller(28, 30);
+>>>>>>> parent of 9e3da2f... calgary comp
 
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * -4.72 - master.get_analog(ANALOG_RIGHT_X) / 1.57 );
@@ -92,10 +113,13 @@ void opcontrol() {
 
 		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6 || towerMode == 420) ::roller(roller.getOutput());
 
+<<<<<<< HEAD
 		#ifdef DEBUG
 		std::cout << "Rack: " << Rack.get_current_draw() << "mA, Arm: " << Arm.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
 		#endif
 
+=======
+>>>>>>> parent of 9e3da2f... calgary comp
 		// Yeet
 		pros::delay(20);
 	}
