@@ -64,7 +64,11 @@ void red1() {
    delay(500);
    roller(-0.3,70);
    delay(1500);
-   rack.move(RACK_UP,127,13).withTol(20).waitUntilSettled();
+   rack.move(RACK_UP,127,13).withTol(20);
+   delay(700);
+   chassis.left(60);
+   chassis.right(60);
+   rack.waitUntilSettled();
    roller(-80);
    delay(50);
    rack.move(RACK_DOWN,127,13).withTol(20);
@@ -135,7 +139,11 @@ void blue1() {
    delay(500);
    roller(-0.3,70);
    delay(1500);
-   rack.move(RACK_UP,127,13).withTol(20).waitUntilSettled();
+   rack.move(RACK_UP,127,13).withTol(20);
+   delay(700);
+   chassis.left(60);
+   chassis.right(60);
+   rack.waitUntilSettled();
    roller(-80);
    delay(50);
    rack.move(RACK_DOWN,127,13).withTol(20);
