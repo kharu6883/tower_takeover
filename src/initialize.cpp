@@ -3,7 +3,7 @@
 #include "controller/chassis.h"
 #include "controller/rack.h"
 #include "controller/arm.h"
-#include "controller/path.h"
+// #include "controller/path.h"
 #include "controller/misc.h"
 
 #include "controller/displayController.h"
