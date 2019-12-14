@@ -8,4 +8,8 @@ class Odometry {
 
   private:
     static bool isRunning;
+
+    static double deltaL, deltaR;
+
+    static double posX, posY, theta;
 };
