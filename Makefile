@@ -32,6 +32,7 @@ EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/display/displayController.cpp
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/chassis.cpp
 # EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/rack.cpp
 # EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/arm.cpp
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/path.cpp
 # EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/vision.cpp
 
 # files that get distributed to every user (beyond your source archive) - add
