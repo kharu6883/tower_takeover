@@ -37,12 +37,12 @@ void initialize() {
   pros::Task b_display(Disp.start, NULL, "Brain Display");
   b_display.set_priority(TASK_PRIORITY_MIN);
 
-  Path path;
-  pros::Task pather(path.start, NULL, "PathMaker");
-  pather.set_priority(TASK_PRIORITY_MIN);
+  // Path path;
+  // pros::Task pather(path.start, NULL, "PathMaker");
+  // pather.set_priority(TASK_PRIORITY_MIN);
 
   double end = timer.millis().convert(millisecond);
-  std::cout << "Initialization Done! Took " << end - init << "ms" << std::endl;
+  std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;
 }
 
 void disabled() {

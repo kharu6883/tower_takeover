@@ -49,36 +49,34 @@ void deploy(double a) {
   RED MATCH AUTONOMOUSES
 ===========================================*/
 void red1() {
-  path.run("red1", false);
-  macro::wait(10000000);
   chassis.calibrateGyro();
   delay(500);
-   deploy(0.7);
-   delay(200);
-   roller(127);
-   chassis.drive(2300, 50,7).withTol(5).waitUntilSettled();
-   roller(0);
-   chassis.withGyro(-45,1).drive(-1900, 127,10).waitUntilSettled();
-   roller(127);
-   chassis.withGyro(0,2).drive(1500, 70,1).waitUntilSettled();
-   roller(127);
-   chassis.turn(450, 80, 5).withConst(1.1).waitUntilSettled();
+  deploy(0.7);
+  delay(200);
+  roller(127);
+  chassis.drive(2300, 50,7).withTol(5).waitUntilSettled();
+  roller(0);
+  chassis.withGyro(-45,1).drive(-1900, 127,10).waitUntilSettled();
+  roller(127);
+  chassis.withGyro(0,2).drive(1500, 70,1).waitUntilSettled();
+  roller(127);
+  chassis.turn(450, 80, 5).withConst(1.1).waitUntilSettled();
 
-   chassis.withGyro(-128,0.7).drive(2300, 100,3);
-   chassis.unlock();
-   delay(500);
-   roller(-0.3,70);
-   delay(700);
-   rack.move(RACK_UP,127,13).withTol(20);
-   delay(200);
+  chassis.withGyro(-128,0.7).drive(2300, 100,3);
+  chassis.unlock();
+  delay(500);
+  roller(-0.3,70);
+  delay(700);
+  rack.move(RACK_UP,127,13).withTol(20);
+  delay(200);
 
-   rack.waitUntilSettled();
-   roller(-80);
-   delay(50);
-   rack.move(RACK_DOWN,127,13).withTol(20);
-   chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+  rack.waitUntilSettled();
+  roller(-80);
+  delay(50);
+  rack.move(RACK_DOWN,127,13).withTol(20);
+  chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
 
-   io::master.rumble(" .");
+  io::master.rumble(" .");
 }
 
 void redbigzone() {
