@@ -1,11 +1,11 @@
 #include "main.h"
 
-#include "lib_7k/control/chassis.h"
-#include "lib_7k/control/rack.h"
-#include "lib_7k/control/arm.h"
+#include "kepler/control/chassis.h"
+#include "kepler/control/rack.h"
+#include "kepler/control/arm.h"
 
-#include "lib_7k/util/misc.h"
-#include "lib_7k/util/vision.h"
+#include "kepler/util/misc.h"
+#include "kepler/util/vision.h"
 
 static Chassis chassis;
 static Rack rack;

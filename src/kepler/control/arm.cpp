@@ -1,5 +1,5 @@
-#include "lib_7k/control/arm.h"
-#include "lib_7k/util/misc.h"
+#include "kepler/control/arm.h"
+#include "kepler/util/misc.h"
 
 pros::Motor ArmMotor(ARM, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
 pros::ADIDigitalIn Limit(ARMLIMIT);
