@@ -1,18 +1,16 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/arm.h"
-#include "controller/displayController.h"
-#include "controller/autonController.h"
-#include "controller/misc.h"
-#include "controller/vision.h"
+#include "kepler/displayController.h"
+#include "kepler/autonController.h"
+#include "kepler/util/misc.h"
 
-Autonomous Auton;
-Vision CamFront(FRONTVISION);
-Camera Feed(FRONTVISION);
+#include "kepler/control/chassis.h"
+#include "kepler/control/arm.h"
 
-Chassis chassis;
-Arm arm;
+static Autonomous Auton;
+
+static Chassis chassis;
+static Arm arm;
 
 std::string Display::setText = "",
 Display::lastText = "";
@@ -50,7 +48,7 @@ static lv_obj_t * btnSkills;
 
 static lv_obj_t * expVal;
 
-static lv_obj_t * visorCont;
+// static lv_obj_t * visorCont;
 
 static lv_obj_t * gyroVal;
 
@@ -81,16 +79,16 @@ static lv_res_t auton_click_action(lv_obj_t * btn) {
   return LV_RES_OK;
 }
 
-static lv_res_t camera_click_action(lv_obj_t * btn) {
-  int id = lv_obj_get_free_num(btn);
-
-  switch(id) {
-    case 1: CamFront.set_exposure(CamFront.get_exposure() - 15); break;
-    case 2: CamFront.set_exposure(CamFront.get_exposure() + 15); break;
-  }
-
-  return LV_RES_OK;
-}
+// static lv_res_t camera_click_action(lv_obj_t * btn) {
+//   int id = lv_obj_get_free_num(btn);
+//
+//   switch(id) {
+//     case 1: CamFront.set_exposure(CamFront.get_exposure() - 15); break;
+//     case 2: CamFront.set_exposure(CamFront.get_exposure() + 15); break;
+//   }
+//
+//   return LV_RES_OK;
+// }
 
 static lv_res_t settings_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
@@ -326,14 +324,14 @@ void Display::camera() {
 
   lv_obj_set_x(btnBack, 5);
 
-  visorCont = lv_cont_create(scr, NULL);
-  lv_obj_set_pos(visorCont, 134, 22);
-  lv_obj_set_size(visorCont, 316, 212);
-  isVision = true;
-
-  lv_obj_t * expDec = createButton(1, 0, 25, 40, 40, SYMBOL_LEFT, scr, camera_click_action);
-  expVal = createLabel(52, 35, "Exp", scr);
-  lv_obj_t * expInc = createButton(2, 85, 25, 40, 40, SYMBOL_RIGHT, scr, camera_click_action);
+  // visorCont = lv_cont_create(scr, NULL);
+  // lv_obj_set_pos(visorCont, 134, 22);
+  // lv_obj_set_size(visorCont, 316, 212);
+  // isVision = true;
+  //
+  // lv_obj_t * expDec = createButton(1, 0, 25, 40, 40, SYMBOL_LEFT, scr, camera_click_action);
+  // expVal = createLabel(52, 35, "Exp", scr);
+  // lv_obj_t * expInc = createButton(2, 85, 25, 40, 40, SYMBOL_RIGHT, scr, camera_click_action);
 
   lv_scr_load(scr);
 }
@@ -343,13 +341,13 @@ void Display::setting() {
 
   lv_obj_set_x(btnBack, 5);
 
-  lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
-  lv_obj_t * gyro_reset = createButton(2, 0, 80, 200, 50, "Calibrate Gyro", scr, settings_click_action);
-
-  lv_obj_t * hotSauce = lv_img_create(scr, NULL);
-  lv_img_set_src(hotSauce, &michael1);
-  lv_obj_set_size(hotSauce, 240, 240);
-  lv_obj_set_pos(hotSauce, 240, 0);
+  // lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
+  // lv_obj_t * gyro_reset = createButton(2, 0, 80, 200, 50, "Calibrate Gyro", scr, settings_click_action);
+  //
+  // lv_obj_t * hotSauce = lv_img_create(scr, NULL);
+  // lv_img_set_src(hotSauce, &michael1);
+  // lv_obj_set_size(hotSauce, 240, 240);
+  // lv_obj_set_pos(hotSauce, 240, 0);
 
   lv_scr_load(scr);
 }
@@ -390,36 +388,36 @@ void Display::run() {
       }
 
       case 3: { // Camera
-        std::string exposure;
-        lv_obj_clean(visorCont);
-        std::map<int, vision_object_s_t> sig = Feed.getFeed();
-        for(int i = 0; i < sig.size(); i++) {
-          if(sig[i].signature == CUBE_PURPLE) { fill = LV_COLOR_PURPLE; sigName = "Purple Cube"; }
-          else if(sig[i].signature == CUBE_ORANGE) { fill = LV_COLOR_ORANGE; sigName = "Orange Cube"; }
-          else if(sig[i].signature == CUBE_GREEN) { fill = LV_COLOR_GREEN; sigName = "Green Cube"; }
-          else if(sig[i].signature == BLUE_ZONE) { fill = LV_COLOR_BLUE; sigName = "Blue Zone"; }
-          else if(sig[i].signature == RED_ZONE) { fill = LV_COLOR_RED; sigName = "Red Zone"; }
-          else { fill = LV_COLOR_WHITE; sigName = "Unknown"; }
-
-          visor = drawRectangle(sig[i].left_coord, sig[i].top_coord, sig[i].width, sig[i].height, LV_COLOR_WHITE, fill, visorCont);
-          objName = createLabel(sig[i].left_coord, sig[i].top_coord - 60, sigName, visorCont);
-          objCoord = createLabel(
-            sig[i].left_coord,
-            sig[i].top_coord - 40,
-            "X:" + std::to_string(sig[i].x_middle_coord) += ", Y:" + std::to_string(sig[i].y_middle_coord),
-            visorCont
-          );
-          objDim = createLabel(
-            sig[i].left_coord,
-            sig[i].top_coord - 20,
-            "Width:" + std::to_string(sig[i].width) += ", Height:" + std::to_string(sig[i].height),
-            visorCont
-          );
-        }
-
-        exposure += std::to_string(CamFront.get_exposure());
-        c = exposure.c_str();
-        lv_label_set_text(expVal, c);
+        // std::string exposure;
+        // lv_obj_clean(visorCont);
+        // std::map<int, vision_object_s_t> sig = Feed.getFeed();
+        // for(int i = 0; i < sig.size(); i++) {
+        //   if(sig[i].signature == CUBE_PURPLE) { fill = LV_COLOR_PURPLE; sigName = "Purple Cube"; }
+        //   else if(sig[i].signature == CUBE_ORANGE) { fill = LV_COLOR_ORANGE; sigName = "Orange Cube"; }
+        //   else if(sig[i].signature == CUBE_GREEN) { fill = LV_COLOR_GREEN; sigName = "Green Cube"; }
+        //   else if(sig[i].signature == BLUE_ZONE) { fill = LV_COLOR_BLUE; sigName = "Blue Zone"; }
+        //   else if(sig[i].signature == RED_ZONE) { fill = LV_COLOR_RED; sigName = "Red Zone"; }
+        //   else { fill = LV_COLOR_WHITE; sigName = "Unknown"; }
+        //
+        //   visor = drawRectangle(sig[i].left_coord, sig[i].top_coord, sig[i].width, sig[i].height, LV_COLOR_WHITE, fill, visorCont);
+        //   objName = createLabel(sig[i].left_coord, sig[i].top_coord - 60, sigName, visorCont);
+        //   objCoord = createLabel(
+        //     sig[i].left_coord,
+        //     sig[i].top_coord - 40,
+        //     "X:" + std::to_string(sig[i].x_middle_coord) += ", Y:" + std::to_string(sig[i].y_middle_coord),
+        //     visorCont
+        //   );
+        //   objDim = createLabel(
+        //     sig[i].left_coord,
+        //     sig[i].top_coord - 20,
+        //     "Width:" + std::to_string(sig[i].width) += ", Height:" + std::to_string(sig[i].height),
+        //     visorCont
+        //   );
+        // }
+        //
+        // exposure += std::to_string(CamFront.get_exposure());
+        // c = exposure.c_str();
+        // lv_label_set_text(expVal, c);
         break;
       }
 

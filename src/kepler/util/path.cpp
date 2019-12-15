@@ -1,8 +1,8 @@
 #include "main.h"
 
-#include "controller/autonController.h"
-#include "controller/path.h"
-#include "controller/misc.h"
+#include "kepler/autonController.h"
+#include "kepler/util/path.h"
+#include "kepler/util/misc.h"
 
 // okapi::ChassisControllerIntegrated Path::driver = ChassisControllerFactory::create(
 //   {9, 10},

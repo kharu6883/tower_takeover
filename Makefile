@@ -12,7 +12,7 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 INCDIR=$(ROOT)/include
 
-WARNFLAGS+=-Wno-psabi
+WARNFLAGS+=-Wno-psabi-Wunknown-attributes
 EXTRA_CFLAGS=
 EXTRA_CXXFLAGS=
 
@@ -28,11 +28,11 @@ VERSION:=1.0.0
 # this line excludes opcontrol.c and similar files
 EXCLUDE_SRC_FROM_LIB+=$(foreach file, $(SRCDIR)/opcontrol $(SRCDIR)/initialize $(SRCDIR)/autonomous,$(foreach cext,$(CEXTS),$(file).$(cext)) $(foreach cxxext,$(CXXEXTS),$(file).$(cxxext)))
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/auton.cpp
-EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/display/displayController.cpp
-EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/chassis.cpp
-# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/rack.cpp
-# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/arm.cpp
-# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/vision.cpp
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kepler/display/displayController.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kepler/control/chassis.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kepler/control/rack.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kepler/control/arm.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kepler/control/vision.cpp
 
 # files that get distributed to every user (beyond your source archive) - add
 # whatever files you want here. This line is configured to add all header files

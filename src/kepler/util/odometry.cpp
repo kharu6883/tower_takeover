@@ -5,6 +5,8 @@ bool Odometry::isRunning = false;
 
 double Odometry::deltaL = 0, Odometry::deltaR = 0;
 
+double Odometry::theta = 0, Odometry::posX = 0, Odometry::posY = 0;
+
 void Odometry::start(void *ignore) {
   if(!isRunning) {
     pros::delay(500);
