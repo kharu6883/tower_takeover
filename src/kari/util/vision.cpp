@@ -1,7 +1,7 @@
 #include "main.h"
 
-#include "kepler/util/vision.h"
-#include "kepler/control/chassis.h"
+#include "kari/util/vision.h"
+#include "kari/control/chassis.h"
 
 using namespace pros;
 

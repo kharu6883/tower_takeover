@@ -1,5 +1,5 @@
-#include "kepler/control/chassis.h"
-#include "kepler/util/misc.h"
+#include "kari/control/chassis.h"
+#include "kari/util/misc.h"
 
 pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
 LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),

@@ -1,5 +1,5 @@
-#include "kepler/control/arm.h"
-#include "kepler/util/misc.h"
+#include "kari/control/arm.h"
+#include "kari/util/misc.h"
 
 pros::Motor ArmMotor(ARM, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
 pros::ADIDigitalIn Limit(ARMLIMIT);

@@ -1,11 +1,11 @@
 #include "main.h"
 
-#include "kepler/displayController.h"
-#include "kepler/autonController.h"
-#include "kepler/util/misc.h"
+#include "kari/displayController.h"
+#include "kari/autonController.h"
+#include "kari/util/misc.h"
 
-#include "kepler/control/chassis.h"
-#include "kepler/control/arm.h"
+#include "kari/control/chassis.h"
+#include "kari/control/arm.h"
 
 static Autonomous Auton;
 

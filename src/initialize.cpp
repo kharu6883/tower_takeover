@@ -1,14 +1,14 @@
 #include "main.h"
 
-#include "kepler/control/chassis.h"
-#include "kepler/control/rack.h"
-#include "kepler/control/arm.h"
+#include "kari/control/chassis.h"
+#include "kari/control/rack.h"
+#include "kari/control/arm.h"
 
-#include "kepler/util/odometry.h"
-#include "kepler/util/misc.h"
+#include "kari/util/odometry.h"
+#include "kari/util/misc.h"
 
-#include "kepler/displayController.h"
-#include "kepler/autonController.h"
+#include "kari/displayController.h"
+#include "kari/autonController.h"
 
 void initialize() {
   macro::print("Starting Init Routine");

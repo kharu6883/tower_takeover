@@ -1,11 +1,11 @@
 #include "main.h"
 
-#include "kepler/control/chassis.h"
-#include "kepler/control/rack.h"
-#include "kepler/control/arm.h"
+#include "kari/control/chassis.h"
+#include "kari/control/rack.h"
+#include "kari/control/arm.h"
 
-#include "kepler/util/misc.h"
-#include "kepler/util/vision.h"
+#include "kari/util/misc.h"
+#include "kari/util/vision.h"
 
 static Chassis chassis;
 static Rack rack;
