@@ -49,34 +49,107 @@ void deploy(double a) {
   RED MATCH AUTONOMOUSES
 ===========================================*/
 void red1() {
-  chassis.calibrateGyro();
-  delay(500);
-  deploy(0.7);
-  delay(200);
-  roller(127);
-  chassis.drive(2300, 50,7).withTol(5).waitUntilSettled();
-  roller(0);
-  chassis.withGyro(-45,1).drive(-1900, 127,10).waitUntilSettled();
-  roller(127);
-  chassis.withGyro(0,2).drive(1500, 70,1).waitUntilSettled();
-  roller(127);
-  chassis.turn(450, 80, 5).withConst(1.1).waitUntilSettled();
 
-  chassis.withGyro(-128,0.7).drive(2300, 100,3);
-  chassis.unlock();
-  delay(500);
-  roller(-0.3,70);
-  delay(700);
-  rack.move(RACK_UP,127,13).withTol(20);
-  delay(200);
 
-  rack.waitUntilSettled();
-  roller(-80);
-  delay(50);
-  rack.move(RACK_DOWN,127,13).withTol(20);
-  chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+      chassis.calibrateGyro();
+       delay(500);
+       deploy(0.7);
+       delay(200);
+       roller(127);
+       delay(100);
+       roller(127);
+       chassis.withGyro(0,2).drive(2300, 50,2).waitUntilSettled();
+       roller(50);
+       chassis.withGyro(0,2).drive(-1500, 80,1).waitUntilSettled();
+       roller(127);
+       chassis.turn(550, 80, 5).withConst(1.1).waitUntilSettled();
+       delay(200);
+       chassis.withGyro(-130,2).drive(750, 100,2);
+       chassis.unlock();
+       roller(-0.3,70);
+       rack.move(RACK_UP,127,13).withTol(20);
+       delay(200);
 
-  io::master.rumble(" .");
+       rack.waitUntilSettled();
+       roller(-80);
+       delay(50);
+       rack.move(RACK_DOWN,127,13).withTol(20);
+       chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+
+       io::master.rumble(" .");
+
+
+    // chassis.calibrateGyro();
+    //  delay(500);
+    //  deploy(0.7);
+    //  delay(200);
+    //  roller(127);
+    //  delay(100);
+    //  roller(127);
+    //  chassis.drive(1700, 60,7).withTol(5).waitUntilSettled();
+    //  roller(0);
+    //  chassis.lock();
+    //  chassis.withGyro(50,1).drive(-1900, 127,7).waitUntilSettled();
+    //  roller(127);
+    //  roller(127);
+    //  chassis.withGyro(0,2).drive(1700, 70,1).waitUntilSettled();
+    //  chassis.withGyro(0,2).drive(-1050, 100,1).waitUntilSettled();
+    //  roller(127);
+    //  chassis.turn(-450, 80, 5).withConst(1.1).waitUntilSettled();
+    //  delay(200);
+    //  chassis.withGyro(-130,2).drive(550, 100,2);
+    //  chassis.unlock();
+    //  roller(-0.3,70);
+    //  rack.move(RACK_UP,127,13).withTol(20);
+    //  delay(200);
+    //
+    //  rack.waitUntilSettled();
+    //  roller(-80);
+    //  delay(50);
+    //  rack.move(RACK_DOWN,127,13).withTol(20);
+    //  chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+    //
+    //  io::master.rumble(" .");
+
+
+
+
+
+
+  //
+  //
+  // chassis.calibrateGyro();
+  // delay(500);
+  // deploy(0.7);
+  // delay(200);
+  // roller(127);
+  // delay(100);
+  // roller(127);
+  // chassis.drive(2300, 50,7).withTol(5).waitUntilSettled();
+  // roller(0);
+  // chassis.withGyro(-45,1).drive(-1900, 127,10).waitUntilSettled();
+  // roller(127);
+  // delay(100);
+  // roller(127);
+  // chassis.withGyro(0,2).drive(1400, 70,1).waitUntilSettled();
+  // roller(127);
+  // chassis.turn(450, 80, 5).withConst(1.1).waitUntilSettled();
+  //
+  // chassis.withGyro(-128,0.7).drive(2350, 100,3);
+  // chassis.unlock();
+  // delay(500);
+  // roller(-0.3,70);
+  // delay(700);
+  // rack.move(RACK_UP,127,13).withTol(20);
+  // delay(200);
+  //
+  // rack.waitUntilSettled();
+  // roller(-80);
+  // delay(50);
+  // rack.move(RACK_DOWN,127,13).withTol(20);
+  // chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+  //
+  // io::master.rumble(" .");
 }
 
 void redbigzone() {
@@ -108,10 +181,11 @@ void redbigzonescore() {
   delay(200);
   rack.move(RACK_DOWN+300, 127);
   chassis.drive(300, 100).waitUntilSettled();
-  chassis.withTarget(700, 50, -85, 1, 1).withTarget(1600, 60, -25,2 ,3).withTarget(2600, 60, 90, 1).drive().waitUntilSettled();
-  chassis.withTarget(-1600, 100, 25, 3, 3).withTarget(-200, 100, 90,2 ,3).withTarget(500, 100, 105, 1).drive().waitUntilSettled();
+  chassis.withTarget(700, 50, -85, 1, 1).withTarget(1600, 60, -25,2 ,3).withTarget(2500, 60, 90, 1).drive().waitUntilSettled();
+  chassis.withTarget(-1600, 100, 25, 3, 3).withTarget(-300, 100, 90,2 ,3).withTarget(500, 100, 105, 1).drive().waitUntilSettled();
   chassis.left(40);
   chassis.right(40);
+  delay(500);
   roller(-0.5,60);
   rack.move(RACK_UP,127,13).withTol(20).waitUntilSettled();
   roller(-100);
@@ -124,24 +198,23 @@ void redbigzonescore() {
 ===========================================*/
 void blue1() {
 
+
   chassis.calibrateGyro();
    delay(500);
    deploy(0.7);
    delay(200);
    roller(127);
-   chassis.drive(2300, 50,7).withTol(5).waitUntilSettled();
-   roller(0);
-   chassis.withGyro(45,1).drive(-1900, 127,10).waitUntilSettled();
-   roller(127);
-   chassis.withGyro(0,2).drive(1500, 70,1).waitUntilSettled();
-   roller(127);
-   chassis.turn(-450, 80, 5).withConst(0.7).waitUntilSettled();
    delay(100);
-   chassis.withGyro(135,0.7).drive(2350, 100,3);
+   roller(127);
+   chassis.withGyro(0,2).drive(2300, 50,2).waitUntilSettled();
+   roller(50);
+   chassis.withGyro(0,2).drive(-1500, 80,1).waitUntilSettled();
+   roller(127);
+   chassis.turn(-550, 80, 5).withConst(1.1).waitUntilSettled();
+   delay(200);
+   chassis.withGyro(130,2).drive(750, 100,2);
    chassis.unlock();
-   delay(500);
    roller(-0.3,70);
-   delay(700);
    rack.move(RACK_UP,127,13).withTol(20);
    delay(200);
 
@@ -152,6 +225,75 @@ void blue1() {
    chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
 
    io::master.rumble(" .");
+
+
+  //
+  // chassis.calibrateGyro();
+  //  delay(500);
+  //  deploy(0.7);
+  //  delay(200);
+  //  roller(127);
+  //  delay(100);
+  //  roller(127);
+  //  chassis.drive(1700, 60,7).withTol(5).waitUntilSettled();
+  //  roller(0);
+  //  chassis.lock();
+  //  chassis.withGyro(-50,1).drive(-1900, 127,7).waitUntilSettled();
+  //  roller(127);
+  //  roller(127);
+  //  chassis.withGyro(0,2).drive(1700, 70,1).waitUntilSettled();
+  //  chassis.withGyro(0,2).drive(-1050, 100,1).waitUntilSettled();
+  //  roller(127);
+  //  chassis.turn(-450, 80, 5).withConst(1.1).waitUntilSettled();
+  //  delay(200);
+  //  chassis.withGyro(130,2).drive(550, 100,2);
+  //  chassis.unlock();
+  //  roller(-0.3,70);
+  //  rack.move(RACK_UP,127,13).withTol(20);
+  //  delay(200);
+  //
+  //  rack.waitUntilSettled();
+  //  roller(-80);
+  //  delay(50);
+  //  rack.move(RACK_DOWN,127,13).withTol(20);
+  //  chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+  //
+  //  io::master.rumble(" .");
+  //
+
+
+  // chassis.calibrateGyro();
+  //  delay(500);
+  //  deploy(0.7);
+  //  delay(200);
+  //  roller(127);
+  //  delay(100);
+  //  roller(127);
+  //  chassis.drive(2300, 50,7).withTol(5).waitUntilSettled();
+  //  roller(0);
+  //  chassis.withGyro(45,1).drive(-1900, 127,10).waitUntilSettled();
+  //  roller(127);
+  //  delay(100);
+  //  roller(127);
+  //  chassis.withGyro(0,2).drive(1500, 70,1).waitUntilSettled();
+  //  roller(127);
+  //  chassis.turn(-450, 80, 5).withConst(0.7).waitUntilSettled();
+  //  delay(100);
+  //  chassis.withGyro(135,0.7).drive(2350, 100,3);
+  //  chassis.unlock();
+  //  delay(500);
+  //  roller(-0.3,70);
+  //  delay(700);
+  //  rack.move(RACK_UP,127,13).withTol(20);
+  //  delay(200);
+  //
+  //  rack.waitUntilSettled();
+  //  roller(-80);
+  //  delay(50);
+  //  rack.move(RACK_DOWN,127,13).withTol(20);
+  //  chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+  //
+  //  io::master.rumble(" .");
 }
 
 void bluebigzone() {
@@ -183,11 +325,12 @@ void bluebigzonescore() {
   arm.waitUntilSettled();
   delay(200);
   rack.move(RACK_DOWN+300, 127);
-  chassis.drive(400, 100).waitUntilSettled();
-  chassis.withTarget(700, 50, 85, 1, 1).withTarget(1600, 60, 25,2 ,3).withTarget(2600, 60, -90, 1).drive().waitUntilSettled();
-  chassis.withTarget(-1600, 100, -25, 3, 3).withTarget(-200, 100, -94,2 ,3).withTarget(500, 100, -110, 1).drive().waitUntilSettled();
+  chassis.drive(300, 100).waitUntilSettled();
+  chassis.withTarget(700, 50, 85, 1, 1).withTarget(1600, 60, 25,2 ,3).withTarget(2500, 60, -90, 1).drive().waitUntilSettled();
+  chassis.withTarget(-1600, 100, -25, 3, 3).withTarget(-300, 100, -90,2 ,3).withTarget(500, 100, -105, 1).drive().waitUntilSettled();
   chassis.left(40);
   chassis.right(40);
+  delay(500);
   roller(-0.5,60);
   rack.move(RACK_UP,127,13).withTol(20).waitUntilSettled();
   roller(-100);
@@ -213,7 +356,7 @@ void skills1() {
   //score red tower
 
   roller(127);
-  chassis.withGyro(-15, 0.5).drive(-950, 100, 9);
+  chassis.withGyro(-15, 0.5).drive(-1000, 100, 9);
   delay(200);
   arm.zero().waitUntilSettled();
   chassis.waitUntilSettled();
@@ -221,7 +364,7 @@ void skills1() {
   chassis.unlock();
   chassis.waitUntilSettled();
 
-  chassis.withTarget(1500, 60, 0, 1.3,1).withTarget(400, 50, -35, 0.5).withTarget(600, 127, 0, 1.3).withTarget(600, 80, 35, 0.5).withTarget(2550, 50, 0, 1.3).withTarget(900, 80, -45, 1.3).drive().waitUntilSettled();
+  chassis.withTarget(1500, 60, 0, 1.3,1).withTarget(400, 50, -35, 0.5).withTarget(600, 127, 0, 1.3).withTarget(600, 80, 35, 0.5).withTarget(2600, 50, 0, 1.3).withTarget(900, 80, -45, 1.3).drive().waitUntilSettled();
   roller(100);
   chassis.left(80);
   chassis.right(80);
@@ -231,8 +374,8 @@ void skills1() {
   chassis.right(0);
   rack.waitUntilSettled();
   roller(-50);
-  delay(50);
-  roller(-100);
+  delay(90);
+  roller(-90);
   rack.move(RACK_DOWN,127,13).withTol(10);
 
 
@@ -253,7 +396,7 @@ void skills1() {
   chassis.turn(150, 100,8).withTol(5).waitUntilSettled();
   arm.move(0.7, 127);
   chassis.lock();
-  chassis.withGyro(-85, 2).drive(-1540, 70, 3).waitUntilSettled();
+  chassis.withGyro(-85, 2).drive(-1650, 70, 3).waitUntilSettled();
   delay(200);
   chassis.turn(450, 100,8).waitUntilSettled();
   delay(200);
@@ -282,7 +425,7 @@ void skills1() {
   arm.zero().waitUntilSettled();
   roller(127);
   chassis.lock();
-  chassis.withGyro(0,2).drive(2850, 60, 6).waitUntilSettled();
+  chassis.withGyro(0,2).drive(2750, 60, 6).waitUntilSettled();
   delay(300);
   arm.withTol(20).tower(1);
   delay(800);
@@ -291,27 +434,26 @@ void skills1() {
   roller(-80);
   delay(1000);
   roller(0);
-  chassis.withGyro(55,1).withTol(10).drive(-200, 40, 3).waitUntilSettled();
-  chassis.turn(300, 100).withConst(0.6).waitUntilSettled();
+  chassis.withGyro(55,1).withTol(10).drive(-180, 40, 3).waitUntilSettled();
+  chassis.turn(250, 100).withConst(0.6).waitUntilSettled();
   arm.zero();
   roller(127);
   chassis.waitUntilSettled();
   arm.waitUntilSettled();
-  chassis.withGyro(0,2).drive(3400, 60, 1).withConst(0.6).waitUntilSettled();
+  chassis.withGyro(0,2).drive(3100, 60, 1).withConst(0.6).waitUntilSettled();
   roller(-70);
   delay(500);
   roller(100);
-  chassis.withGyro(0,2).drive(-1500, 60, 1).waitUntilSettled();
+  chassis.withGyro(0,2).drive(-1200, 60, 1).waitUntilSettled();
   roller(70);
   chassis.turn(-200, 127,5).withTol(10).withConst(1.1).waitUntilSettled();
-  chassis.withGyro(45,2).drive(2300, 127, 5).waitUntilSettled();
+  chassis.withGyro(45,2).drive(2300, 127, 5);
+  delay(1500);
+  rack.move(RACK_UP,127,13).withTol(20);
+  chassis.waitUntilSettled();
   roller(-0.4,60);
   chassis.left(80);
   chassis.right(80);
-  rack.move(RACK_UP,127,13).withTol(20);
-  delay(300);
-  chassis.left(20);
-  chassis.right(20);
   rack.waitUntilSettled();
   roller(-100);
   rack.move(RACK_DOWN,127,13).withTol(10);
@@ -328,17 +470,17 @@ void skills1() {
 
   roller(127);
   chassis.turn(600, 127,5).withTol(10).waitUntilSettled();
-  chassis.withGyro(-83,2).drive(5000, 50, 3).waitUntilSettled();
-  chassis.withGyro(-83,2).drive(-1200, 100, 3).waitUntilSettled();
+  chassis.withGyro(-80,2).drive(4700, 50, 3).waitUntilSettled();
+  chassis.withGyro(-80,2).drive(-1100, 100, 3).waitUntilSettled();
   delay(700);
   arm.tower(1);
   delay(500);
   arm.move(1.15, 127);
-  chassis.turn(400, 127,5).withTol(10).waitUntilSettled();
-  chassis.drive(600, 80, 3).waitUntilSettled();
+  chassis.turn(340, 127,5).withTol(10).waitUntilSettled();
+  chassis.drive(440, 80, 3).waitUntilSettled();
   roller(-90);
   delay(400);
-  chassis.drive(-1000, 80, 3).waitUntilSettled();
+  chassis.drive(-1200, 80, 3).waitUntilSettled();
   arm.zero();
   roller(127);
   delay(300);
@@ -355,6 +497,4 @@ void skills1() {
   roller(-100);
   rack.move(RACK_DOWN,127,13).withTol(10);
   chassis.drive(-700, 127, 5).waitUntilSettled();
-
-
 }
