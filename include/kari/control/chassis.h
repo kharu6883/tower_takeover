@@ -26,9 +26,9 @@ class Chassis {
     Chassis& withConst(double kP_ = 0.3, double kD_ = 0.3);
     Chassis& withTol(double tolerance_ = 6);
     Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
-    Chassis& withTarget(double x, double y, double theta, int speed, double rate = 4);
+    Chassis& withTarget(double x, double y, int speed, double rate = 4);
 
-    Chassis& drive();
+    Chassis& drive(); // For withTarget
     Chassis& drive(double target_, int speed_, int rate_ = 4);
     Chassis& turn(double target_, int speed_, int rate_ = 4);
     Chassis& strafe(double target_, int speed_, int rate_ = 4);
@@ -76,11 +76,10 @@ class Chassis {
     static int currentTarget;
     static bool isMultiTarget;
 
-    static double *theta, *posX, *posY;
+    static double *deltaL, *deltaR, *theta, *posX, *posY;
 
     static double angle, gyroAmp;
 
-    static double deltaL, deltaR;
     static double current, last, error, derivative, output, slewOutput;
 
     static double lastL, lastR, outputL, outputR;

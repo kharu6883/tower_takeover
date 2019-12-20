@@ -21,12 +21,11 @@ std::vector<ChassisTarget> Chassis::target;
 int Chassis::currentTarget = 0;
 bool Chassis::isMultiTarget = false;
 
-double *Chassis::theta, *Chassis::posX, *Chassis::posY;
+double *Chassis::deltaL, *Chassis::deltaR, *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
 double Chassis::angle = 0, Chassis::gyroAmp = 2;
 
-double Chassis::deltaL = 0, Chassis::deltaR = 0,
-Chassis::current = 0, Chassis::last = 0, Chassis::error = 0, Chassis::derivative = 0,
+double Chassis::current = 0, Chassis::last = 0, Chassis::error = 0, Chassis::derivative = 0,
 Chassis::output = 0, Chassis::slewOutput = 0, Chassis::lastL = 0, Chassis::lastR = 0,
 Chassis::outputL = 0, Chassis::outputR = 0, Chassis::nowTime = 0,
 Chassis::lastTime = 0, Chassis::elapsed = 0;
@@ -59,7 +58,7 @@ Chassis& Chassis::withSlop(double amp_, double offset_) {
   return *this;
 }
 
-Chassis& Chassis::withTarget(double x, double y, double theta, int speed, double rate) {
+Chassis& Chassis::withTarget(double x, double y, int speed, double rate) {
   target.push_back(ChassisTarget());
   target[target.size() - 1].x = x;
   target[target.size() - 1].y = y;
@@ -116,7 +115,6 @@ void Chassis::tarePos() {
 
 void Chassis::reset() {
   current = last = error = derivative = output = slewOutput = 0;
-  deltaL = deltaR = lastL = lastR = outputL = outputR = 0;
 
   mode = IDLE;
 
@@ -149,7 +147,9 @@ int Chassis::getGyro() {
   return Gyro.get_value();
 }
 
-void Chassis::setOdom(double *theta_, double *posX_, double *posY_) {
+void Chassis::setOdom(double *odomL_, double *odomR_, double *theta_, double *posX_, double *posY_) {
+  deltaL = odomL_;
+  deltaR = odomR_;
   theta = theta_;
   posX = posX_;
   posY = posY_;
@@ -235,25 +235,17 @@ void Chassis::run() {
           }
         }
 
-        if(!usingGyro) {
-          left(slewOutput + slop());
-          right(slewOutput - slop());
-        } else {
-          left(slewOutput - (((Gyro.get_value() / 10) + target[currentTarget].theta) * 2));
-          right(slewOutput + (((Gyro.get_value() / 10) + target[currentTarget].theta) * 2));
-        }
+
 
         break;
       }
 
       case TURNING: { // Turning
-        deltaL = LF.get_position();
-        deltaR = RF.get_position();
-        current = -1 * ( deltaR + deltaL ) / 2;
+        current = -1 * ( *deltaR + *deltaL ) / 2;
 
-        error = target[0].length - current;
+        error = target[0].theta - *theta;
 
-        output = ( error * (kP+0.8) ) + ( error - last ) * kD;
+        output = ( error * ( kP + 0.8 ) ) + ( error - last ) * kD;
 
         last = error;
 
@@ -285,7 +277,7 @@ void Chassis::run() {
         break;
       }
 
-      case STRAFING: { // Aligning
+      case STRAFING: { // Strafing
         break;
       }
 
@@ -320,9 +312,9 @@ void Chassis::right(int speed) {
 
 double Chassis::slop(int mode) {
   switch(mode) {
-    case 0: return ( deltaR + deltaL + offset) * amp; break;
-    case 1: return ( deltaR - deltaL ) * amp; break;
+    case 0: return ( *deltaR + *deltaL + offset) * amp; break;
+    case 1: return ( *deltaR - *deltaL ) * amp; break;
 
-    default: return ( deltaR + deltaL + offset ) * amp; break;
+    default: return ( *deltaR + *deltaL + offset ) * amp; break;
   }
 }

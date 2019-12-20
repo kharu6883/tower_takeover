@@ -15,9 +15,9 @@ double Odometry::output = 0, Odometry::Desiredtheta = 0, Odometry::DesiredX = 0,
 
 double errorx,errory;
 
-int LslewOutput, RslewOutput,Loutput, Routput, turnOutput;
+double velocity, kpd = 1, kpt= 2;
 
-int velocity, kp;
+int slewOutput, output, slewturnOutput , turnOutput, angle;
 
 double thetaerror;
 
@@ -87,55 +87,93 @@ void Odometry::stop() {
   isRunning = false;
 }
 
-void Odometry::point(double DesiredX, double DesiredY, double rate, double speed) {
+void Odometry::turn(double angle, double rate, double speed, double tol) {
+  thetaerror=0;
+  turnOutput=0;
+  slewturnOutput=0;
+
+  while(true)
+  {
+  thetaerror=thetaDeg-angle;
+  turnOutput=thetaerror*kpd;
+
+  if(turnOutput > 0) {
+    if(turnOutput > slewturnOutput + rate) {
+      slewturnOutput += rate;
+    } else {
+      slewturnOutput = turnOutput;
+    }
+  } else if(turnOutput < 0) {
+    if(turnOutput < slewturnOutput - rate) {
+      slewturnOutput -= rate;
+    } else {
+      slewturnOutput = turnOutput;
+    }
+  }
+
+
+  LF.move(-slewturnOutput);
+  LB.move(-slewturnOutput);
+  RF.move(slewturnOutput);
+  RB.move(slewturnOutput);
+if(thetaerror<tol && -tol<thetaerror)break;
+
+  pros::delay(10);
+}
+}
+
+void Odometry::point(double DesiredX, double DesiredY, double rate, double speed, double tol) {
   while(true) {
   //math angle
    errory=posY-DesiredY;
    errorx=posX-DesiredX;
    Desiredtheta=tan(errorx/errory);
    thetaerror=thetaRad-Desiredtheta;
-   turnOutput=thetaerror*2;
+   turnOutput=thetaerror*kpd;
   //math     velocity
 
-   velocity=(sqrt(pow(errorx, 2)+pow(errory, 2)))*0.1;
+   velocity=(sqrt(pow(errorx, 2)+pow(errory, 2)))*kpd;
    if(velocity>speed)velocity=speed;
    if(velocity<-speed)velocity=-speed;
   //output control
-   Loutput=turnOutput+(velocity/thetaerror);
-   Routput=-turnOutput+(velocity/thetaerror);
+   output=velocity;
 
-   if(Loutput > 0) {
-     if(Loutput > LslewOutput + rate) {
-       LslewOutput += rate;
+   if(output > 0) {
+     if(output > slewOutput + rate) {
+       slewOutput += rate;
      } else {
-       LslewOutput = Loutput;
+       slewOutput = output;
      }
    } else if(output < 0) {
-     if(Loutput < LslewOutput - rate) {
-       LslewOutput -= rate;
+     if(output < slewOutput - rate) {
+       slewOutput -= rate;
      } else {
-       LslewOutput = Loutput;
+       slewOutput = output;
      }
    }
 
-   if(Routput > 0) {
-     if(Routput > RslewOutput + rate) {
-       RslewOutput += rate;
+   if(turnOutput > 0) {
+     if(turnOutput > slewturnOutput + rate) {
+       slewturnOutput += rate;
      } else {
-       RslewOutput = Routput;
+       slewturnOutput = turnOutput;
      }
-   } else if(Routput < 0) {
-     if(Routput < RslewOutput - rate) {
-       RslewOutput -= rate;
+   } else if(turnOutput < 0) {
+     if(turnOutput < slewturnOutput - rate) {
+       slewturnOutput -= rate;
      } else {
-       RslewOutput = Routput;
+       slewturnOutput = turnOutput;
      }
    }
 
-   LF.move(LslewOutput);
-   LB.move(LslewOutput);
-   RF.move(RslewOutput);
-   RB.move(RslewOutput);
+
+   LF.move(slewOutput+slewturnOutput);
+   LB.move(slewOutput+slewturnOutput);
+   RF.move(-slewOutput-slewturnOutput);
+   RB.move(-slewOutput-slewturnOutput);
+
+   if(errorx<tol && -tol<errorx && errory<tol && tol<-errory)break;
+
    pros::delay(10);
   }
 }
