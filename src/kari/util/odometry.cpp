@@ -1,14 +1,14 @@
 #include "kari/util/odometry.h"
 #include "kari/control/chassis.h"
 
-pros::ADIEncoder LEncoder(ENCODERLTOP, ENCODERLBOTTOM),
-                 REncoder(ENCODERRTOP, ENCODERRBOTTOM);
+pros::ADIEncoder LEncoder(5, 6, true),
+                 REncoder(3, 4);
 
 bool Odometry::isRunning = false;
 
 double Odometry::deltaL = 0, Odometry::deltaR = 0, Odometry::lastDeltaL = 0, Odometry::lastDeltaR = 0;
 
-double Odometry::theta = 0, Odometry::posX = 0, Odometry::posY = 0;
+double Odometry::thetaRad = 0, Odometry::thetaDeg = 0, Odometry::posX = 0, Odometry::posY = 0;
 
 double Odometry::amp = 1;
 
@@ -30,8 +30,12 @@ double * Odometry::getR() {
   return &deltaR;
 }
 
-double * Odometry::getTheta() {
-  return &theta;
+double * Odometry::getThetaRad() {
+  return &thetaRad;
+}
+
+double * Odometry::getThetaDeg() {
+  return &thetaDeg;
 }
 
 double * Odometry::getX() {
@@ -54,16 +58,17 @@ void Odometry::run() {
   isRunning = true;
 
   while(isRunning) {
-    deltaL = LEncoder.get_value();
-    deltaR = REncoder.get_value();
+    deltaL = LEncoder.get_value() - lastDeltaL;
+    deltaR = REncoder.get_value() - lastDeltaR;
 
-    theta = theta + (( deltaL + deltaR ) / 2) / 11;
+    thetaRad = thetaRad + (( deltaL - deltaR ) / 2) / 7.5 / 23.34;
+    thetaDeg = thetaRad * 180 / 3.14159265358979323846264338327950288419716939937;
 
-    posX = posX + ( cos(theta) * (( deltaL + deltaR ) / 2 )) * amp;
-    posY = posY + ( sin(theta) * (( deltaL + deltaR ) / 2 )) * amp;
+    // posX = posX + ( cos(theta) * (( deltaL + deltaR ) / 2 )) * amp;
+    // posY = posY + ( sin(theta) * (( deltaL + deltaR ) / 2 )) * amp;
 
-    // posX = posX + (( deltaL + deltaR ) / 2) * cos(theta);
-    // posY = posY + (( deltaL + deltaR ) / 2) * sin(theta);
+    posX = posX + (( deltaL + deltaR ) / 2) * cos(thetaRad);
+    posY = posY + (( deltaL + deltaR ) / 2) * sin(thetaRad);
 
     // std::cout << "Left: " << deltaL << ", Right: " << deltaR << ", Theta: " << theta << ", X: " << posX << ", Y: " << posY << std::endl;
 
@@ -85,7 +90,7 @@ void Odometry::point(double DesiredX, double DesiredY, double rate, double speed
    errory=posY-DesiredY;
    errorx=posX-DesiredX;
    Desiredtheta=tan(errorx/errory);
-   thetaerror=theta-Desiredtheta;
+   thetaerror=thetaRad-Desiredtheta;
    turnOutput=thetaerror*2;
   //math     velocity
 

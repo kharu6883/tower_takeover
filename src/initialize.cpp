@@ -53,9 +53,10 @@ void initialize() {
 
   Disp.addInfo("Left", odom.getL());
   Disp.addInfo("Right", odom.getR());
-  Disp.addInfo("Theta", odom.getTheta());
+  Disp.addInfo("Rad Theta", odom.getThetaRad());
+  Disp.addInfo("Deg Theta", odom.getThetaDeg());
   Disp.addInfo("X", odom.getX());
-  Disp.addInfo("Y", odom.getX());
+  Disp.addInfo("Y", odom.getY());
 
   // Path Pathmaker;
   // pros::Task pathMaker(Pathmaker.start, NULL, "PathMaker");

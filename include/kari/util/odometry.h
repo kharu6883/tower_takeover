@@ -2,11 +2,6 @@
 
 extern pros::ADIEncoder LEncoder, REncoder;
 
-#define ENCODERLTOP 1
-#define ENCODERLBOTTOM 2
-#define ENCODERRTOP 3
-#define ENCODERRBOTTOM 4
-
 class Odometry {
   public:
 
@@ -14,7 +9,8 @@ class Odometry {
     double * getL();
     double * getR();
 
-    double * getTheta();
+    double * getThetaRad();
+    double * getThetaDeg();
     double * getX();
     double * getY();
 
@@ -28,7 +24,7 @@ class Odometry {
 
     static double deltaL, deltaR, lastDeltaL, lastDeltaR;
 
-    static double posX, posY, theta;
+    static double thetaRad, thetaDeg, posX, posY;
 
     static double amp;
 

@@ -26,10 +26,10 @@ void opcontrol() {
 	arm.setBrakeType(MOTOR_BRAKE_HOLD);
 
 	while (true) {
-		LF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		LB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		RF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		RB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
 
 		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;
