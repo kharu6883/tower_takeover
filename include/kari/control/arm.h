@@ -41,8 +41,8 @@ class Arm {
     // Sensors
     bool getLimit();
 
-    void run();
     static void start(void *ignore);
+    void run();
     void stop();
 
     void move(int speed);

@@ -1,11 +1,11 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/rack.h"
-#include "controller/arm.h"
-#include "controller/misc.h"
+#include "kari/control/chassis.h"
+#include "kari/control/rack.h"
+#include "kari/control/arm.h"
+#include "kari/util/misc.h"
 
-#include "controller/displayController.h"
+#include "kari/displayController.h"
 
 void opcontrol() {
 	using namespace io;
@@ -31,10 +31,10 @@ void opcontrol() {
 	RB.set_brake_mode(MOTOR_BRAKE_COAST);
 
 	while (true) {
-		LF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		LB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 4.724 - master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		RF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		RB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
 
 		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;

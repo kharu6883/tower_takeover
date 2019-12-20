@@ -1,7 +1,7 @@
 #include "main.h"
 
-#include "controller/autonController.h"
-#include "controller/misc.h"
+#include "kari/autonController.h"
+#include "kari/util/misc.h"
 
 using namespace okapi;
 using namespace std;

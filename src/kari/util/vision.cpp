@@ -1,7 +1,7 @@
 #include "main.h"
 
-#include "controller/vision.h"
-#include "controller/chassis.h"
+#include "kari/util/vision.h"
+#include "kari/control/chassis.h"
 
 using namespace pros;
 

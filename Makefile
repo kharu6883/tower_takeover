@@ -12,7 +12,7 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 INCDIR=$(ROOT)/include
 
-WARNFLAGS+=-Wno-psabi
+WARNFLAGS+=-Wno-psabi-Wunknown-attributes
 EXTRA_CFLAGS=
 EXTRA_CXXFLAGS=
 
@@ -22,18 +22,19 @@ USE_PACKAGE:=1
 # Set this to 1 to add additional rules to compile your project as a PROS library template
 IS_LIBRARY:=1
 # TODO: CHANGE THIS!
-LIBNAME:=lib7krobotics
+LIBNAME:=kari
 VERSION:=1.0.0
 # EXCLUDE_SRC_FROM_LIB= $(SRCDIR)/unpublishedfile.c
 # this line excludes opcontrol.c and similar files
 EXCLUDE_SRC_FROM_LIB+=$(foreach file, $(SRCDIR)/opcontrol $(SRCDIR)/initialize $(SRCDIR)/autonomous,$(foreach cext,$(CEXTS),$(file).$(cext)) $(foreach cxxext,$(CXXEXTS),$(file).$(cxxext)))
 EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/auton.cpp
-EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/display/displayController.cpp
-EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/chassis.cpp
-# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/rack.cpp
-# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/arm.cpp
-# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/path.cpp
-# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/controller/vision.cpp
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/display/displayController.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/control/chassis.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/control/rack.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/control/arm.cpp
+# EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/control/vision.cpp
+
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/util/odometry.cpp
 
 # files that get distributed to every user (beyond your source archive) - add
 # whatever files you want here. This line is configured to add all header files

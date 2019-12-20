@@ -1,5 +1,5 @@
-#include "controller/arm.h"
-#include "controller/misc.h"
+#include "kari/control/arm.h"
+#include "kari/util/misc.h"
 
 pros::Motor ArmMotor(ARM, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
 pros::ADIDigitalIn Limit(ARMLIMIT);
@@ -98,6 +98,14 @@ bool Arm::getMacroState() {
 
 bool Arm::getLimit() {
   return Limit.get_value();
+}
+
+void Arm::start(void *ignore) {
+  if(!isRunning) {
+    pros::delay(500);
+    Arm *that = static_cast<Arm*>(ignore);
+    that -> run();
+  }
 }
 
 void Arm::run() {
@@ -229,14 +237,6 @@ void Arm::run() {
     #endif
 
     pros::delay(20);
-  }
-}
-
-void Arm::start(void *ignore) {
-  if(!isRunning) {
-    pros::delay(500);
-    Arm *that = static_cast<Arm*>(ignore);
-    that -> run();
   }
 }
 

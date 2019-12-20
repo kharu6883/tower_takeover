@@ -1,25 +1,19 @@
 #include "main.h"
-#include "controller/misc.h"
+#include "kari/util/misc.h"
 
 extern pros::Motor LF, LB, RF, RB;
-extern pros::ADIUltrasonic LSonic, RSonic;
 extern pros::ADIGyro Gyro;
 
-#define LFPORT 14 // 14
-#define LBPORT 15 // 15
-#define RFPORT 17 // 17
-#define RBPORT 16 // 16
-
-#define SONIC_L_PING 3
-#define SONIC_L_ECHO 4
-#define SONIC_R_PING 5
-#define SONIC_R_ECHO 6
+#define LFPORT 1
+#define LBPORT 11
+#define RFPORT 10
+#define RBPORT 20
 
 #define GYRO 7
 
 #define DRIVING 1
 #define TURNING 2
-#define ALIGNING 3
+#define STRAFING 3
 
 class Chassis {
   public:
@@ -28,7 +22,7 @@ class Chassis {
 
     Chassis& calibrateGyro();
 
-    Chassis& withConst(double kP_ = 0.3, double kD = 0.3);
+    Chassis& withConst(double kP_ = 0.3, double kD_ = 0.3);
     Chassis& withTol(double tolerance_ = 6);
     Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
     Chassis& withGyro(double angle_, double gyroAmp_ = 2);
@@ -37,8 +31,7 @@ class Chassis {
     Chassis& drive();
     Chassis& drive(double target_, int speed_, int rate_ = 4);
     Chassis& turn(double target_, int speed_, int rate_ = 4);
-
-    Chassis& align(double target_);
+    Chassis& strafe(double target_, int speed_, int rate_ = 4);
 
     void waitUntilSettled();
 
@@ -61,8 +54,8 @@ class Chassis {
     void clearArr();
 
     // Task
-    void run();
     static void start(void* ignore);
+    void run();
     void stop();
 
     void left(int speed);

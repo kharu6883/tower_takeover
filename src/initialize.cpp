@@ -1,13 +1,14 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/rack.h"
-#include "controller/arm.h"
-// #include "controller/path.h"
-#include "controller/misc.h"
+#include "kari/control/chassis.h"
+#include "kari/control/rack.h"
+#include "kari/control/arm.h"
 
-#include "controller/displayController.h"
-#include "controller/autonController.h"
+#include "kari/util/odometry.h"
+#include "kari/util/misc.h"
+
+#include "kari/displayController.h"
+#include "kari/autonController.h"
 
 void initialize() {
   okapi::Timer timer;
@@ -15,31 +16,46 @@ void initialize() {
   macro::print("Starting Init Routine");
 
   Autonomous Auton;
+  macro::print("Auton Set!");
+
+  // Class Initialization
+  Odometry odom;
+  Chassis chassis;
+  Rack rack;
+  Arm arm;
+
+  Display Disp;
 
   // Roller Init
   io::RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
 	io::RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
 
   // Threads
-  Chassis chassis;
+  pros::Task odomController(odom.start, NULL, "Odometry Tracker");
+
   pros::Task baseController(chassis.start, NULL, "Chassis Controller");
 
-  Rack rack;
   pros::Task rackController(rack.start, NULL, "Rack Controller");
   rack.setBrakeType(MOTOR_BRAKE_HOLD);
 
-  Arm arm;
   pros::Task armController(arm.start, NULL, "Arm Controller");
   arm.setBrakeType(MOTOR_BRAKE_HOLD);
   arm.tarePos();
 
-  Display Disp;
-  pros::Task b_display(Disp.start, NULL, "Brain Display");
+  pros::Task b_display(Disp.start, NULL, "Display Controller");
   b_display.set_priority(TASK_PRIORITY_MIN);
 
-  // Path path;
-  // pros::Task pather(path.start, NULL, "PathMaker");
-  // pather.set_priority(TASK_PRIORITY_MIN);
+  Disp.addInfo("Left", odom.getL());
+  Disp.addInfo("Right", odom.getR());
+  Disp.addInfo("Rad Theta", odom.getThetaRad());
+  Disp.addInfo("Deg Theta", odom.getThetaDeg());
+  Disp.addInfo("X", odom.getX());
+  Disp.addInfo("Y", odom.getY());
+
+  // Path Pathmaker;
+  // pros::Task pathMaker(Pathmaker.start, NULL, "PathMaker");
+  // pathMaker.set_priority(TASK_PRIORITY_MIN);
+  // print("PathMaker Initialized!");
 
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;

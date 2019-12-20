@@ -1,4 +1,4 @@
-#include "controller/rack.h"
+#include "kari/control/rack.h"
 
 pros::Motor RackMotor(RACK, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
 pros::ADIPotentiometer Pot(RACKPOT);
@@ -59,6 +59,14 @@ int Rack::getPot() {
     TASK
 --------------------------------*/
 
+void Rack::start(void *ignore) {
+  if(!isRunning) {
+    pros::delay(500);
+    Rack *that = static_cast<Rack*>(ignore);
+    that -> run();
+  }
+}
+
 void Rack::run() {
   isRunning = true;
 
@@ -102,14 +110,6 @@ void Rack::run() {
 
     end:
     pros::delay(20);
-  }
-}
-
-void Rack::start(void *ignore) {
-  if(!isRunning) {
-    pros::delay(500);
-    Rack *that = static_cast<Rack*>(ignore);
-    that -> run();
   }
 }
 

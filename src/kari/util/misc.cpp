@@ -1,6 +1,5 @@
 #include "main.h"
-
-#include "controller/misc.h"
+#include "kari/util/misc.h"
 
 namespace io {
   pros::Controller master(CONTROLLER_MASTER);

@@ -1,18 +1,17 @@
 #include "main.h"
 
-#include "controller/chassis.h"
-#include "controller/rack.h"
-#include "controller/arm.h"
-#include "controller/path.h"
+#include "kari/control/chassis.h"
+#include "kari/control/rack.h"
+#include "kari/control/arm.h"
 
-#include "controller/misc.h"
-#include "controller/vision.h"
+#include "kari/util/odometry.h"
+#include "kari/util/misc.h"
+#include "kari/util/vision.h"
 
 static Chassis chassis;
 static Rack rack;
 static Arm arm;
-static Path path;
-static Camera CamFront(FRONTVISION);
+static Odometry odom;
 
 using namespace io;
 
