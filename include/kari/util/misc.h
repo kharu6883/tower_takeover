@@ -1,9 +1,6 @@
 #pragma once
 #include "api.h"
 
-#define ROLLERL 1 // 13
-#define ROLLERR 19 // 19
-
 namespace io {
   extern pros::Controller master;
 
@@ -55,14 +52,6 @@ namespace macro {
       double kP, kD;
 
       double current, error, last, derivative, output;
-  };
-
-  struct ChassisTarget {
-    double length;
-    int speed;
-    double angle;
-    double gyroAmp;
-    double rate;
   };
 
   void wait(int ms);

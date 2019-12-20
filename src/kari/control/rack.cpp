@@ -1,7 +1,7 @@
 #include "kari/control/rack.h"
 
-pros::Motor RackMotor(RACK, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
-pros::ADIPotentiometer Pot(RACKPOT);
+pros::Motor RackMotor(3, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
+pros::ADIPotentiometer Pot(1);
 
 bool Rack::isRunning = false,
 Rack::isSettled = true,

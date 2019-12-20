@@ -31,10 +31,10 @@ void opcontrol() {
 	RB.set_brake_mode(MOTOR_BRAKE_COAST);
 
 	while (true) {
-		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		RF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
-		RB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X) * 1.5);
+		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 1.58 + master.get_analog(ANALOG_LEFT_X) * 1.58 + master.get_analog(ANALOG_RIGHT_X) * 1.58);
+		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 1.58 - master.get_analog(ANALOG_LEFT_X) * 1.58 + master.get_analog(ANALOG_RIGHT_X) * 1.58);
+		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 1.58 - master.get_analog(ANALOG_LEFT_X) * 1.58 - master.get_analog(ANALOG_RIGHT_X) * 1.58);
+		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 1.58 + master.get_analog(ANALOG_LEFT_X) * 1.58 - master.get_analog(ANALOG_RIGHT_X) * 1.58);
 
 		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;
@@ -64,7 +64,7 @@ void opcontrol() {
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) { // Goin' Down
 			lastPos = 0;
 
-			rackPID.withConst(0.43).calculate(RACK_DOWN, rack.getPot());                   
+			rackPID.withConst(0.43).calculate(RACK_DOWN, rack.getPot());
 			rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		} else { // Stop

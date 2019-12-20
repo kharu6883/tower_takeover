@@ -23,7 +23,6 @@ void initialize() {
   Chassis chassis;
   Rack rack;
   Arm arm;
-
   Display Disp;
 
   // Roller Init
@@ -44,6 +43,8 @@ void initialize() {
 
   pros::Task b_display(Disp.start, NULL, "Display Controller");
   b_display.set_priority(TASK_PRIORITY_MIN);
+
+  chassis.setOdom(odom.getL(), odom.getR(), odom.getThetaDeg(), odom.getX(), odom.getY());
 
   Disp.addInfo("Left", odom.getL());
   Disp.addInfo("Right", odom.getR());

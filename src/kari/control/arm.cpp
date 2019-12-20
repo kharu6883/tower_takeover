@@ -1,8 +1,8 @@
 #include "kari/control/arm.h"
 #include "kari/util/misc.h"
 
-pros::Motor ArmMotor(ARM, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
-pros::ADIDigitalIn Limit(ARMLIMIT);
+pros::Motor ArmMotor(2, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
+pros::ADIDigitalIn Limit(2);
 
 bool Arm::isRunning = false,
 Arm::isSettled = true,

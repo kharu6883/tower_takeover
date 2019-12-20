@@ -8,6 +8,8 @@ class Odometry {
     // Getters & Setters
     double * getL();
     double * getR();
+    double * getDL();
+    double * getDR();
 
     double * getThetaRad();
     double * getThetaDeg();
@@ -22,11 +24,10 @@ class Odometry {
   private:
     static bool isRunning;
 
+    static double currentL, currentR;
     static double deltaL, deltaR, lastDeltaL, lastDeltaR;
 
     static double thetaRad, thetaDeg, posX, posY;
-
-    static double amp;
 
     static double output, DesiredX, DesiredY, Desiredtheta;
 };

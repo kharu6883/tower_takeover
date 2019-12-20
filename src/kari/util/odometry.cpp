@@ -6,11 +6,10 @@ pros::ADIEncoder LEncoder(5, 6, true),
 
 bool Odometry::isRunning = false;
 
+double Odometry::currentL = 0, Odometry::currentR = 0;
 double Odometry::deltaL = 0, Odometry::deltaR = 0, Odometry::lastDeltaL = 0, Odometry::lastDeltaR = 0;
 
 double Odometry::thetaRad = 0, Odometry::thetaDeg = 0, Odometry::posX = 0, Odometry::posY = 0;
-
-double Odometry::amp = 1;
 
 double Odometry::output = 0, Odometry::Desiredtheta = 0, Odometry::DesiredX = 0, Odometry::DesiredY = 0;
 
@@ -23,10 +22,18 @@ int velocity, kp;
 double thetaerror;
 
 double * Odometry::getL() {
-  return &deltaL;
+  return &currentL;
 }
 
 double * Odometry::getR() {
+  return &currentR;
+}
+
+double * Odometry::getDL() {
+  return &deltaL;
+}
+
+double * Odometry::getDR() {
   return &deltaR;
 }
 
@@ -58,19 +65,16 @@ void Odometry::run() {
   isRunning = true;
 
   while(isRunning) {
-    deltaL = LEncoder.get_value() - lastDeltaL;
-    deltaR = REncoder.get_value() - lastDeltaR;
+    currentL = LEncoder.get_value();
+    currentR = REncoder.get_value();
+    deltaL = currentL - lastDeltaL;
+    deltaR = currentR - lastDeltaR;
 
     thetaRad = thetaRad + (( deltaL - deltaR ) / 2) / 7.5 / 23.34;
     thetaDeg = thetaRad * 180 / 3.14159265358979323846264338327950288419716939937;
 
-    // posX = posX + ( cos(theta) * (( deltaL + deltaR ) / 2 )) * amp;
-    // posY = posY + ( sin(theta) * (( deltaL + deltaR ) / 2 )) * amp;
-
-    posX = posX + (( deltaL + deltaR ) / 2) * cos(thetaRad);
-    posY = posY + (( deltaL + deltaR ) / 2) * sin(thetaRad);
-
-    // std::cout << "Left: " << deltaL << ", Right: " << deltaR << ", Theta: " << theta << ", X: " << posX << ", Y: " << posY << std::endl;
+    posX = posX + (( deltaL + deltaR ) / 2) * cos( thetaRad );
+    posY = posY + (( deltaL + deltaR ) / 2) * sin( thetaRad );
 
     lastDeltaL = LEncoder.get_value();
     lastDeltaR = REncoder.get_value();
@@ -84,8 +88,7 @@ void Odometry::stop() {
 }
 
 void Odometry::point(double DesiredX, double DesiredY, double rate, double speed) {
-  while(true)
-  {
+  while(true) {
   //math angle
    errory=posY-DesiredY;
    errorx=posX-DesiredX;

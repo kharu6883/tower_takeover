@@ -1,8 +1,5 @@
 #include "main.h"
 
-#define ARM 11 // 11
-#define ARMLIMIT 2
-
 #define ARM_BOTTOM 0
 #define ARM_LOW_TOWER 1.05
 #define ARM_LOW_TOWER_MANUAL 0.95

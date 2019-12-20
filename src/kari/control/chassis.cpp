@@ -1,12 +1,12 @@
 #include "kari/control/chassis.h"
 #include "kari/util/misc.h"
 
-pros::Motor LF(LFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-            LB(LBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-            RF(RFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-            RB(RBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS);
+pros::Motor LF(1, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
+            LB(11, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
+            RF(10, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
+            RB(20, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS);
 
-pros::ADIGyro Gyro(GYRO);
+pros::ADIGyro Gyro(7);
 
 bool Chassis::isRunning = false,
 Chassis::isSettled = true,
@@ -17,9 +17,11 @@ int Chassis::mode = IDLE;
 double Chassis::kP = 0.3, Chassis::kD = 0.3;
 
 double Chassis::tolerance = 6, Chassis::amp = 0.2, Chassis::offset = 0;
-std::vector<macro::ChassisTarget> Chassis::target;
+std::vector<ChassisTarget> Chassis::target;
 int Chassis::currentTarget = 0;
 bool Chassis::isMultiTarget = false;
+
+double *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
 double Chassis::angle = 0, Chassis::gyroAmp = 2;
 
@@ -57,21 +59,13 @@ Chassis& Chassis::withSlop(double amp_, double offset_) {
   return *this;
 }
 
-Chassis& Chassis::withGyro(double angle_, double gyroAmp_) {
-  if(target.size() != 1) target.resize(1);
-  target[0].angle = angle_;
-  target[0].gyroAmp = gyroAmp_;
-  usingGyro = true;
-  return *this;
-}
-
-Chassis& Chassis::withTarget(double target_, int speed_, double angle_, double gyroAmp_, double rate_) {
-  target.push_back(macro::ChassisTarget());
-  target[target.size() - 1].length = target_;
-  target[target.size() - 1].speed = speed_;
-  target[target.size() - 1].angle = angle_;
-  target[target.size() - 1].gyroAmp = gyroAmp_;
-  target[target.size() - 1].rate = rate_;
+Chassis& Chassis::withTarget(double x, double y, double theta, int speed, double rate) {
+  target.push_back(ChassisTarget());
+  target[target.size() - 1].x = x;
+  target[target.size() - 1].y = y;
+  target[target.size() - 1].theta = angle;
+  target[target.size() - 1].speed = speed;
+  target[target.size() - 1].rate = rate;
   return *this;
 }
 
@@ -88,7 +82,7 @@ Chassis& Chassis::drive() {
 Chassis& Chassis::drive(double target_, int speed_, int rate_) {
   currentTarget = 0;
   if(target.size() != 1) target.resize(1);
-  target[0].length = target_;
+  target[0].x = target_;
   target[0].speed = speed_;
   target[0].rate = rate_;
   isSettled = false;
@@ -100,7 +94,7 @@ Chassis& Chassis::drive(double target_, int speed_, int rate_) {
 Chassis& Chassis::turn(double target_, int speed_, int rate_) {
   currentTarget = 0;
   if(target.size() != 1) target.resize(1);
-  target[0].length = target_;
+  target[0].theta = target_;
   target[0].speed = speed_;
   target[0].rate = rate_;
   isSettled = false;
@@ -155,6 +149,12 @@ int Chassis::getGyro() {
   return Gyro.get_value();
 }
 
+void Chassis::setOdom(double *theta_, double *posX_, double *posY_) {
+  theta = theta_;
+  posX = posX_;
+  posY = posY_;
+}
+
 bool Chassis::getState() {
   return isSettled;
 }
@@ -187,12 +187,7 @@ void Chassis::run() {
 
     switch(mode) {
       case DRIVING: { // Driving
-        std::cout << ": " << target.size() << ", currentTarget: " << currentTarget << ", Output: " << output << ", SlewOutput: " << slewOutput << ", yeet: " << target[currentTarget].rate << std::endl;
-        deltaL = LF.get_position();
-        deltaR = RF.get_position();
-        current = ( deltaR - deltaL ) / 2;
-
-        error = target[currentTarget].length - current;
+        error = target[currentTarget].x - *posX;
 
         output = (error * kP) + (error - last) * kD;
 
@@ -244,8 +239,8 @@ void Chassis::run() {
           left(slewOutput + slop());
           right(slewOutput - slop());
         } else {
-          left(slewOutput - (((Gyro.get_value() / 10) + target[currentTarget].angle) * 2 * target[currentTarget].gyroAmp));
-          right(slewOutput + (((Gyro.get_value() / 10) + target[currentTarget].angle) * 2 * target[currentTarget].gyroAmp));
+          left(slewOutput - (((Gyro.get_value() / 10) + target[currentTarget].theta) * 2));
+          right(slewOutput + (((Gyro.get_value() / 10) + target[currentTarget].theta) * 2));
         }
 
         break;

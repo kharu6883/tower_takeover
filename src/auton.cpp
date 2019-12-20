@@ -26,11 +26,8 @@ using namespace io;
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  chassis.drive(1000, 127);
-  delay(100);
-  chassis.clearArr();
-  chassis.setMode(IDLE);
-  chassis.withTarget(-500, 100, 0).drive().waitUntilSettled();
+  odom.point(500, 0, 4, 50);
+  odom.point(0, 500, 4, 50);
   io::master.rumble(" .");
 }
 

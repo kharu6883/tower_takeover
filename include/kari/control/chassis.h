@@ -4,16 +4,17 @@
 extern pros::Motor LF, LB, RF, RB;
 extern pros::ADIGyro Gyro;
 
-#define LFPORT 1
-#define LBPORT 11
-#define RFPORT 10
-#define RBPORT 20
-
-#define GYRO 7
-
 #define DRIVING 1
 #define TURNING 2
 #define STRAFING 3
+
+struct ChassisTarget {
+  double x;
+  double y;
+  double theta;
+  int speed;
+  double rate;
+};
 
 class Chassis {
   public:
@@ -25,8 +26,7 @@ class Chassis {
     Chassis& withConst(double kP_ = 0.3, double kD_ = 0.3);
     Chassis& withTol(double tolerance_ = 6);
     Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
-    Chassis& withGyro(double angle_, double gyroAmp_ = 2);
-    Chassis& withTarget(double target_, int speed_, double angle_, double gyroAmp_ = 2, double rate_ = 4);
+    Chassis& withTarget(double x, double y, double theta, int speed, double rate = 4);
 
     Chassis& drive();
     Chassis& drive(double target_, int speed_, int rate_ = 4);
@@ -44,6 +44,8 @@ class Chassis {
 
     // Sensors
     int getGyro();
+
+    void setOdom(double * odomL, double * odomR, double * theta_, double * posX_, double * posY_);
 
     // States
     bool getState();
@@ -70,9 +72,11 @@ class Chassis {
 
     static double kP, kD;
     static double tolerance, amp, offset;
-    static std::vector<macro::ChassisTarget> target;
+    static std::vector<ChassisTarget> target;
     static int currentTarget;
     static bool isMultiTarget;
+
+    static double *theta, *posX, *posY;
 
     static double angle, gyroAmp;
 

@@ -7,7 +7,7 @@ using namespace okapi;
 using namespace std;
 
 bool Autonomous::isInitialized = false;
-int Autonomous::type = SLOT_BLUE,
+int Autonomous::type = SLOT_SKILLS,
 Autonomous::slot = 0;
 
 std::map<int, void(*)()> Autonomous::redAuton;

@@ -1,8 +1,5 @@
 #include "main.h"
 
-#define RACK 18
-#define RACKPOT 1
-
 #define RACK_DOWN 950
 #define RACK_TOWER 1650
 #define RACK_UP 3300
