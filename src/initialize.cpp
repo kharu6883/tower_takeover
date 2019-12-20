@@ -51,6 +51,12 @@ void initialize() {
   b_display.set_priority(TASK_PRIORITY_MIN);
   macro::print("Display Initialized!");
 
+  Disp.addInfo("Left", odom.getL());
+  Disp.addInfo("Right", odom.getR());
+  Disp.addInfo("Theta", odom.getTheta());
+  Disp.addInfo("X", odom.getX());
+  Disp.addInfo("Y", odom.getX());
+
   // Path Pathmaker;
   // pros::Task pathMaker(Pathmaker.start, NULL, "PathMaker");
   // pathMaker.set_priority(TASK_PRIORITY_MIN);

@@ -15,10 +15,10 @@ static Arm arm;
 std::string Display::setText = "",
 Display::lastText = "";
 
+std::vector<info> Display::updateInfo;
+
 static int screen = 0;
 static int auton_type = 1;
-
-static bool isVision;
 
 static lv_style_t overlay;
 static lv_style_t mainScr;
@@ -46,12 +46,6 @@ static lv_obj_t * btnRed;
 static lv_obj_t * btnBlue;
 static lv_obj_t * btnSkills;
 
-static lv_obj_t * expVal;
-
-// static lv_obj_t * visorCont;
-
-static lv_obj_t * gyroVal;
-
 static lv_res_t main_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
@@ -65,7 +59,7 @@ static lv_res_t main_click_action(lv_obj_t * btn) {
   if(id == 4) { display.setting(); }
 
   // Home Button
-  if(id == 420) { display.main(); isVision = false; }
+  if(id == 420) { display.main(); }
 
   return LV_RES_OK;
 }
@@ -224,7 +218,7 @@ void Display::main() {
   lv_obj_set_x(btnSkills, -100);
 
   lv_obj_t * btnAuton = createButton(1, 250, 30, 200, 40, SYMBOL_LIST" Autonomous", scr, main_click_action);
-  lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_GPS" Sensors", scr, main_click_action);
+  lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_FILE" Status", scr, main_click_action);
   lv_obj_t * btnCamera = createButton(3, 250, 140, 200, 40, SYMBOL_IMAGE" Camera", scr, main_click_action);
   lv_obj_t * btnSetting = createButton(4, 250, 185, 200, 40, SYMBOL_SETTINGS" Settings", scr, main_click_action);
 
@@ -314,24 +308,17 @@ void Display::sensor() {
   screen = 2;
   lv_obj_set_x(btnBack, 5);
 
-  gyroVal = createLabel(50, 50, "Gyro", lv_scr_act());
+  for(int i = 0; i < updateInfo.size(); i++) {
+    if(i == 0) updateInfo[i].labelObj = createLabel(20, 50, updateInfo[i].text, scr);
+      else updateInfo[i].labelObj = createLabel(20, i * 20 + 20, updateInfo[i].text, scr);
+  }
 
   lv_scr_load(scr);
 }
 
 void Display::camera() {
   screen = 3;
-
   lv_obj_set_x(btnBack, 5);
-
-  // visorCont = lv_cont_create(scr, NULL);
-  // lv_obj_set_pos(visorCont, 134, 22);
-  // lv_obj_set_size(visorCont, 316, 212);
-  // isVision = true;
-  //
-  // lv_obj_t * expDec = createButton(1, 0, 25, 40, 40, SYMBOL_LEFT, scr, camera_click_action);
-  // expVal = createLabel(52, 35, "Exp", scr);
-  // lv_obj_t * expInc = createButton(2, 85, 25, 40, 40, SYMBOL_RIGHT, scr, camera_click_action);
 
   lv_scr_load(scr);
 }
@@ -343,11 +330,11 @@ void Display::setting() {
 
   // lv_obj_t * arm_reset = createButton(1, 0, 0, 200, 50, "Calibrate Arm", scr, settings_click_action);
   // lv_obj_t * gyro_reset = createButton(2, 0, 80, 200, 50, "Calibrate Gyro", scr, settings_click_action);
-  //
-  // lv_obj_t * hotSauce = lv_img_create(scr, NULL);
-  // lv_img_set_src(hotSauce, &michael1);
-  // lv_obj_set_size(hotSauce, 240, 240);
-  // lv_obj_set_pos(hotSauce, 240, 0);
+
+  lv_obj_t * hotSauce = lv_img_create(scr, NULL);
+  lv_img_set_src(hotSauce, &michael1);
+  lv_obj_set_size(hotSauce, 240, 240);
+  lv_obj_set_pos(hotSauce, 240, 0);
 
   lv_scr_load(scr);
 }
@@ -357,67 +344,29 @@ void Display::run() {
   std::string name;
   const char * c;
 
-  lv_color_t fill;
-  lv_obj_t * size;
-
-  lv_obj_t * visor;
-  lv_obj_t * objName;
-  lv_obj_t * objCoord;
-  lv_obj_t * objDim;
-
-  const char * sigName;
-
   name = "Auton Selected: ";
 
   while(true) {
 
     switch(screen) {
-      case 0: {
-        break;
-      }
 
       case 1: { // Auton
         break;
       }
 
       case 2: { // Sensor
-        std::string gyro;
-        gyro = "Limit Switch: " +  std::to_string(arm.getLimit());
-        lv_label_set_text(gyroVal, gyro.c_str());
+        for(int i = 0; i < updateInfo.size(); i++) {
+          if(updateInfo[i].labelObj == nullptr) break;
+          if(*updateInfo[i].data != updateInfo[i].last) {
+            std::string temp = updateInfo[i].text + ": " + std::to_string(*updateInfo[i].data);
+            lv_label_set_text(updateInfo[i].labelObj, temp.c_str());
+            updateInfo[i].last = *updateInfo[i].data;
+          }
+        }
         break;
       }
 
       case 3: { // Camera
-        // std::string exposure;
-        // lv_obj_clean(visorCont);
-        // std::map<int, vision_object_s_t> sig = Feed.getFeed();
-        // for(int i = 0; i < sig.size(); i++) {
-        //   if(sig[i].signature == CUBE_PURPLE) { fill = LV_COLOR_PURPLE; sigName = "Purple Cube"; }
-        //   else if(sig[i].signature == CUBE_ORANGE) { fill = LV_COLOR_ORANGE; sigName = "Orange Cube"; }
-        //   else if(sig[i].signature == CUBE_GREEN) { fill = LV_COLOR_GREEN; sigName = "Green Cube"; }
-        //   else if(sig[i].signature == BLUE_ZONE) { fill = LV_COLOR_BLUE; sigName = "Blue Zone"; }
-        //   else if(sig[i].signature == RED_ZONE) { fill = LV_COLOR_RED; sigName = "Red Zone"; }
-        //   else { fill = LV_COLOR_WHITE; sigName = "Unknown"; }
-        //
-        //   visor = drawRectangle(sig[i].left_coord, sig[i].top_coord, sig[i].width, sig[i].height, LV_COLOR_WHITE, fill, visorCont);
-        //   objName = createLabel(sig[i].left_coord, sig[i].top_coord - 60, sigName, visorCont);
-        //   objCoord = createLabel(
-        //     sig[i].left_coord,
-        //     sig[i].top_coord - 40,
-        //     "X:" + std::to_string(sig[i].x_middle_coord) += ", Y:" + std::to_string(sig[i].y_middle_coord),
-        //     visorCont
-        //   );
-        //   objDim = createLabel(
-        //     sig[i].left_coord,
-        //     sig[i].top_coord - 20,
-        //     "Width:" + std::to_string(sig[i].width) += ", Height:" + std::to_string(sig[i].height),
-        //     visorCont
-        //   );
-        // }
-        //
-        // exposure += std::to_string(CamFront.get_exposure());
-        // c = exposure.c_str();
-        // lv_label_set_text(expVal, c);
         break;
       }
 
@@ -481,6 +430,14 @@ void Display::start(void* ignore) {
   that -> run();
 }
 
+void Display::addInfo(std::string text, double * info) {
+  updateInfo.push_back(::info());
+  updateInfo[updateInfo.size() - 1].labelObj = nullptr;
+  updateInfo[updateInfo.size() - 1].text = text;
+  updateInfo[updateInfo.size() - 1].data = info;
+  updateInfo[updateInfo.size() - 1].last = 1;
+}
+
 void Display::setRemoteText(std::string text_) {
   setText = text_;
 }
@@ -495,9 +452,7 @@ void Display::remoteUpdate() {
 lv_obj_t * Display::createLabel(int x, int y, std::string text_, lv_obj_t * parent) {
   lv_obj_t * label = lv_label_create(parent, NULL);
   lv_obj_set_pos(label, x, y);
-  const char * text;
-  text = text_.c_str();
-  lv_label_set_text(label, text);
+  lv_label_set_text(label, text_.c_str());
 
   return label;
 }
@@ -512,23 +467,4 @@ lv_obj_t * Display::createButton(int id, int x, int y, int width, int height, st
   lv_obj_align(buttonLabel, button, LV_ALIGN_CENTER, 0, 0);
 
   return button;
-}
-
-lv_obj_t * Display::drawRectangle(int x, int y, int width, int height, lv_color_t stroke, lv_color_t fill, lv_obj_t * parent) {
-  lv_obj_t * obj = lv_obj_create(parent, NULL);
-
-  lv_style_t *style1 = (lv_style_t *)malloc( sizeof( lv_style_t ));
-  lv_style_copy(style1, &lv_style_plain_color);
-  style1 -> body.border.color = stroke;
-  style1 -> body.border.width = 1;
-  style1 -> body.border.part = LV_BORDER_FULL;
-
-  style1 -> body.main_color = fill;
-  style1 -> body.grad_color = fill;
-
-  lv_obj_set_style(obj, style1);
-  lv_obj_set_pos(obj, x, y);
-  lv_obj_set_size(obj, width, height);
-
-  return obj;
 }

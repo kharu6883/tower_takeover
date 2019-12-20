@@ -1,13 +1,11 @@
 #include "kari/control/chassis.h"
 #include "kari/util/misc.h"
 
-pros::Motor LF(LFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
-LB(LBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
-RF(RFPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS),
-RB(RBPORT, MOTOR_GEARSET_6, 0, MOTOR_ENCODER_COUNTS);
+pros::Motor LF(LFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
+            LB(LBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
+            RF(RFPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
+            RB(RBPORT, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS);
 
-pros::ADIUltrasonic LSonic(SONIC_L_PING, SONIC_L_ECHO);
-pros::ADIUltrasonic RSonic(SONIC_R_PING, SONIC_R_ECHO);
 pros::ADIGyro Gyro(GYRO);
 
 bool Chassis::isRunning = false,
@@ -108,16 +106,6 @@ Chassis& Chassis::turn(double target_, int speed_, int rate_) {
   isSettled = false;
   reset();
   mode = TURNING;
-  return *this;
-}
-
-Chassis& Chassis::align(double target_) {
-  currentTarget = 0;
-  if(target.size() != 1) target.resize(1);
-  target[0].length = target_;
-  isSettled = false;
-  reset();
-  mode = ALIGNING;
   return *this;
 }
 
@@ -294,24 +282,7 @@ void Chassis::run() {
         break;
       }
 
-      case ALIGNING: { // Aligning
-        deltaL = target[0].length - LSonic.get_value();
-        deltaR = target[0].length - RSonic.get_value();
-
-        outputL = ( deltaL * kP ) + ( deltaL - lastL ) * kD;
-        outputR = ( deltaR * kP ) + ( deltaR - lastR ) * kD;
-
-        lastL = deltaL;
-        lastR = deltaR;
-
-        if(deltaL > -tolerance && deltaL < tolerance && deltaR > -tolerance && deltaR < tolerance) {
-          isSettled = true;
-          withConst().withTol().withSlop().reset();
-          break;
-        }
-
-        left(outputL);
-        right(outputR);
+      case STRAFING: { // Aligning
         break;
       }
 

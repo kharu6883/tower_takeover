@@ -34,6 +34,8 @@ EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/display/displayController.cpp
 # EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/control/arm.cpp
 # EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/control/vision.cpp
 
+EXCLUDE_SRC_FROM_LIB+=$(SRCDIR)/kari/util/odometry.cpp
+
 # files that get distributed to every user (beyond your source archive) - add
 # whatever files you want here. This line is configured to add all header files
 # that are in the the include directory get exported
