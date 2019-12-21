@@ -26,12 +26,14 @@ using namespace io;
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  odom.turn(90, 1, 150, 5);
+  odom.point(1000, 0, 4, 100,3);
   chassis.left(0);
   chassis.right(0);
-  delay(10000);
-  odom.point(500, 100, 4, 50,10);
-  odom.point(100, 500, 4, 50,10);
+  delay(800);
+  odom.point(0, 0, 4, 50,3);
+  chassis.left(0);
+  chassis.right(0);
+  delay(800);
   odom.turn(90, 4, 80, 10);
   io::master.rumble(" .");
 }
