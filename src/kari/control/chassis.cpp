@@ -9,9 +9,7 @@ pros::Motor LF(1, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
 pros::ADIGyro Gyro(7);
 
 bool Chassis::isRunning = false,
-Chassis::isSettled = true,
-Chassis::usingGyro = false;
-
+Chassis::isSettled = true;
 int Chassis::mode = IDLE;
 
 double Chassis::kP = 0.3, Chassis::kD = 0.3;
@@ -20,17 +18,25 @@ double Chassis::tolerance = 6, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<ChassisTarget> Chassis::target;
 int Chassis::currentTarget = 0;
 bool Chassis::isMultiTarget = false;
+bool Chassis::isTurnToPoint = false;
 
 double *Chassis::deltaL, *Chassis::deltaR, *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
-double Chassis::angle = 0, Chassis::gyroAmp = 2;
-
-double Chassis::current = 0, Chassis::last = 0, Chassis::error = 0, Chassis::derivative = 0,
-Chassis::output = 0, Chassis::slewOutput = 0, Chassis::lastL = 0, Chassis::lastR = 0,
-Chassis::outputL = 0, Chassis::outputR = 0, Chassis::nowTime = 0,
-Chassis::lastTime = 0, Chassis::elapsed = 0;
+double Chassis::error = 0, Chassis::last = 0, Chassis::output = 0, Chassis::slewOutput = 0,
+Chassis::driveOutput = 0, Chassis::turnOutput = 0,
+Chassis::errorX = 0, Chassis::errorY = 0, Chassis::lastX = 0, Chassis::lastY = 0,
+Chassis::outputL = 0, Chassis::outputR = 0, Chassis::slewOutputL = 0, Chassis::slewOutputR = 0,
+Chassis::nowTime = 0, Chassis::lastTime = 0, Chassis::elapsed = 0;
 
 Chassis::Chassis() { }
+
+Chassis::Chassis(double * odomL_, double * odomR_, double * theta_, double * posX_, double * posY_) {
+  deltaL = odomL_;
+  deltaR = odomR_;
+  theta = theta_;
+  posX = posX_;
+  posY = posY_;
+}
 
 Chassis::~Chassis() {
   reset();
@@ -62,7 +68,6 @@ Chassis& Chassis::withTarget(double x, double y, int speed, double rate) {
   target.push_back(ChassisTarget());
   target[target.size() - 1].x = x;
   target[target.size() - 1].y = y;
-  target[target.size() - 1].theta = angle;
   target[target.size() - 1].speed = speed;
   target[target.size() - 1].rate = rate;
   return *this;
@@ -71,14 +76,52 @@ Chassis& Chassis::withTarget(double x, double y, int speed, double rate) {
 Chassis& Chassis::drive() {
   currentTarget = 0;
   isMultiTarget = true;
-  usingGyro = true;
   isSettled = false;
   reset();
   mode = DRIVING;
   return *this;
 }
 
-Chassis& Chassis::drive(double target_, int speed_, int rate_) {
+Chassis& Chassis::drive(double x_, double y_, int speed_, int rate_) {
+  currentTarget = 0;
+  if(target.size() != 1) target.resize(1);
+  target[0].x = x_;
+  target[0].y = y_;
+  target[0].speed = speed_;
+  target[0].rate = rate_;
+  isSettled = false;
+  reset();
+  mode = DRIVING;
+  return *this;
+}
+
+Chassis& Chassis::turn(double theta_, int speed_, int rate_) {
+  currentTarget = 0;
+  if(target.size() != 1) target.resize(1);
+  target[0].theta = theta_;
+  target[0].speed = speed_;
+  target[0].rate = rate_;
+  isSettled = false;
+  reset();
+  mode = TURNING;
+  return *this;
+}
+
+Chassis& Chassis::turn(double x_, double y_, int speed_, int rate_) {
+  currentTarget = 0;
+  isTurnToPoint = true;
+  if(target.size() != 1) target.resize(1);
+  target[0].x = x_;
+  target[0].y = y_;
+  target[0].speed = speed_;
+  target[0].rate = rate_;
+  isSettled = false;
+  reset();
+  mode = TURNING;
+  return *this;
+}
+
+Chassis& Chassis::strafe(double target_, int speed_, int rate_) {
   currentTarget = 0;
   if(target.size() != 1) target.resize(1);
   target[0].x = target_;
@@ -86,19 +129,7 @@ Chassis& Chassis::drive(double target_, int speed_, int rate_) {
   target[0].rate = rate_;
   isSettled = false;
   reset();
-  mode = DRIVING;
-  return *this;
-}
-
-Chassis& Chassis::turn(double target_, int speed_, int rate_) {
-  currentTarget = 0;
-  if(target.size() != 1) target.resize(1);
-  target[0].theta = target_;
-  target[0].speed = speed_;
-  target[0].rate = rate_;
-  isSettled = false;
-  reset();
-  mode = TURNING;
+  mode = STRAFING;
   return *this;
 }
 
@@ -114,7 +145,9 @@ void Chassis::tarePos() {
 }
 
 void Chassis::reset() {
-  current = last = error = derivative = output = slewOutput = 0;
+  error = last = output = slewOutput = 0;
+  errorX = errorY = lastX = lastY = 0;
+  slewOutput = slewOutputL = slewOutputR = 0;
 
   mode = IDLE;
 
@@ -141,18 +174,6 @@ void Chassis::unlock() {
   LB.set_brake_mode(MOTOR_BRAKE_COAST);
   RF.set_brake_mode(MOTOR_BRAKE_COAST);
   RB.set_brake_mode(MOTOR_BRAKE_COAST);
-}
-
-int Chassis::getGyro() {
-  return Gyro.get_value();
-}
-
-void Chassis::setOdom(double *odomL_, double *odomR_, double *theta_, double *posX_, double *posY_) {
-  deltaL = odomL_;
-  deltaR = odomR_;
-  theta = theta_;
-  posX = posX_;
-  posY = posY_;
 }
 
 bool Chassis::getState() {
@@ -187,63 +208,35 @@ void Chassis::run() {
 
     switch(mode) {
       case DRIVING: { // Driving
-        error = target[currentTarget].x - *posX;
+        errorX = target[currentTarget].x - *posX;
+        errorY = target[currentTarget].y - *posY;
 
-        output = (error * kP) + (error - last) * kD;
 
-        last = error;
 
-        if(!isMultiTarget || currentTarget == target.size() - 1) { // Is it last target?
+        if(!isMultiTarget || currentTarget == target.size() - 1) {
           if(output > 0) {
-            if(output > slewOutput + target[currentTarget].rate) {
-              slewOutput += target[currentTarget].rate;
-            } else {
-              slewOutput = output;
-            }
-          } else if(output < 0) {
-            if(output < slewOutput - target[currentTarget].rate) {
-              slewOutput -= target[currentTarget].rate;
-            } else {
-              slewOutput = output;
-            }
-          }
-        } else {
-          if(output > 0) {
-            if(target[currentTarget].speed > slewOutput) slewOutput += target[currentTarget].rate;
-            if(target[currentTarget].speed < slewOutput) slewOutput -= target[currentTarget].rate;
-          }
 
-          if(output < 0) {
             if(-target[currentTarget].speed > slewOutput) slewOutput += target[currentTarget].rate;
-            if(-target[currentTarget].speed < slewOutput) slewOutput -= target[currentTarget].rate;
           }
         }
 
-        if(slewOutput > target[currentTarget].speed) slewOutput = target[currentTarget].speed;
-        if(slewOutput < -target[currentTarget].speed) slewOutput = -target[currentTarget].speed;
-
-        if(output > -tolerance && output < tolerance) {
-          if(target.size() > 1 && target.size() - 1 > currentTarget) {
-            tarePos();
-            currentTarget++;
-            break;
-          } else {
-            isSettled = true;
-            target.clear();
-            withConst().withTol().withSlop().reset();
-            break;
-          }
-        }
-
-
+        LF.move(0);
+        LB.move(0);
+        RF.move(0);
+        RB.move(0);
 
         break;
       }
 
       case TURNING: { // Turning
-        current = -1 * ( *deltaR + *deltaL ) / 2;
-
-        error = target[0].theta - *theta;
+        if(!isTurnToPoint) {
+          error = target[0].theta - *theta;
+          if(error > *theta - target[0].theta) {
+            //bruv
+          }
+        } else {
+          error = atan( (target[0].x - *posX) / (target[0].y - *posY) ) - *theta;
+        }
 
         output = ( error * ( kP + 0.8 ) ) + ( error - last ) * kD;
 
@@ -268,6 +261,7 @@ void Chassis::run() {
 
         if(output > -tolerance && output < tolerance) {
           isSettled = true;
+          isTurnToPoint = false;
           withConst().withTol().withSlop().reset();
           break;
         }

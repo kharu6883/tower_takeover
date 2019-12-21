@@ -71,7 +71,7 @@ void Odometry::run() {
     deltaR = currentR - lastDeltaR;
 
     thetaRad = thetaRad + (( deltaL - deltaR ) / 2) / 7.5 / 23.34;
-    thetaDeg = thetaRad * 180 / 3.14159265358979323846264338327950288419716939937;
+    thetaDeg = thetaRad * 180 / okapi::pi;
 
     posX = posX + (( deltaL + deltaR ) / 2) * cos( thetaRad );
     posY = posY + (( deltaL + deltaR ) / 2) * sin( thetaRad );
@@ -172,7 +172,7 @@ void Odometry::point(double DesiredX, double DesiredY, double rate, double speed
    RF.move(-slewOutput-slewturnOutput);
    RB.move(-slewOutput-slewturnOutput);
 
-   if(errorx<tol && -tol<errorx && errory<tol && tol<-errory)break;
+   if( errorx < tol && -tol < errorx && errory < tol && tol < -errory)break;
 
    pros::delay(10);
   }

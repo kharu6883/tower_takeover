@@ -20,7 +20,7 @@ void initialize() {
 
   // Class Initialization
   Odometry odom;
-  Chassis chassis;
+  Chassis chassis(odom.getL(), odom.getR(), odom.getThetaDeg(), odom.getX(), odom.getY());
   Rack rack;
   Arm arm;
   Display Disp;
@@ -44,19 +44,12 @@ void initialize() {
   pros::Task b_display(Disp.start, NULL, "Display Controller");
   b_display.set_priority(TASK_PRIORITY_MIN);
 
-  chassis.setOdom(odom.getL(), odom.getR(), odom.getThetaDeg(), odom.getX(), odom.getY());
-
   Disp.addInfo("Left", odom.getL());
   Disp.addInfo("Right", odom.getR());
   Disp.addInfo("Rad Theta", odom.getThetaRad());
   Disp.addInfo("Deg Theta", odom.getThetaDeg());
   Disp.addInfo("X", odom.getX());
   Disp.addInfo("Y", odom.getY());
-
-  // Path Pathmaker;
-  // pros::Task pathMaker(Pathmaker.start, NULL, "PathMaker");
-  // pathMaker.set_priority(TASK_PRIORITY_MIN);
-  // print("PathMaker Initialized!");
 
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;

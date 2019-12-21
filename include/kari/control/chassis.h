@@ -19,6 +19,7 @@ struct ChassisTarget {
 class Chassis {
   public:
     Chassis();
+    Chassis(double * odomL_, double * odomR_, double * theta_, double * posX_, double * posY_);
     ~Chassis();
 
     Chassis& calibrateGyro();
@@ -26,11 +27,12 @@ class Chassis {
     Chassis& withConst(double kP_ = 0.3, double kD_ = 0.3);
     Chassis& withTol(double tolerance_ = 6);
     Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
-    Chassis& withTarget(double x, double y, int speed, double rate = 4);
+    Chassis& withTarget(double x_, double y_, int speed_, double rate_ = 4);
 
     Chassis& drive(); // For withTarget
-    Chassis& drive(double target_, int speed_, int rate_ = 4);
-    Chassis& turn(double target_, int speed_, int rate_ = 4);
+    Chassis& drive(double x_, double y_, int speed_, int rate_ = 4);
+    Chassis& turn(double theta_, int speed_, int rate_ = 4);
+    Chassis& turn(double x_, double y_, int speed_, int rate_ = 4);
     Chassis& strafe(double target_, int speed_, int rate_ = 4);
 
     void waitUntilSettled();
@@ -41,11 +43,6 @@ class Chassis {
 
     void lock();
     void unlock();
-
-    // Sensors
-    int getGyro();
-
-    void setOdom(double * odomL, double * odomR, double * theta_, double * posX_, double * posY_);
 
     // States
     bool getState();
@@ -68,21 +65,18 @@ class Chassis {
     static bool isSettled;
     static int mode;
 
-    static bool usingGyro;
-
     static double kP, kD;
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currentTarget;
     static bool isMultiTarget;
+    static bool isTurnToPoint;
 
     static double *deltaL, *deltaR, *theta, *posX, *posY;
 
-    static double angle, gyroAmp;
-
-    static double current, last, error, derivative, output, slewOutput;
-
-    static double lastL, lastR, outputL, outputR;
+    static double error, last, output, slewOutput;
+    static double driveOutput, turnOutput;
+    static double errorX, errorY, lastX, lastY, outputL, outputR, slewOutputL, slewOutputR;
 
     static double nowTime, lastTime, elapsed;
 
