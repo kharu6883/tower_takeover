@@ -185,11 +185,7 @@ void Odometry::point(double DesiredX, double DesiredY, double rate, double speed
    RB.move(slewturnOutput+slewOutput);
 
 
-<<<<<<< HEAD
    if( errorx < tol && -tol < errorx && errory < tol && tol < -errory)break;
-=======
-   if(errorx<tol && -tol<errorx && errory<tol && -tol<errory)break;
->>>>>>> e54cd19bdaf03b8ccc70ef2cc86e01df838636de
 
    pros::delay(10);
   }
