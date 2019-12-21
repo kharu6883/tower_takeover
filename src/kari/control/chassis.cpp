@@ -216,7 +216,6 @@ void Chassis::run() {
         if(!isMultiTarget || currentTarget == target.size() - 1) {
           if(output > 0) {
 
-            if(-target[currentTarget].speed > slewOutput) slewOutput += target[currentTarget].rate;
           }
         }
 

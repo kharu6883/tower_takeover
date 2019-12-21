@@ -15,7 +15,7 @@ double Odometry::output = 0, Odometry::Desiredtheta = 0, Odometry::DesiredX = 0,
 
 double errorx,errory;
 
-double velocity, kpd = 1, kpt= 2;
+double velocity, kpd = 0.2, kpt= 2;
 
 int slewOutput, output, slewturnOutput , turnOutput, angle;
 
@@ -95,7 +95,7 @@ void Odometry::turn(double angle, double rate, double speed, double tol) {
   while(true)
   {
   thetaerror=thetaDeg-angle;
-  turnOutput=thetaerror*kpd;
+  turnOutput=thetaerror*kpt;
 
   if(turnOutput > 0) {
     if(turnOutput > slewturnOutput + rate) {
@@ -127,12 +127,14 @@ void Odometry::point(double DesiredX, double DesiredY, double rate, double speed
   //math angle
    errory=posY-DesiredY;
    errorx=posX-DesiredX;
-   Desiredtheta=tan(errorx/errory);
-   thetaerror=thetaRad-Desiredtheta;
-   turnOutput=thetaerror*kpd;
+   Desiredtheta=atan2(DesiredY - posY, DesiredX - posX);
+   Desiredtheta=Desiredtheta * (180 / PI);
+   thetaerror=thetaDeg-Desiredtheta;
+   turnOutput=thetaerror*kpt;
+
   //math     velocity
 
-   velocity=(sqrt(pow(errorx, 2)+pow(errory, 2)))*kpd;
+   velocity=(sqrt(pow(errorx, 2)+pow(errory, 2)))*kpd/(turnOutput/10);
    if(velocity>speed)velocity=speed;
    if(velocity<-speed)velocity=-speed;
   //output control
@@ -167,12 +169,27 @@ void Odometry::point(double DesiredX, double DesiredY, double rate, double speed
    }
 
 
-   LF.move(slewOutput+slewturnOutput);
-   LB.move(slewOutput+slewturnOutput);
-   RF.move(-slewOutput-slewturnOutput);
-   RB.move(-slewOutput-slewturnOutput);
+   // LF.move(slewOutput);
+   // LB.move(slewOutput);
+   // RF.move(slewOutput);
+   // RB.move(slewOutput);
 
+   // LF.move(slewOutput+slewturnOutput);
+   // LB.move(slewOutput+slewturnOutput);
+   // RF.move(-slewOutput-slewturnOutput);
+   // RB.move(-slewOutput-slewturnOutput);
+
+   LF.move(-slewturnOutput+slewOutput);
+   LB.move(-slewturnOutput+slewOutput);
+   RF.move(slewturnOutput+slewOutput);
+   RB.move(slewturnOutput+slewOutput);
+
+
+<<<<<<< HEAD
    if( errorx < tol && -tol < errorx && errory < tol && tol < -errory)break;
+=======
+   if(errorx<tol && -tol<errorx && errory<tol && -tol<errory)break;
+>>>>>>> e54cd19bdaf03b8ccc70ef2cc86e01df838636de
 
    pros::delay(10);
   }
