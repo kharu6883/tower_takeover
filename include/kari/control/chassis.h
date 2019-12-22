@@ -8,6 +8,11 @@ extern pros::ADIGyro Gyro;
 #define TURNING 2
 #define STRAFING 3
 
+struct Vector2 {
+  double x;
+  double y;
+};
+
 struct ChassisTarget {
   double x;
   double y;
@@ -25,14 +30,14 @@ class Chassis {
     Chassis& calibrateGyro();
 
     Chassis& withConst(double kP_ = 0.3, double kD_ = 0.3);
-    Chassis& withTol(double tolerance_ = 6);
+    Chassis& withTol(double tolerance_ = 1);
     Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
-    Chassis& withTarget(double x_, double y_, int speed_, double rate_ = 4);
+    Chassis& withTarget(Vector2 point, int speed_, double rate_ = 4);
 
     Chassis& drive(); // For withTarget
-    Chassis& drive(double x_, double y_, int speed_, int rate_ = 4);
+    Chassis& drive(Vector2 point, int speed_, int rate_ = 4);
     Chassis& turn(double theta_, int speed_, int rate_ = 4);
-    Chassis& turn(double x_, double y_, int speed_, int rate_ = 4);
+    Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
     Chassis& strafe(double target_, int speed_, int rate_ = 4);
 
     void waitUntilSettled();
@@ -72,11 +77,13 @@ class Chassis {
     static bool isMultiTarget;
     static bool isTurnToPoint;
 
+    static double thetaRel;
+
     static double *deltaL, *deltaR, *theta, *posX, *posY;
 
     static double error, last, output, slewOutput;
-    static double driveOutput, turnOutput;
-    static double errorX, errorY, lastX, lastY, outputL, outputR, slewOutputL, slewOutputR;
+    static double errorX, errorY, lastX, lastY, turnError, lastTurn;
+    static double driveOutput, turnOutput, driveSlewOutput, turnSlewOutput;
 
     static double nowTime, lastTime, elapsed;
 

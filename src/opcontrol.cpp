@@ -33,8 +33,8 @@ void opcontrol() {
 	while (true) {
 		LF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 1.58 + master.get_analog(ANALOG_LEFT_X) * 1.58 + master.get_analog(ANALOG_RIGHT_X) * 1.58);
 		LB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 1.58 - master.get_analog(ANALOG_LEFT_X) * 1.58 + master.get_analog(ANALOG_RIGHT_X) * 1.58);
-		RF.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 1.58 - master.get_analog(ANALOG_LEFT_X) * 1.58 - master.get_analog(ANALOG_RIGHT_X) * 1.58);
-		RB.move_velocity(master.get_analog(ANALOG_LEFT_Y) * 1.58 + master.get_analog(ANALOG_LEFT_X) * 1.58 - master.get_analog(ANALOG_RIGHT_X) * 1.58);
+		RF.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 1.58 + master.get_analog(ANALOG_LEFT_X) * 1.58 + master.get_analog(ANALOG_RIGHT_X) * 1.58);
+		RB.move_velocity(-master.get_analog(ANALOG_LEFT_Y) * 1.58 - master.get_analog(ANALOG_LEFT_X) * 1.58 + master.get_analog(ANALOG_RIGHT_X) * 1.58);
 
 		if(master.get_digital(DIGITAL_A)) {
 			if(!isTrack) isTrack = true;

@@ -70,8 +70,11 @@ void Odometry::run() {
     deltaL = currentL - lastDeltaL;
     deltaR = currentR - lastDeltaR;
 
-    thetaRad = thetaRad + (( deltaL - deltaR ) / 2) / 7.5 / 23.34;
-    thetaDeg = thetaRad * 180 / okapi::pi;
+    thetaRad = thetaRad + ((( deltaL - deltaR ) / 2) / 7.5 / 23.34) * -1;
+    thetaDeg = ( thetaRad * ( 180 / PI ) );
+    // thetaDeg = thetaDeg - (int)thetaDeg;
+    // thetaDeg *= 360;
+    // thetaDeg = abs(thetaDeg);
 
     posX = posX + (( deltaL + deltaR ) / 2) * cos( thetaRad );
     posY = posY + (( deltaL + deltaR ) / 2) * sin( thetaRad );
