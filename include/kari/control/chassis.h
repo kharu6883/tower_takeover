@@ -74,7 +74,7 @@ class Chassis {
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currentTarget;
-    static bool isMultiTarget;
+    static bool hasMultiTarget;
     static bool isTurnToPoint;
 
     static double thetaRel;
@@ -82,7 +82,7 @@ class Chassis {
     static double *deltaL, *deltaR, *theta, *posX, *posY;
 
     static double error, last, output, slewOutput;
-    static double errorX, errorY, lastX, lastY, turnError, lastTurn;
+    static double driveError, driveLast, turnError, turnLast;
     static double driveOutput, turnOutput, driveSlewOutput, turnSlewOutput;
 
     static double nowTime, lastTime, elapsed;

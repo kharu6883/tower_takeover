@@ -17,7 +17,7 @@ double Chassis::kP = 0.3, Chassis::kD = 0.3;
 double Chassis::tolerance = 1, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<ChassisTarget> Chassis::target;
 int Chassis::currentTarget = 0;
-bool Chassis::isMultiTarget = false;
+bool Chassis::hasMultiTarget = false;
 bool Chassis::isTurnToPoint = false;
 
 double Chassis::thetaRel = 0;
@@ -25,7 +25,7 @@ double Chassis::thetaRel = 0;
 double *Chassis::deltaL, *Chassis::deltaR, *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
 double Chassis::error = 0, Chassis::last = 0, Chassis::output = 0, Chassis::slewOutput = 0,
-Chassis::errorX = 0, Chassis::errorY = 0, Chassis::lastX = 0, Chassis::lastY = 0, Chassis::turnError = 0, Chassis::lastTurn = 0,
+Chassis::driveError = 0, Chassis::driveLast = 0, Chassis::turnError = 0, Chassis::turnLast = 0,
 Chassis::driveOutput = 0, Chassis::turnOutput = 0, Chassis::driveSlewOutput = 0, Chassis::turnSlewOutput = 0,
 Chassis::nowTime = 0, Chassis::lastTime = 0, Chassis::elapsed = 0;
 
@@ -76,7 +76,7 @@ Chassis& Chassis::withTarget(Vector2 point, int speed, double rate) {
 
 Chassis& Chassis::drive() {
   currentTarget = 0;
-  isMultiTarget = true;
+  hasMultiTarget = true;
   isSettled = false;
   reset();
   mode = DRIVING;
@@ -148,7 +148,7 @@ void Chassis::tarePos() {
 
 void Chassis::reset() {
   error = last = output = slewOutput = 0;
-  errorX = errorY = lastX = lastY = 0;
+  driveError = driveLast = turnError = turnLast = 0;
   driveOutput = driveSlewOutput = turnOutput = turnSlewOutput = 0;
 
   mode = IDLE;
@@ -210,22 +210,23 @@ void Chassis::run() {
   while(isRunning) {
     if(!pros::competition::is_autonomous()) goto end;
 
-    thetaRel = abs( ( ( *theta / 360 ) - (int)*theta ) * 360 );
-
     switch(mode) {
       case DRIVING: { // Driving
-        errorX = target[currentTarget].x - *posX;
-        errorY = target[currentTarget].y - *posY;
-        turnError = atan2( errorY, errorX ) * ( 180 / PI ) - *theta;
+        driveError = sqrt( pow( target[currentTarget].x - *posX, 2) + pow( target[currentTarget].y - *posY, 2) );
+        target[0].theta = atan2( target[currentTarget].y - *posY, target[currentTarget].x - *posX ) * ( 180 / PI );
 
-        driveOutput = sqrt( pow( errorX, 2 ) + pow( errorY, 2 ) ) * kP; /* + ( sqrt( pow( errorX, 2 ) + pow( errorY, 2 ) ) - sqrt( pow( lastX, 2 ) + pow( lastY, 2 ) ) ) * kD; */
-        turnOutput = turnError * ( kP + 2 ) + ( turnError - lastTurn ) * kD;
+        error = target[0].theta + ( (int)( *theta / 360 ) * 360 ) - *theta;
+        if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) - *theta ) ) {
+          error = ( target[0].theta - 360 ) + ( (int)( *theta / 360) * 360 );
+        }
 
-        lastX = errorX;
-        lastY = errorY;
-        lastTurn = turnError;
+        driveOutput = driveError * kP + ( driveError - driveLast ) * kD;
+        turnOutput = turnError * ( kP + 2 ) + ( turnError - turnLast ) * kD;
 
-        driveOutput = driveOutput / abs(turnOutput/5);
+        driveLast = driveError;
+        turnLast = turnError;
+
+        driveOutput = driveOutput / abs(turnOutput / 5);
 
         if(driveOutput > 0) {
           if(driveOutput > driveSlewOutput + target[currentTarget].rate) {
@@ -255,7 +256,10 @@ void Chassis::run() {
           }
         }
 
-        if(errorX > -tolerance && errorX < tolerance && errorY > -tolerance && errorY < tolerance) {
+        if(slewOutput > target[0].speed) slewOutput = target[0].speed;
+        if(slewOutput < -target[0].speed) slewOutput = -target[0].speed;
+
+        if(driveError > -tolerance && driveError < tolerance && turnError > -tolerance && turnError < tolerance) {
           isSettled = true;
           isTurnToPoint = false;
           withConst().withTol().withSlop().reset();
@@ -268,22 +272,13 @@ void Chassis::run() {
       }
 
       case TURNING: { // Turning
-        if(!isTurnToPoint) {
-          if(target[0].theta + *theta < *theta + 180) {
-            error = target[0].theta - thetaRel;
-          } else if(target[0].theta - *theta > *theta - 180) {
-            error = target[0].theta - thetaRel;
-          }
-        } else {
+        if(isTurnToPoint) {
           target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
-          if(target[0].theta < 180) target[0].theta = target[0].theta;
-          if(target[0].theta > 180) target[0].theta = 180 - target[0].theta;
-          if(target[0].theta + *theta < *theta + 180) {
-            error = target[0].theta - thetaRel;
-          } else if(target[0].theta - *theta > *theta - 180) {
-            error = target[0].theta - thetaRel;
-          }
-          error = (  - 180 ) - *theta;
+        }
+
+        error = target[0].theta + ( (int)( *theta / 360 ) * 360 ) - *theta;
+        if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) - *theta ) ) {
+          error = ( target[0].theta - 360 ) + ( (int)( *theta / 360) * 360 );
         }
 
         output = ( error * ( kP + 2 ) ) + ( error - last ) * kD;
