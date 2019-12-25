@@ -276,9 +276,23 @@ void Chassis::run() {
           target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
         }
 
-        error = target[0].theta + ( (int)( *theta / 360 ) * 360 ) - *theta;
-        if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) - *theta ) ) {
-          error = ( target[0].theta - 360 ) + ( (int)( *theta / 360) * 360 );
+        if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
+          if(*theta > 0) {
+            thetaRel = floor((int)( *theta / 360 )) * 360;
+          } else {
+            thetaRel = ceil((int)( *theta / 360 )) * 360;
+          }
+        } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta - 180 ) {
+          if(*theta > 0) {
+            thetaRel = ceil((int)( *theta / 360 )) * 360;
+          } else {
+            thetaRel = floor((int)( *theta / 360 )) * 360;
+          }
+        }
+
+        error = ( target[0].theta + thetaRel ) - *theta;
+        if( abs(error) > abs( ( (target[0].theta - 360) + thetaRel ) - *theta) ) {
+          error = ( (target[0].theta - 360) + thetaRel ) - *theta;
         }
 
         output = ( error * ( kP + 2 ) ) + ( error - last ) * kD;

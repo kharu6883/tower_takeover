@@ -27,11 +27,7 @@ using namespace io;
 void tester() {
   std::cout << "Testing" << std::endl;
   chassis.lock();
-  chassis.drive({1823, 18.6}, 50).withTol(30).waitUntilSettled();
-  chassis.drive({2315, -195}, 50).withTol(30).waitUntilSettled();
-  chassis.drive({2870, -215}, 50).withTol(30).waitUntilSettled();
-  chassis.drive({4164, 1196}, 50).withTol(30).waitUntilSettled();
-  chassis.drive({1720, 905}, 50).withTol(30).waitUntilSettled();
+  chassis.turn({0, 0}, 50).waitUntilSettled();
   io::master.rumble(" .");
 }
 
