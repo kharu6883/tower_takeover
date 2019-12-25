@@ -1,13 +1,13 @@
 #include "kari/control/rack.h"
 
-pros::Motor RackMotor(3, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
-pros::ADIPotentiometer Pot(1);
+pros::Motor RackMotor(9, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
+pros::ADIPotentiometer Pot(2);
 
 bool Rack::isRunning = false,
 Rack::isSettled = true,
 Rack::isActive = false;
 
-double Rack::kP = 0.09, Rack::tolerance = 5, Rack::target = 0;
+double Rack::kP = 0.04, Rack::tolerance = 5, Rack::target = 0;
 int Rack::speed = 0, Rack::rate = 0;
 
 double Rack::error = 0, Rack::output = 0, Rack::slewOutput = 0;
@@ -81,7 +81,7 @@ void Rack::run() {
         if(output > slewOutput + rate) {
           slewOutput += rate;
         } else {
-          slewOutput = output;
+          slewOutput =  output;
         }
       }
 

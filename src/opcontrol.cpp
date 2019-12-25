@@ -20,7 +20,7 @@ void opcontrol() {
 
 	macro::Slew roller(60, 80); // Accel, Decel
 	macro::Slew rackSlew(10, 30, true); // Accel, Decel
-	macro::PID rackPID(0.13); // kP
+	macro::PID rackPID(0.06); // kP
 
 	rack.setBrakeType(MOTOR_BRAKE_HOLD);
 	arm.setBrakeType(MOTOR_BRAKE_HOLD);
@@ -50,7 +50,8 @@ void opcontrol() {
 			if(!isTrack) { // Put up Rack
 				lastPos = 2;
 
-				rackPID.withConst(0.12).calculate(RACK_UP, rack.getPot());
+
+				rackPID.withConst(0.08).calculate(RACK_UP, rack.getPot());
 				rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		  } else { // Tower Placement
