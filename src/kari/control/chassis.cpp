@@ -216,7 +216,7 @@ void Chassis::run() {
         target[0].theta = atan2( target[currentTarget].y - *posY, target[currentTarget].x - *posX ) * ( 180 / PI );
 
         error = target[0].theta + ( (int)( *theta / 360 ) * 360 ) - *theta;
-        if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) ) ) {
+        if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) - *theta ) ) {
           error = ( target[0].theta - 360 ) + ( (int)( *theta / 360) * 360 );
         }
 
@@ -256,6 +256,9 @@ void Chassis::run() {
           }
         }
 
+        if(slewOutput > target[0].speed) slewOutput = target[0].speed;
+        if(slewOutput < -target[0].speed) slewOutput = -target[0].speed;
+
         if(driveError > -tolerance && driveError < tolerance && turnError > -tolerance && turnError < tolerance) {
           isSettled = true;
           isTurnToPoint = false;
@@ -274,7 +277,7 @@ void Chassis::run() {
         }
 
         error = target[0].theta + ( (int)( *theta / 360 ) * 360 ) - *theta;
-        if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) ) ) {
+        if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) - *theta ) ) {
           error = ( target[0].theta - 360 ) + ( (int)( *theta / 360) * 360 );
         }
 
