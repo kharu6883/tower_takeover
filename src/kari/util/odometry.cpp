@@ -71,7 +71,7 @@ void Odometry::run() {
     deltaR = currentR - lastDeltaR;
 
     thetaRad = thetaRad + ((( deltaL - deltaR ) / 2) / 7.5 / 23.34) * -1;
-    thetaDeg = ( thetaRad * ( 180 / PI ) );
+    thetaDeg = thetaRad * ( 180 / PI );
     // thetaDeg = thetaDeg - (int)thetaDeg;
     // thetaDeg *= 360;
     // thetaDeg = abs(thetaDeg);

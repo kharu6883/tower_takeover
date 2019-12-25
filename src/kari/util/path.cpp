@@ -4,7 +4,7 @@
 #include "kari/util/path.h"
 #include "kari/util/misc.h"
 
-// okapi::ChassisControllerIntegrated Path::driver = ChassisControllerFactory::create(
+// auto Path::driver = ChassisControllerFactory::create(
 //   { -14, -15 },
 //   { 17, 16 },
 //   AbstractMotor::gearset::blue,
