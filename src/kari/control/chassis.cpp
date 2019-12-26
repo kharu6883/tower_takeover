@@ -73,6 +73,16 @@ Chassis& Chassis::withTarget(Vector2 point, int speed, double rate, bool reverse
   return *this;
 }
 
+Chassis& Chassis::withTarget(double target_, double theta_, int speed, double rate, bool reverse_) {
+  target.push_back(ChassisTarget());
+  target[target.size() - 1].x = target_;
+  target[target.size() - 1].theta = theta_;
+  target[target.size() - 1].speed = speed;
+  target[target.size() - 1].rate = rate;
+  target[target.size() - 1].reverse = reverse_;
+  return *this;
+}
+
 Chassis& Chassis::drive() {
   currTarget = 0;
   isSettled = false;
