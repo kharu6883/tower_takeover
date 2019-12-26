@@ -19,6 +19,7 @@ struct ChassisTarget {
   double theta;
   int speed;
   double rate;
+  bool reverse;
 };
 
 class Chassis {
@@ -29,30 +30,35 @@ class Chassis {
 
     Chassis& calibrateGyro();
 
+    // Constant Settings
     Chassis& withConst(double kP_ = 0.3, double kD_ = 0.3);
     Chassis& withTol(double tolerance_ = 1);
     Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
-    Chassis& withTarget(Vector2 point, int speed_, double rate_ = 4);
+
+    // Movement Settings
+    Chassis& usingEncoder();
+    Chassis& usingGyro();
+    Chassis& withTarget(Vector2 point, int speed_, double rate_ = 4, bool reverse_ = false);
+    Chassis& withTarget(double target_, double theta_, int speed_, double rate_ = 4, bool reverse_ = false);
 
     Chassis& drive(); // For withTarget
-    Chassis& drive(Vector2 point, int speed_, int rate_ = 4);
+    Chassis& drive(double target_, int speed_, int rate_ = 4);
+    Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse = false);
     Chassis& turn(double theta_, int speed_, int rate_ = 4);
     Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
     Chassis& strafe(double target_, int speed_, int rate_ = 4);
 
     void waitUntilSettled();
 
-    // Chassis Motors
+    // Chassis Motor Settings
     void tarePos();
     void reset();
 
     void lock();
     void unlock();
 
-    // States
-    bool getState();
+    // Process Related
     int getMode();
-
     void setMode(int mode);
 
     void clearArr();
@@ -73,19 +79,16 @@ class Chassis {
     static double kP, kD;
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
-    static int currentTarget;
-    static bool hasMultiTarget;
+    static int currTarget;
     static bool isTurnToPoint;
-
-    static double thetaRel;
 
     static double *deltaL, *deltaR, *theta, *posX, *posY;
 
+    static double thetaRel;
     static double error, last, output, slewOutput;
     static double driveError, driveLast, turnError, turnLast;
     static double driveOutput, turnOutput, driveSlewOutput, turnSlewOutput;
-
-    static double nowTime, lastTime, elapsed;
+    static double totOutputL, totOutputR;
 
     double slop(int mode = 0);
 };

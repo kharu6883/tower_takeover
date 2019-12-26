@@ -73,18 +73,13 @@ void Odometry::run() {
     thetaRad = thetaRad + ((( deltaL - deltaR ) / 2) / 7.5 / 23.34) * -1;
     thetaDeg = thetaRad * ( 180 / PI );
 
-    if(thetaDeg<0.0){
-      thetaDeg= (-thetaDeg);
-      thetaDeg=fmod(thetaDeg,360.0);
-      thetaDeg=(-thetaDeg);
+    if(thetaDeg < 0) {
+      thetaDeg = (-thetaDeg);
+      thetaDeg = fmod(thetaDeg,360.0);
+      thetaDeg = (-thetaDeg);
+    } else {
+      thetaDeg = fmod(thetaDeg,360.0);
     }
-    else {
-    thetaDeg=fmod(thetaDeg,360.0);
-
-    }
-    // thetaDeg = thetaDeg - (int)thetaDeg;
-    // thetaDeg *= 360;
-    // thetaDeg = abs(thetaDeg);
 
     posX = posX + (( deltaL + deltaR ) / 2) * cos( thetaRad );
     posY = posY + (( deltaL + deltaR ) / 2) * sin( thetaRad );

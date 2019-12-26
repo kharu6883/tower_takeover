@@ -20,6 +20,11 @@ Rack::~Rack() { }
     GETTERS & SETTERS
 --------------------------------*/
 
+Rack& Rack::withConst(double kP_) {
+  kP = kP_;
+  return *this;
+}
+
 Rack& Rack::withTol(double tolerance_) {
   tolerance = tolerance_;
   return *this;
@@ -97,7 +102,7 @@ void Rack::run() {
 
       if(output > -tolerance && output < tolerance) {
         isSettled = true;
-        withTol().reset();
+        withConst().withTol().reset();
         goto end;
       }
 

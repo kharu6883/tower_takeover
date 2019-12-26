@@ -61,6 +61,8 @@ void tester() {
   // chassis.drive({4557, 1094}, 50,6).withConst(2).withTol(100).waitUntilSettled();
   // roller(-100);
 
+  chassis.drive();
+
   io::master.rumble(" .");
 }
 
