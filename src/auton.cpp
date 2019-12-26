@@ -26,8 +26,41 @@ using namespace io;
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  chassis.lock();
-  chassis.turn({0, 0}, 50).waitUntilSettled();
+  roller(127);
+  chassis.drive({1671, -3}, 80,12).withConst(1.3).withTol(80).waitUntilSettled();
+  chassis.drive({2500, -135}, 60,12).withConst(1.3).withTol(80).waitUntilSettled();
+  chassis.drive({2860, -135}, 60,12).withConst(1.3).withTol(80).waitUntilSettled();
+  chassis.drive({4400, -29}, 60,12).withConst(1.3).withTol(80).waitUntilSettled();
+  chassis.drive({4928, -444}, 60,12).withConst(2).withTol(100).waitUntilSettled();
+  roller(60);
+  rack.move(RACK_UP,127,5).withTol(20);
+  chassis.waitUntilSettled();
+  roller(30);
+  chassis.left(60);
+  chassis.right(60);
+  delay(500);
+  chassis.left(0);
+  chassis.right(0);
+  rack.waitUntilSettled();
+  rack.move(RACK_DOWN,127,8).withTol(20);
+  roller(-50);
+  delay(90);
+  roller(-90);
+  chassis.left(-90);
+  chassis.right(-90);
+  delay(600);
+  chassis.left(0);
+  chassis.right(0);
+  // roller(127);
+  // chassis.turn({4600, 900},70).withTol(20).waitUntilSettled();
+  // chassis.drive({4600, 900}, 60,12).withConst(1.3).withTol(100).waitUntilSettled();
+  // delay(1000);
+  // roller(-0.5,100);
+  // arm.move(ARM_MID_TOWER,127);
+  // delay(1200);
+  // chassis.drive({4557, 1094}, 50,6).withConst(2).withTol(100).waitUntilSettled();
+  // roller(-100);
+
   io::master.rumble(" .");
 }
 

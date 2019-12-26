@@ -12,7 +12,7 @@ bool Chassis::isRunning = false,
 Chassis::isSettled = true;
 int Chassis::mode = IDLE;
 
-double Chassis::kP = 0.3, Chassis::kD = 0.3;
+double Chassis::kP = 0.9, Chassis::kD = 0.3;
 
 double Chassis::tolerance = 1, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<ChassisTarget> Chassis::target;
@@ -212,69 +212,13 @@ void Chassis::run() {
 
     switch(mode) {
       case DRIVING: { // Driving
-        driveError = sqrt( pow( target[currentTarget].x - *posX, 2) + pow( target[currentTarget].y - *posY, 2) );
-        target[0].theta = atan2( target[currentTarget].y - *posY, target[currentTarget].x - *posX ) * ( 180 / PI );
 
-        error = target[0].theta + ( (int)( *theta / 360 ) * 360 ) - *theta;
-        if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) - *theta ) ) {
-          error = ( target[0].theta - 360 ) + ( (int)( *theta / 360) * 360 );
-        }
-
-        driveOutput = driveError * kP + ( driveError - driveLast ) * kD;
-        turnOutput = turnError * ( kP + 2 ) + ( turnError - turnLast ) * kD;
-
-        driveLast = driveError;
-        turnLast = turnError;
-
-        driveOutput = driveOutput / abs(turnOutput / 5);
-
-        if(driveOutput > 0) {
-          if(driveOutput > driveSlewOutput + target[currentTarget].rate) {
-            driveSlewOutput += target[currentTarget].rate;
-          } else {
-            driveSlewOutput = driveOutput;
-          }
-        } else if(driveOutput < 0) {
-          if(driveOutput < driveSlewOutput - target[currentTarget].rate) {
-            driveSlewOutput -= target[currentTarget].rate;
-          } else {
-            driveSlewOutput = driveOutput;
-          }
-        }
-
-        if(turnOutput > 0) {
-          if(turnOutput > turnSlewOutput + target[currentTarget].rate) {
-            turnSlewOutput += target[currentTarget].rate;
-          } else {
-            turnSlewOutput = turnOutput;
-          }
-        } else if(turnOutput < 0) {
-          if(turnOutput < turnSlewOutput - target[currentTarget].rate) {
-            turnSlewOutput -= target[currentTarget].rate;
-          } else {
-            turnSlewOutput = turnOutput;
-          }
-        }
-
-        if(slewOutput > target[0].speed) slewOutput = target[0].speed;
-        if(slewOutput < -target[0].speed) slewOutput = -target[0].speed;
-
-        if(driveError > -tolerance && driveError < tolerance && turnError > -tolerance && turnError < tolerance) {
-          isSettled = true;
-          isTurnToPoint = false;
-          withConst().withTol().withSlop().reset();
-          break;
-        }
-
-        left(driveSlewOutput - turnSlewOutput);
-        right(driveSlewOutput + turnSlewOutput);
-        break;
-      }
-
-      case TURNING: { // Turning
-        if(isTurnToPoint) {
+        //turn output math
+          //error math
           target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
-        }
+          driveError = sqrt( pow( target[currentTarget].x - *posX, 2) + pow( target[currentTarget].y - *posY, 2) );
+          driveOutput = driveError * kP + ( driveError - driveLast ) * kD;
+          //error math
 
         if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
           if(*theta > 0) {
@@ -282,13 +226,177 @@ void Chassis::run() {
           } else {
             thetaRel = ceil((int)( *theta / 360 )) * 360;
           }
-        } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta - 180 ) {
-          if(*theta > 0) {
+        } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta + 180 ) {
+          if(*theta < 0) {
             thetaRel = ceil((int)( *theta / 360 )) * 360;
           } else {
             thetaRel = floor((int)( *theta / 360 )) * 360;
           }
         }
+
+
+
+        turnError = ( target[0].theta + thetaRel ) - *theta;
+        if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - *theta) ) {
+          turnError = ( (target[0].theta - 360) + thetaRel ) - *theta;
+        }
+
+        turnOutput = ( turnError * ( kP + 2 ) ) + ( turnError - last ) * kD;
+
+        driveLast = driveError;
+        turnLast = turnError;
+        //turn output math^^
+
+        if(turnOutput > 0) {
+          if(turnOutput > turnSlewOutput + target[0].rate) {
+            turnSlewOutput += target[0].rate;
+          } else {
+            turnSlewOutput = turnOutput;
+          }
+        } else if(turnOutput < 0) {
+          if(turnOutput < turnSlewOutput - target[0].rate) {
+            turnSlewOutput -= target[0].rate;
+          } else {
+            turnSlewOutput = turnOutput;
+          }
+        }
+
+        driveOutput = driveOutput / abs(turnOutput / 5);
+
+          if(driveOutput > 0) {
+            if(driveOutput > driveSlewOutput + target[currentTarget].rate) {
+              driveSlewOutput += target[currentTarget].rate;
+            } else {
+              driveSlewOutput = driveOutput;
+            }
+          } else if(driveOutput < 0) {
+            if(driveOutput < driveSlewOutput - target[currentTarget].rate) {
+              driveSlewOutput -= target[currentTarget].rate;
+            } else {
+              driveSlewOutput = driveOutput;
+            }
+          }
+
+        if(turnSlewOutput > target[0].speed) turnSlewOutput = target[0].speed;
+        if(turnSlewOutput < -target[0].speed) turnSlewOutput = -target[0].speed;
+
+                if(driveSlewOutput > target[0].speed) driveSlewOutput = target[0].speed;
+                if(driveSlewOutput < -target[0].speed) driveSlewOutput = -target[0].speed;
+        if(driveError > -tolerance && driveError < tolerance && turnError > -tolerance && turnError < tolerance) {
+            isSettled = true;
+            isTurnToPoint = false;
+            withConst().withTol().withSlop().reset();
+            break;
+          }
+
+        left(-turnSlewOutput+driveSlewOutput);
+        right(turnSlewOutput+driveSlewOutput);
+        break;
+
+
+
+
+
+      //  //drive output math
+      //   driveError = sqrt( pow( target[currentTarget].x - *posX, 2) + pow( target[currentTarget].y - *posY, 2) );
+      //   target[0].theta = atan2( target[currentTarget].y - *posY, target[currentTarget].x - *posX ) * ( 180 / PI );
+      //
+      //   error = target[0].theta + ( (int)( *theta / 360 ) * 360 ) - *theta;
+      //   if( abs(error) > abs( (target[0].theta - 360) + ( (int)( *theta / 360 ) * 360 ) - *theta ) ) {
+      //     error = ( target[0].theta - 360 ) + ( (int)( *theta / 360) * 360 );
+      //   }
+      // //drive output math^^
+      //
+      //   driveOutput = driveError * kP + ( driveError - driveLast ) * kD;
+      //   turnOutput = turnError * ( kP + 2 ) + ( turnError - turnLast ) * kD;
+      //
+      //   driveLast = driveError;
+      //   turnLast = turnError;
+      //
+      //   driveOutput = driveOutput / abs(turnOutput / 5);
+      //
+      //   if(driveOutput > 0) {
+      //     if(driveOutput > driveSlewOutput + target[currentTarget].rate) {
+      //       driveSlewOutput += target[currentTarget].rate;
+      //     } else {
+      //       driveSlewOutput = driveOutput;
+      //     }
+      //   } else if(driveOutput < 0) {
+      //     if(driveOutput < driveSlewOutput - target[currentTarget].rate) {
+      //       driveSlewOutput -= target[currentTarget].rate;
+      //     } else {
+      //       driveSlewOutput = driveOutput;
+      //     }
+      //   }
+      //
+      //   if(turnOutput > 0) {
+      //     if(turnOutput > turnSlewOutput + target[currentTarget].rate) {
+      //       turnSlewOutput += target[currentTarget].rate;
+      //     } else {
+      //       turnSlewOutput = turnOutput;
+      //     }
+      //   } else if(turnOutput < 0) {
+      //     if(turnOutput < turnSlewOutput - target[currentTarget].rate) {
+      //       turnSlewOutput -= target[currentTarget].rate;
+      //     } else {
+      //       turnSlewOutput = turnOutput;
+      //     }
+      //   }
+      //
+      //   if(slewOutput > target[0].speed) slewOutput = target[0].speed;
+      //   if(slewOutput < -target[0].speed) slewOutput = -target[0].speed;
+      //
+      //   if(driveError > -tolerance && driveError < tolerance && turnError > -tolerance && turnError < tolerance) {
+      //     isSettled = true;
+      //     isTurnToPoint = false;
+      //     withConst().withTol().withSlop().reset();
+      //     break;
+      //   }
+      //
+      //   left(driveSlewOutput - turnSlewOutput);
+      //   right(driveSlewOutput + turnSlewOutput);
+      //   break;
+      }
+
+      case TURNING: { // Turning
+
+
+
+        //turn output math
+        if(isTurnToPoint) {
+          target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
+        }
+
+
+        if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
+          if(*theta > 0) {
+            thetaRel = floor((int)( *theta / 360 )) * 360;
+          } else {
+            thetaRel = ceil((int)( *theta / 360 )) * 360;
+          }
+        } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta + 180 ) {
+          if(*theta < 0) {
+            thetaRel = ceil((int)( *theta / 360 )) * 360;
+          } else {
+            thetaRel = floor((int)( *theta / 360 )) * 360;
+          }
+        }
+
+
+
+        // if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
+        //   if(*theta > 0) {
+        //     thetaRel = floor((int)( *theta / 360 )) * 360;
+        //   } else {
+        //     thetaRel = ceil((int)( *theta / 360 )) * 360;
+        //   }
+        // } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta + 180 ) {
+        //   if(*theta > 0) {
+        //     thetaRel = ceil((int)( *theta / 360 )) * 360;
+        //   } else {
+        //     thetaRel = floor((int)( *theta / 360 )) * 360;
+        //   }
+        // }
 
         error = ( target[0].theta + thetaRel ) - *theta;
         if( abs(error) > abs( ( (target[0].theta - 360) + thetaRel ) - *theta) ) {
@@ -298,6 +406,7 @@ void Chassis::run() {
         output = ( error * ( kP + 2 ) ) + ( error - last ) * kD;
 
         last = error;
+        //turn output math^^
 
         if(output > 0) {
           if(output > slewOutput + target[0].rate) {

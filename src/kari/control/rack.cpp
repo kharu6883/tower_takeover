@@ -7,7 +7,7 @@ bool Rack::isRunning = false,
 Rack::isSettled = true,
 Rack::isActive = false;
 
-double Rack::kP = 0.04, Rack::tolerance = 5, Rack::target = 0;
+double Rack::kP = 0.08, Rack::tolerance = 5, Rack::target = 0;
 int Rack::speed = 0, Rack::rate = 0;
 
 double Rack::error = 0, Rack::output = 0, Rack::slewOutput = 0;
