@@ -31,14 +31,14 @@ class Chassis {
     Chassis& calibrateGyro();
 
     // Constant Settings
-    Chassis& withConst(double kP_ = 0.3, double kD_ = 0.3);
+    Chassis& withConst(double kPd = 0.9, double kDd = 0.3, double kPt = 3.3, double kDt = 0.3);
     Chassis& withTol(double tolerance_ = 1);
     Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
 
     // Movement Settings
     Chassis& usingEncoder();
     Chassis& usingGyro();
-    Chassis& withTarget(Vector2 point, int speed_, double rate_ = 4, bool reverse_ = false);
+    Chassis& withPoint(Vector2 point, int speed_, double rate_ = 4, bool reverse_ = false);
     Chassis& withTarget(double target_, double theta_, int speed_, double rate_ = 4, bool reverse_ = false);
 
     Chassis& drive(); // For withTarget
@@ -76,7 +76,7 @@ class Chassis {
     static bool isSettled;
     static int mode;
 
-    static double kP, kD;
+    static double kP_drive, kD_drive, kP_turn, kD_turn;
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currTarget;

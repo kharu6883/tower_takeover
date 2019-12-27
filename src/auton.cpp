@@ -26,12 +26,11 @@ using namespace io;
 // Ignore below. Just for testing stuff.
 void tester() {
   std::cout << "Testing" << std::endl;
-  roller(127);
-  chassis.drive({1671, -3}, 80,12).withConst(1.3).withTol(80).waitUntilSettled();
-  chassis.drive({2500, -135}, 60,12).withConst(1.3).withTol(80).waitUntilSettled();
-  chassis.drive({2860, -135}, 60,12).withConst(1.3).withTol(80).waitUntilSettled();
-  chassis.drive({4400, -29}, 60,12).withConst(1.3).withTol(80).waitUntilSettled();
-  chassis.drive({4928, -444}, 60,12).withConst(2).withTol(100).waitUntilSettled();
+  chassis.withPoint({1671, -3}, 110, 12)
+          .withPoint({2500, -135}, 110, 12)
+          .withPoint({2860, -135}, 110, 12)
+          .withPoint({4400, -29}, 110, 12)
+          .withPoint({4928, -444}, 50, 12).withConst(2).withTol(100).drive().waitUntilSettled();
   roller(60);
   rack.move(RACK_UP,127,5).withTol(20);
   chassis.waitUntilSettled();
@@ -60,8 +59,6 @@ void tester() {
   // delay(1200);
   // chassis.drive({4557, 1094}, 50,6).withConst(2).withTol(100).waitUntilSettled();
   // roller(-100);
-
-  chassis.drive();
 
   io::master.rumble(" .");
 }
