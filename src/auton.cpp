@@ -531,35 +531,32 @@ void redbigzonescore() {
   BLUE MATCH AUTONOMOUSES
 ===========================================*/
 void blue1() {
-
-
   chassis.calibrateGyro();
-   delay(500);
-   deploy(0.7);
-   delay(200);
-   roller(127);
-   delay(100);
-   roller(127);
-   // chassis.withGyro(0,2).drive(2300, 50,2).waitUntilSettled();
-   roller(50);
-   // chassis.withGyro(0,2).drive(-1500, 80,1).waitUntilSettled();
-   roller(127);
-   chassis.turn(-550, 80, 5).withConst(1.1).waitUntilSettled();
-   delay(200);
-   // chassis.withGyro(130,2).drive(750, 100,2);
-   chassis.unlock();
-   roller(-0.3,70);
-   rack.move(RACK_UP,127,13).withTol(20);
-   delay(200);
+  delay(500);
+  deploy(0.7);
+  delay(200);
+  roller(127);
+  delay(100);
+  roller(127);
+  // chassis.withGyro(0,2).drive(2300, 50,2).waitUntilSettled();
+  roller(50);
+  // chassis.withGyro(0,2).drive(-1500, 80,1).waitUntilSettled();
+  roller(127);
+  chassis.turn(-550, 80, 5).withConst(1.1).waitUntilSettled();
+  delay(200);
+  // chassis.withGyro(130,2).drive(750, 100,2);
+  chassis.unlock();
+  roller(-0.3,70);
+  rack.move(RACK_UP,127,13).withTol(20);
+  delay(200);
 
-   rack.waitUntilSettled();
-   roller(-80);
-   delay(50);
-   rack.move(RACK_DOWN,127,13).withTol(20);
-   //chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
+  rack.waitUntilSettled();
+  roller(-80);
+  delay(50);
+  rack.move(RACK_DOWN,127,13).withTol(20);
+  //chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
 
-   io::master.rumble(" .");
-
+  io::master.rumble(" .");
 
   //
   // chassis.calibrateGyro();
@@ -631,7 +628,6 @@ void blue1() {
 }
 
 void bluebigzone() {
-
   chassis.calibrateGyro();
   delay(400);
   arm.move(0.5, 127);
@@ -640,14 +636,11 @@ void bluebigzone() {
   arm.zero();
   roller(127);
   delay(200);
-  // //chassis.drive(300, 100).waitUntilSettled();
-//  chassis.withTarget(700, 40, 85, 1, 1).withTarget(1600, 40, 25,2 ,3).withTarget(2600, 40, -90, 1).drive().waitUntilSettled();
-
-
+  // chassis.drive(300, 100).waitUntilSettled();
+  // chassis.withTarget(700, 40, 85, 1, 1).withTarget(1600, 40, 25,2 ,3).withTarget(2600, 40, -90, 1).drive().waitUntilSettled();
 }
 
 void bluebigzonescore() {
-
   chassis.calibrateGyro();
   delay(400);
   arm.move(0.5, 127);
@@ -659,9 +652,9 @@ void bluebigzonescore() {
   arm.waitUntilSettled();
   delay(200);
   rack.move(RACK_DOWN+300, 127);
-  // //chassis.drive(300, 100).waitUntilSettled();
-//  chassis.withTarget(700, 50, 85, 1, 1).withTarget(1600, 60, 25,2 ,3).withTarget(2500, 60, -90, 1).drive().waitUntilSettled();
-  //chassis.withTarget(-1600, 100, -25, 3, 3).withTarget(-300, 100, -90,2 ,3).withTarget(500, 100, -105, 1).drive().waitUntilSettled();
+  // chassis.drive(300, 100).waitUntilSettled();
+  // chassis.withTarget(700, 50, 85, 1, 1).withTarget(1600, 60, 25,2 ,3).withTarget(2500, 60, -90, 1).drive().waitUntilSettled();
+  // chassis.withTarget(-1600, 100, -25, 3, 3).withTarget(-300, 100, -90,2 ,3).withTarget(500, 100, -105, 1).drive().waitUntilSettled();
   chassis.left(40);
   chassis.right(40);
   delay(500);
@@ -669,15 +662,13 @@ void bluebigzonescore() {
   rack.move(RACK_UP,127,13).withTol(20).waitUntilSettled();
   roller(-100);
   rack.move(RACK_DOWN,127,13).withTol(10);
-  //chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
-
+  // chassis.drive(-500, 127,5).withTol(5).waitUntilSettled();
 }
 
 /*===========================================
   SKILLS AUTONOMOUSES
 ===========================================*/
 void skills1() {
-
   arm.move(1.05, 127);
   chassis.lock();
   chassis.withPoint({50, 0}, 30, 5)
@@ -710,8 +701,8 @@ void skills1() {
   //         .withPoint({4067, -175}, 50, 12)
   //         .withPoint({4960, -538}, 50, 12)
   //         .withConst(2).withTol(200).drive().waitUntilSettled();
-          chassis.left(60);
-          chassis.right(60);
+  chassis.left(60);
+  chassis.right(60);
   rack.move(RACK_UP,127,5).withTol(30);
   delay(400);
   roller(0);
@@ -787,9 +778,4 @@ void skills1() {
   chassis.turn(0,50,4).withTol(10).waitUntilSettled();
   chassis.drive({2173,3100},50,4).waitUntilSettled();
   roller(-80);
-
-
-
-
-
 }

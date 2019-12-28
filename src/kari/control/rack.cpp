@@ -117,7 +117,7 @@ void Rack::run() {
     #endif
 
     end:
-    pros::delay(20);
+    pros::delay(10);
   }
 }
 

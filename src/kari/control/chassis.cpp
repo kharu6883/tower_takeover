@@ -491,7 +491,7 @@ void Chassis::run() {
     #endif
 
     end:
-    pros::delay(20);
+    pros::delay(10);
   }
 }
 

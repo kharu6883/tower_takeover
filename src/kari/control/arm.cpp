@@ -212,7 +212,7 @@ void Arm::run() {
           }
         }
 
-        if((output > -tolerance && output < tolerance) || (target == ARM_BOTTOM && Limit.get_value())) {
+        if((error > -tolerance && error < tolerance) || (target == ARM_BOTTOM && Limit.get_value())) {
           if(nextCmd != 0) {
             mode = nextCmd;
             break;
@@ -236,7 +236,7 @@ void Arm::run() {
     std::cout << "Arm Output: " << output << std::endl;
     #endif
 
-    pros::delay(20);
+    pros::delay(10);
   }
 }
 
