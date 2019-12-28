@@ -13,7 +13,7 @@ LV_IMG_DECLARE(michael2);
 struct info {
   lv_obj_t * labelObj;
   std::string text;
-  double * data;
+  void * data;
   double last;
 };
 

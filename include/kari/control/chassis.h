@@ -4,9 +4,10 @@
 extern pros::Motor LF, LB, RF, RB;
 extern pros::ADIGyro Gyro;
 
-#define DRIVING 1
-#define TURNING 2
-#define STRAFING 3
+#define DRIVING_POINT 1
+#define DRIVING_DIST 2
+#define TURNING 3
+#define STRAFING 4
 
 struct Vector2 {
   double x;
@@ -33,19 +34,18 @@ class Chassis {
     // Constant Settings
     Chassis& withConst(double kPd = 0.9, double kDd = 0.3, double kPt = 3.3, double kDt = 0.3);
     Chassis& withTol(double tolerance_ = 1);
-    Chassis& withSlop(double amp_ = 0.2, double offset_ = 0);
+    Chassis& withSlop(double offset_ = 0, double amp_ = 0.2);
 
     // Movement Settings
-    Chassis& usingEncoder();
-    Chassis& usingGyro();
+    Chassis& withoutOdom();
     Chassis& withPoint(Vector2 point, int speed_, double rate_ = 4, bool reverse_ = false);
     Chassis& withTarget(double target_, double theta_, int speed_, double rate_ = 4, bool reverse_ = false);
 
     Chassis& drive(); // For withTarget
-    Chassis& drive(double target_, int speed_, int rate_ = 4);
     Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse = false);
-    Chassis& turn(double theta_, int speed_, int rate_ = 4);
+    Chassis& drive(double target_, int speed_, int rate_ = 4);
     Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
+    Chassis& turn(double theta_, int speed_, int rate_ = 4);
     Chassis& strafe(double target_, int speed_, int rate_ = 4);
 
     void waitUntilSettled();
@@ -80,12 +80,11 @@ class Chassis {
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currTarget;
-    static bool isTurnToPoint;
+    static bool isUsingOdom, isTurnToPoint;
 
-    static double *deltaL, *deltaR, *theta, *posX, *posY;
+    static double *odomL, *odomR, *theta, *posX, *posY;
 
-    static double thetaRel;
-    static double error, last, output, slewOutput;
+    static double thetaRel, initL, initR, deltaL, deltaR;
     static double driveError, driveLast, turnError, turnLast;
     static double driveOutput, turnOutput, driveSlewOutput, turnSlewOutput;
     static double totOutputL, totOutputR;

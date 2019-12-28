@@ -24,7 +24,7 @@ class Rack {
     void setBrakeType(pros::motor_brake_mode_e_t type_);
 
     bool getState();
-    int getPot();
+    int * getPot();
 
     static void start(void *ignore);
     void run();
@@ -44,6 +44,7 @@ class Rack {
     static double target;
     static int speed, rate;
 
+    static int current;
     static double error, output, slewOutput;
 
 };

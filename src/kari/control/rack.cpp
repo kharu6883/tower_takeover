@@ -1,6 +1,6 @@
 #include "kari/control/rack.h"
 
-pros::Motor RackMotor(9, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
+pros::Motor RackMotor(16, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);
 pros::ADIPotentiometer Pot(2);
 
 bool Rack::isRunning = false,
@@ -10,6 +10,7 @@ Rack::isActive = false;
 double Rack::kP = 0.08, Rack::tolerance = 5, Rack::target = 0;
 int Rack::speed = 0, Rack::rate = 0;
 
+int Rack::current = 0;
 double Rack::error = 0, Rack::output = 0, Rack::slewOutput = 0;
 
 Rack::Rack() { }
@@ -56,8 +57,8 @@ bool Rack::getState() {
   return isSettled;
 }
 
-int Rack::getPot() {
-  return Pot.get_value();
+int * Rack::getPot() {
+  return &current;
 }
 
 /*--------------------------------
@@ -76,6 +77,8 @@ void Rack::run() {
   isRunning = true;
 
   while(isRunning) {
+    current = Pot.get_value();
+
     if(!pros::competition::is_autonomous()) goto end;
 
     if(isActive) {

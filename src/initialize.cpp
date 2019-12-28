@@ -26,8 +26,8 @@ void initialize() {
   Display Disp;
 
   // Roller Init
-  io::RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
-	io::RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
+  io::RollerL.set_brake_mode(MOTOR_BRAKE_BRAKE);
+	io::RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
   // Threads
   pros::Task odomController(odom.start, NULL, "Odometry Tracker");
@@ -50,6 +50,7 @@ void initialize() {
   Disp.addInfo("Deg Theta", odom.getThetaDeg());
   Disp.addInfo("X", odom.getX());
   Disp.addInfo("Y", odom.getY());
+
 
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;

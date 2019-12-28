@@ -357,10 +357,10 @@ void Display::run() {
       case 2: { // Sensor
         for(int i = 0; i < updateInfo.size(); i++) {
           if(updateInfo[i].labelObj == nullptr) break;
-          if(*updateInfo[i].data != updateInfo[i].last) {
-            std::string temp = updateInfo[i].text + ": " + std::to_string(*updateInfo[i].data);
+          if(*(double*)updateInfo[i].data != updateInfo[i].last) {
+            std::string temp = updateInfo[i].text + ": " + std::to_string(*(double*)updateInfo[i].data);
             lv_label_set_text(updateInfo[i].labelObj, temp.c_str());
-            updateInfo[i].last = *updateInfo[i].data;
+            updateInfo[i].last = *(double*)updateInfo[i].data;
           }
         }
         break;

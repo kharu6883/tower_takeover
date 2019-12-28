@@ -4,10 +4,14 @@
 namespace io {
   pros::Controller master(CONTROLLER_MASTER);
 
-  pros::Motor RollerL(3, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);//left roller
-  pros::Motor RollerR(7, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS);//right roller
+  pros::Motor RollerL(2, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS); // Left Roller
+  pros::Motor RollerR(9, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS); // Right Roller
 
   void roller(int speed) {
+    RollerL.move(speed);
+    pros::delay(50);
+    RollerR.move(speed);
+    pros::delay(50);
     RollerL.move(speed);
     pros::delay(50);
     RollerR.move(speed);
