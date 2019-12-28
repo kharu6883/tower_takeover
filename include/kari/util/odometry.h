@@ -19,8 +19,6 @@ class Odometry {
     static void start(void* ignore);
     void run();
     void stop();
-    void point(double DesiredX, double DesiredY, double rate, double speed, double tol);
-    void turn(double angle, double rate, double speed, double tol);
 
   private:
     static bool isRunning;

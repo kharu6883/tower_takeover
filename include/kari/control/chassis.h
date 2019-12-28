@@ -80,7 +80,7 @@ class Chassis {
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currTarget;
-    static bool isUsingOdom, isTurnToPoint;
+    static bool isUsingOdom, isUsingGyro, isTurnToPoint;
 
     static double *odomL, *odomR, *theta, *posX, *posY;
 
