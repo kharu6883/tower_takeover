@@ -12,7 +12,7 @@ Arm::reached = false;
 int Arm::mode = 0,
 Arm::nextCmd = 0;
 
-double Arm::target = 0, Arm::tolerance = 25;
+double Arm::target = 0, Arm::tolerance = 1;
 int Arm::speed = 0, Arm::rate = 9;
 
 double Arm::kP = 350;

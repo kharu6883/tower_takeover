@@ -16,6 +16,8 @@ class Odometry {
     double * getX();
     double * getY();
 
+    void reset(int theta_);
+
     static void start(void* ignore);
     void run();
     void stop();

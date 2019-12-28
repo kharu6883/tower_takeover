@@ -45,6 +45,11 @@ double * Odometry::getY() {
   return &posY;
 }
 
+void Odometry::reset(int theta_) {
+  posX = posY = 0;
+  thetaRad = theta_ * ( PI * 180 );
+}
+
 void Odometry::start(void *ignore) {
   if(!isRunning) {
     pros::delay(500);
