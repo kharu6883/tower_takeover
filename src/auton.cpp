@@ -28,9 +28,8 @@ using namespace io;
 void tester() {
   std::cout << "Testing" << std::endl;
 
-
 chassis.lock();
-arm.move(ARM_LOW_TOWER, 127).withTol(20).waitUntilSettled();
+arm.move(ARM_LOW_TOWER, 127).waitUntilSettled();
 arm.zero();
 delay(200);
   chassis.drive({1388,0}, 70,4).withTol(70);
