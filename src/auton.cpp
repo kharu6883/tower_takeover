@@ -176,8 +176,7 @@ void tester() {
 
 
 
-
-
+odom.reset();
 
 //   delay(100000);
 roller(127);
