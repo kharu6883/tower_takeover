@@ -12,7 +12,7 @@ Arm::reached = false;
 int Arm::mode = 0,
 Arm::nextCmd = 0;
 
-double Arm::target = 0, Arm::tolerance = 1;
+double Arm::target = 0, Arm::tolerance = 0.1;
 int Arm::speed = 0, Arm::rate = 9;
 
 double Arm::kP = 350;
@@ -194,7 +194,8 @@ void Arm::run() {
 
       // MovePos
       case 11: {
-        output = (target - ArmMotor.get_position()) * kP;
+        error = target - ArmMotor.get_position();
+        output = error  * kP;
 
         if(output > 0) {
           if(output > slewOutput + rate) {
