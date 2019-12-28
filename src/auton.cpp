@@ -28,7 +28,6 @@ using namespace io;
 void tester() {
   std::cout << "Testing" << std::endl;
 
-odom.reset(90);
 chassis.lock();
 arm.move(ARM_LOW_TOWER, 127).waitUntilSettled();
 arm.zero();

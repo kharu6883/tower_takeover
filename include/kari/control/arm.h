@@ -16,11 +16,7 @@ class Arm {
     Arm();
     ~Arm();
 
-<<<<<<< HEAD
-    Arm& withTol(double tolerance_ = 0.001);
-=======
     Arm& withTol(double tolerance_ = 0.1);
->>>>>>> 7462744946041beca5ae0ff1485ceef4fb71fbed
 
     Arm& move(double target_, int speed_, int rate_ = 9);
     Arm& tower(int tower);
