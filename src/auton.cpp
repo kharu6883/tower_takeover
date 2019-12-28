@@ -28,44 +28,44 @@ using namespace io;
 void tester() {
   std::cout << "Testing" << std::endl;
 
-//
-// chassis.lock();
-// arm.move(ARM_LOW_TOWER, 127).withTol(35).waitUntilSettled();
-// arm.zero();
-// delay(200);
-//   chassis.drive({1388,0}, 70,4).withTol(70);
-//   delay(400);
-//   roller(127);
-//   chassis.waitUntilSettled();
-//
-//   chassis.drive({120,-900}, 80,4,true).withTol(150).waitUntilSettled();
-//   roller(127);
-//
-//   chassis.drive({1300,-1000}, 60,4).withPoint({1980,-800}, 50,4).withTol(200).drive().waitUntilSettled();
-//
-//   chassis.drive({607,-1017}, 60,4,true).withConst(0.1).withTol(100).waitUntilSettled();
-//   chassis.turn({270,-1420}, 70,4).withConst(0.2).withTol(20).waitUntilSettled();
-//
-//   chassis.drive({270,-1420}, 85,4).withTol(300);
-//   delay(300);
-//   roller(-0.4,60);
-//   rack.move(RACK_UP,127,8).withTol(30);
-//   chassis.waitUntilSettled();
-//
-//   chassis.left(60);
-//   chassis.right(60);
-// delay(400);
-// roller(0);
-//
-// delay(200);
-// chassis.left(0);
-// chassis.right(0);
-// rack.waitUntilSettled();
-// rack.move(RACK_DOWN,127,8).withTol(20);
-//
-// roller(-90);
-// chassis.lock();
-//   chassis.drive({674,-1000}, 127,4,true).withConst(0.2).withTol(70).waitUntilSettled();
+
+chassis.lock();
+arm.move(ARM_LOW_TOWER, 127).withTol(20).waitUntilSettled();
+arm.zero();
+delay(200);
+  chassis.drive({1388,0}, 70,4).withTol(70);
+  delay(400);
+  roller(127);
+  chassis.waitUntilSettled();
+
+  chassis.drive({120,-900}, 100,4,true).withTol(150).waitUntilSettled();
+  roller(127);
+
+  chassis.drive({1300,-1000}, 50,4).withPoint({1980,-800}, 50,4).withTol(200).drive().waitUntilSettled();
+
+  chassis.drive({607,-1017}, 90,4,true).withConst(0.1).withTol(100).waitUntilSettled();
+  chassis.turn({270,-1420}, 70,4).withConst(0.1).withTol(20).waitUntilSettled();
+
+  chassis.drive({270,-1420}, 85,4).withTol(300);
+  delay(300);
+  roller(-0.4,60);
+  rack.move(RACK_UP,127,8).withTol(30);
+  chassis.waitUntilSettled();
+
+  chassis.left(60);
+  chassis.right(60);
+delay(400);
+roller(0);
+
+delay(200);
+chassis.left(0);
+chassis.right(0);
+rack.waitUntilSettled();
+rack.move(RACK_DOWN,127,8).withTol(20);
+
+roller(-90);
+chassis.lock();
+  chassis.drive({674,-1000}, 127,4,true).withConst(0.2).withTol(70).waitUntilSettled();
 //   roller(127);
 //
 //   chassis.drive({4295,-980}, 60,4).withConst(0.2).withTol(70).waitUntilSettled();
@@ -174,10 +174,9 @@ void tester() {
 
 
 
+delay(10000);
 
-
-
-
+//odom.reset();
 
 //   delay(100000);
 roller(127);
