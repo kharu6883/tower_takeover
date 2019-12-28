@@ -1,7 +1,11 @@
 #include "main.h"
 
-#include "kari/autonController.h"
+#include "kari/control/chassis.h"
+#include "kari/control/rack.h"
+#include "kari/control/arm.h"
+
 #include "kari/util/misc.h"
+#include "kari/autonController.h"
 
 using namespace okapi;
 using namespace std;
@@ -17,7 +21,10 @@ std::map<int, typeName> Autonomous::slotName;
 std::map<int, typeName> Autonomous::slotAbbv;
 
 void autonomous() {
-  macro::print("Starting Autonomous");
+  Chassis chassis; chassis.reset();
+  Rack rack; rack.reset();
+  Arm arm; arm.reset();
+
   Autonomous Auton;
   Auton.runAuton();
 }
