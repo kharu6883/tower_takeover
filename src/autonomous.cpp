@@ -12,7 +12,7 @@ using namespace std;
 
 bool Autonomous::isInitialized = false;
 int Autonomous::type = SLOT_SKILLS,
-Autonomous::slot = 0;
+Autonomous::slot = 1;
 
 std::map<int, void(*)()> Autonomous::redAuton;
 std::map<int, void(*)()> Autonomous::blueAuton;
@@ -33,12 +33,12 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
   if(!isInitialized) {
 
     // RED
-    addAuton(SLOT_RED, "Red small zone", "RSZ", red1);
+    addAuton(SLOT_RED, "Red small zone", "RSZ", redsmallzone9);
     addAuton(SLOT_RED, "Red big zone", "RBZ", redbigzone);
     addAuton(SLOT_RED, "Red big zone score", "RBZs", redbigzonescore);
 
     // BLUE
-    addAuton(SLOT_BLUE, "blue small zone", "BSZ", blue1);
+    addAuton(SLOT_BLUE, "blue small zone", "BSZ", bluesmallzone9);
     addAuton(SLOT_BLUE, "blue big zone", "BBZ", bluebigzone);
     addAuton(SLOT_BLUE, "blue big zone score", "BBZs", bluebigzonescore);
 
