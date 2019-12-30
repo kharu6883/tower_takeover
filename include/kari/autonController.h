@@ -50,12 +50,16 @@ void tester();
 
 // Red
 void redsmallzone9();
+void redsmallzone8();
+void redsmallzone5();
 void redbigzone();
 void redbigzonescore();
 
 
 // Blue
 void bluesmallzone9();
+void bluesmallzone8();
+void bluesmallzone5();
 void bluebigzone();
 void bluebigzonescore();
 
