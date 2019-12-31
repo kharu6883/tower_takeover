@@ -1,8 +1,6 @@
 #include "kari/control/chassis.h"
 #include "kari/util/misc.h"
 
-// TODO Slop logic needs to be fixed
-
 pros::Motor LF(14, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
             LB(11, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
             RF(19, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
@@ -392,7 +390,7 @@ void Chassis::run() {
             break;
           }
         }
-        
+
         left(driveSlewOutput - slop());
         right(driveSlewOutput + slop());
         break;

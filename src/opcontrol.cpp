@@ -8,15 +8,11 @@
 #include "kari/displayController.h"
 
 void opcontrol() {
-	using namespace io;
-
 	int towerMode = 0, lastPos = 0;
 	bool isTrack = false;
 
 	Rack rack;
 	Arm arm;
-
-	Display display;
 
 	macro::Slew roller(60, 80); // Accel, Decel
 	macro::Slew rackSlew(50, 50, true); // Accel, Decel
@@ -90,9 +86,11 @@ void opcontrol() {
 
 		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && *rack.getPot() <= 1400) towerMode = 1;
 
-		if(master.get_digital_new_press(DIGITAL_B) && *rack.getPot() <= 1400) towerMode = 4;
-		if(master.get_digital_new_press(DIGITAL_Y) && *rack.getPot() <= 1400) towerMode = 5;
-		if(master.get_digital_new_press(DIGITAL_X) && *rack.getPot() <= 1400) towerMode = 6;
+		if(*rack.getPot() <= 1400) {
+			if(master.get_digital_new_press(DIGITAL_B)) towerMode = 4;
+			if(master.get_digital_new_press(DIGITAL_Y)) towerMode = 5;
+			if(master.get_digital_new_press(DIGITAL_X)) towerMode = 6;
+		}
 
 		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) towerMode = 10;
 
@@ -170,7 +168,7 @@ void opcontrol() {
 		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6) io::roller(roller.getOutput());
 
 		// std::cout << "Rack: " << RackMotor.get_current_draw() << "mA, Arm: " << ArmMotor.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
-		std::cout << "Rack Output: " << rackSlew.getOutput() << ", Rack PID Output: " << rackPID.getOutput() << std::endl;
+		// std::cout << "Rack Output: " << rackSlew.getOutput() << ", Rack PID Output: " << rackPID.getOutput() << std::endl;
 
 		// Yeet
 		pros::delay(10);

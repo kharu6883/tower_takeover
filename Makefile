@@ -12,7 +12,8 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 INCDIR=$(ROOT)/include
 
-WARNFLAGS+=-Wno-psabi-Wunknown-attributes
+WARNFLAGS+=-Wno-psabi
+WARNFLAGS+=-Wno-attributes
 EXTRA_CFLAGS=
 EXTRA_CXXFLAGS=
 
