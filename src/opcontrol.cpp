@@ -8,6 +8,8 @@
 #include "kari/displayController.h"
 
 void opcontrol() {
+	using namespace io;
+
 	int towerMode = 0, lastPos = 0;
 	bool isTrack = false;
 
