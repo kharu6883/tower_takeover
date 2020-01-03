@@ -41,6 +41,7 @@ class Chassis {
     Chassis& withPoint(Vector2 point, int speed_, double rate_ = 4, bool reverse_ = false);
     Chassis& withTarget(double target_, double theta_, int speed_, double rate_ = 4, bool reverse_ = false);
 
+    // Actuators
     Chassis& drive(); // For withTarget
     Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse = false);
     Chassis& drive(double target_, int speed_, int rate_ = 4);
