@@ -3,9 +3,11 @@
 
 extern pros::Motor LF, LB, RF, RB;
 extern pros::ADIGyro Gyro;
+extern pros::ADIUltrasonic distance;
 
 #define DRIVING_POINT 1
 #define DRIVING_DIST 2
+#define DRIVING_ULTRASONIC 5
 #define TURNING 3
 #define STRAFING 4
 
@@ -45,6 +47,7 @@ class Chassis {
     Chassis& drive(); // For withTarget
     Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse = false);
     Chassis& drive(double target_, int speed_, int rate_ = 4);
+    Chassis& driveultrasonic(double target_, int speed_, int rate_ = 4);
     Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
     Chassis& turn(double theta_, int speed_, int rate_ = 4);
     Chassis& strafe(double target_, int speed_, int rate_ = 4);

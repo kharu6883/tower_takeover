@@ -26,8 +26,14 @@ using namespace io;
 
 // Ignore below. Just for testing stuff.
 void tester() {
+  chassis.driveultrasonic(550, 127).withConst(0.6).withTol(5.5).waitUntilSettled();
+  chassis.driveultrasonic(550, 127).withConst(1.2).withTol(0);
+  delay(700);
 
 
+
+chassis.left(0);
+chassis.right(0);
   arm.zero();
 
 }
