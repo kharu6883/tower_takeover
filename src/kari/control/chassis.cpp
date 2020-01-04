@@ -494,48 +494,46 @@ void Chassis::run() {
         RB.move(-driveSlewOutput - slop(1));
         break;
       }
-      case DRIVING_ULTRASONIC:{
 
-                deltaL = *odomL - initL;
-                deltaR = *odomR - initR;
+      case DRIVING_ULTRASONIC: {
+        deltaL = *odomL - initL;
+        deltaR = *odomR - initR;
 
-                driveError = target[currTarget].x - distance.get_value();
-                driveOutput = driveError * kP_drive + ( driveError - driveLast ) * kD_drive;
-                driveLast = driveError;
+        driveError = target[currTarget].x - distance.get_value();
+        driveOutput = driveError * kP_drive + ( driveError - driveLast ) * kD_drive;
+        driveLast = driveError;
 
-                if(target.size() - 1 == currTarget) {
-                  if(driveOutput > 0) {
-                    if(driveOutput > driveSlewOutput + target[currTarget].rate) driveSlewOutput += target[currTarget].rate;
-                      else driveSlewOutput = driveOutput;
-                  } else if(driveOutput < 0) {
-                    if(driveOutput < driveSlewOutput - target[currTarget].rate) driveSlewOutput -= target[currTarget].rate;
-                      else driveSlewOutput = driveOutput;
-                  }
-                } else {
+        if(target.size() - 1 == currTarget) {
+          if(driveOutput > 0) {
+            if(driveOutput > driveSlewOutput + target[currTarget].rate) driveSlewOutput += target[currTarget].rate;
+              else driveSlewOutput = driveOutput;
+          } else if(driveOutput < 0) {
+            if(driveOutput < driveSlewOutput - target[currTarget].rate) driveSlewOutput -= target[currTarget].rate;
+              else driveSlewOutput = driveOutput;
+          }
+        } else {
 
-                }
+        }
 
-                if(driveSlewOutput > target[currTarget].speed) driveSlewOutput = target[currTarget].speed;
-                if(driveSlewOutput < -target[currTarget].speed) driveSlewOutput = -target[currTarget].speed;
+        if(driveSlewOutput > target[currTarget].speed) driveSlewOutput = target[currTarget].speed;
+        if(driveSlewOutput < -target[currTarget].speed) driveSlewOutput = -target[currTarget].speed;
 
+        if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
+          if(target.size() - 1 == currTarget) {
+            clearArr();
+            isUsingOdom = true;
+            isSettled = true;
+            withConst().withTol().withSlop().reset();
+            break;
+          } else {
+            currTarget++;
+            break;
+          }
+        }
 
-
-                if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
-                  if(target.size() - 1 == currTarget) {
-                    clearArr();
-                    isUsingOdom = true;
-                    isSettled = true;
-                    withConst().withTol().withSlop().reset();
-                    break;
-                  } else {
-                    currTarget++;
-                    break;
-                  }
-                }
-
-                left(driveSlewOutput - (slop()*5));
-                right(driveSlewOutput + (slop()*5));
-                break;
+        left(driveSlewOutput - (slop()*5));
+        right(driveSlewOutput + (slop()*5));
+        break;
 
       }
 
