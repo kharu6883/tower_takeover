@@ -29,6 +29,9 @@ void initialize() {
   io::RollerL.set_brake_mode(MOTOR_BRAKE_BRAKE);
 	io::RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
+  // Sensor Init
+  chassis.calibrateGyro();
+
   // Threads
   pros::Task odomController(odom.start, NULL, "Odometry Tracker");
 
@@ -44,16 +47,18 @@ void initialize() {
   pros::Task b_display(Disp.start, NULL, "Display Controller");
   b_display.set_priority(TASK_PRIORITY_MIN);
 
-  Disp.addInfo("Left", odom.getL());
-  Disp.addInfo("Right", odom.getR());
-  Disp.addInfo("Rad Theta", odom.getThetaRad());
-  Disp.addInfo("Deg Theta", odom.getThetaDeg());
-  Disp.addInfo("X", odom.getX());
-  Disp.addInfo("Y", odom.getY());
+  Disp.addInfo("Left", odom.getL())
+      .addInfo("Right", odom.getR())
+      .addInfo("Rad Theta", odom.getThetaRad())
+      .addInfo("Deg Theta", odom.getThetaDeg())
+      .addInfo("X", odom.getX())
+      .addInfo("Y", odom.getY());
 
+  Disp.addInfo("Yeet", odom.getL());
 
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;
+  io::master.rumble(" .");
 }
 
 void disabled() {

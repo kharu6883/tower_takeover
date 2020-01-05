@@ -6,8 +6,8 @@ pros::Motor LF(14, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
             RF(19, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
             RB(20, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS);
 
-pros::ADIGyro Gyro(7);
-pros::ADIUltrasonic distance (7,8);
+pros::Imu Imu_T(7), Imu_L(4), Imu_R(8);
+pros::ADIUltrasonic Ultrasonic(7, 8);
 
 bool Chassis::isRunning = false,
 Chassis::isSettled = true;
@@ -18,11 +18,11 @@ double Chassis::kP_drive = 0.9, Chassis::kD_drive = 0.3, Chassis::kP_turn = 3.3,
 double Chassis::tolerance = 1, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<ChassisTarget> Chassis::target;
 int Chassis::currTarget = 0;
-bool Chassis::isUsingOdom = true, Chassis::isTurnToPoint = false;
+bool Chassis::isUsingOdom = true, Chassis::isUsingGyro = false, Chassis::isTurnToPoint = false;
 
 double *Chassis::odomL, *Chassis::odomR, *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
-double Chassis::thetaRel = 0, Chassis::initL = 0, Chassis::initR = 0, Chassis::deltaL = 0, Chassis::deltaR = 0,
+double Chassis::current = 0, Chassis::gyroOffset = 0, Chassis::thetaRel = 0, Chassis::initL = 0, Chassis::initR = 0, Chassis::deltaL = 0, Chassis::deltaR = 0,
 Chassis::driveError = 0, Chassis::driveLast = 0, Chassis::turnError = 0, Chassis::turnLast = 0,
 Chassis::driveOutput = 0, Chassis::turnOutput = 0, Chassis::driveSlewOutput = 0, Chassis::turnSlewOutput = 0,
 Chassis::totOutputL = 0, Chassis::totOutputR = 0;
@@ -42,7 +42,16 @@ Chassis::~Chassis() {
 }
 
 Chassis& Chassis::calibrateGyro() {
-  Gyro.reset();
+  Imu_T.reset();
+  Imu_L.reset();
+  Imu_R.reset();
+
+  while(Imu_T.is_calibrating() || Imu_L.is_calibrating() || Imu_R.is_calibrating()) pros::delay(20);
+  return *this;
+}
+
+Chassis& Chassis::tareGyro() {
+  gyroOffset = current;
   return *this;
 }
 
@@ -67,6 +76,12 @@ Chassis& Chassis::withSlop(double offset_, double amp_) {
 
 Chassis& Chassis::withoutOdom() {
   isUsingOdom = false;
+  return *this;
+}
+
+Chassis& Chassis::withGyro(double theta_) {
+  isUsingGyro = true;
+  target[target.size() - 1].theta = theta_;
   return *this;
 }
 
@@ -132,7 +147,7 @@ Chassis& Chassis::drive(double target_, int speed_, int rate_) {
   return *this;
 }
 
-Chassis& Chassis::driveultrasonic(double target_, int speed_, int rate_) {
+Chassis& Chassis::driveUltrasonic(double target_, int speed_, int rate_) {
   currTarget = 0;
   if(target.size() != 1) target.resize(1);
   initL = *odomL;
@@ -260,39 +275,40 @@ void Chassis::run() {
   while(isRunning) {
     if(!pros::competition::is_autonomous()) goto end;
 
+    current = ( Imu_L.get_vex_heading() + Imu_L.get_vex_heading() ) / 2 - gyroOffset;
+
     switch(mode) {
       case DRIVING_POINT: { // Driving
-        double currTheta = *theta;
         driveError = sqrt( pow( target[currTarget].x - *posX, 2) + pow( target[currTarget].y - *posY, 2) );
         driveOutput = driveError * kP_drive + ( driveError - driveLast ) * kD_drive;
 
         target[currTarget].theta = atan2( target[currTarget].y - *posY, target[currTarget].x - *posX ) * ( 180 / PI );
 
-        if(target[currTarget].reverse)   target[currTarget].theta += 180;
+        if(target[currTarget].reverse) target[currTarget].theta += 180;
 
-        if( ( (int)( currTheta / 360 ) * 360 ) > target[currTarget].theta && ( (int)( currTheta / 360 ) * 360 ) < target[currTarget].theta + 180 ) {
-          if(currTheta > 0) {
-            thetaRel = floor((int)( currTheta / 360 )) * 360;
+        if( ( (int)( *theta / 360 ) * 360 ) > target[currTarget].theta && ( (int)( *theta / 360 ) * 360 ) < target[currTarget].theta + 180 ) {
+          if(*theta > 0) {
+            thetaRel = floor((int)( *theta / 360 )) * 360;
           } else {
-            thetaRel = ceil((int)( currTheta / 360 )) * 360;
+            thetaRel = ceil((int)( *theta / 360 )) * 360;
           }
-        } else if( ( (int)( currTheta / 360 ) * 360 ) < target[currTarget].theta && ( (int)( currTheta / 360 ) * 360 ) > target[currTarget].theta + 180 ) {
-          if(currTheta < 0) {
-            thetaRel = ceil((int)( currTheta / 360 )) * 360;
+        } else if( ( (int)( *theta / 360 ) * 360 ) < target[currTarget].theta && ( (int)( *theta / 360 ) * 360 ) > target[currTarget].theta + 180 ) {
+          if(*theta < 0) {
+            thetaRel = ceil((int)( *theta / 360 )) * 360;
           } else {
-            thetaRel = floor((int)( currTheta / 360 )) * 360;
+            thetaRel = floor((int)( *theta / 360 )) * 360;
           }
         } else {
-          if(currTheta > 0) {
-            thetaRel = floor((int)( currTheta / 360 )) * 360;
+          if(*theta > 0) {
+            thetaRel = floor((int)( *theta / 360 )) * 360;
           } else {
-            thetaRel = ceil((int)( currTheta / 360 )) * 360;
+            thetaRel = ceil((int)( *theta / 360 )) * 360;
           }
         }
 
-        turnError = ( target[currTarget].theta + thetaRel ) - currTheta;
-        if( abs(turnError) > abs( ( (target[currTarget].theta - 360) + thetaRel ) - currTheta) ) {
-          turnError = ( (target[currTarget].theta - 360) + thetaRel ) - currTheta;
+        turnError = ( target[currTarget].theta + thetaRel ) - *theta;
+        if( abs(turnError) > abs( ( (target[currTarget].theta - 360) + thetaRel ) - *theta) ) {
+          turnError = ( (target[currTarget].theta - 360) + thetaRel ) - *theta;
         }
 
         turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
@@ -376,9 +392,52 @@ void Chassis::run() {
 
         driveError = target[currTarget].x - ( deltaL + deltaR ) / 2;
         driveOutput = driveError * kP_drive + ( driveError - driveLast ) * kD_drive;
+
+        if(isUsingGyro) {
+          if(target[currTarget].reverse) target[currTarget].theta += 180;
+
+          if( ( (int)( current / 360 ) * 360 ) > target[currTarget].theta && ( (int)( current / 360 ) * 360 ) < target[currTarget].theta + 180 ) {
+            if(current > 0) {
+              thetaRel = floor((int)( current / 360 )) * 360;
+            } else {
+              thetaRel = ceil((int)( current / 360 )) * 360;
+            }
+          } else if( ( (int)( current / 360 ) * 360 ) < target[currTarget].theta && ( (int)( current / 360 ) * 360 ) > target[currTarget].theta + 180 ) {
+            if(current < 0) {
+              thetaRel = ceil((int)( current / 360 )) * 360;
+            } else {
+              thetaRel = floor((int)( current / 360 )) * 360;
+            }
+          } else {
+            if(current > 0) {
+              thetaRel = floor((int)( current / 360 )) * 360;
+            } else {
+              thetaRel = ceil((int)( current / 360 )) * 360;
+            }
+          }
+
+          turnError = ( target[currTarget].theta + thetaRel ) - current;
+          if( abs(turnError) > abs( ( (target[currTarget].theta - 360) + thetaRel ) - current) ) {
+            turnError = ( (target[currTarget].theta - 360) + thetaRel ) - current;
+          }
+        }
+
+        turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
+
         driveLast = driveError;
+        turnLast = turnError;
 
         if(target.size() - 1 == currTarget) {
+          if(turnOutput > 0) {
+            if(turnOutput > turnSlewOutput + target[currTarget].rate) turnSlewOutput += target[currTarget].rate;
+              else turnSlewOutput = turnOutput;
+          } else if(turnOutput < 0) {
+            if(turnOutput < turnSlewOutput - target[currTarget].rate) turnSlewOutput -= target[currTarget].rate;
+              else turnSlewOutput = turnOutput;
+          }
+
+          driveOutput /= abs(turnSlewOutput / 10);
+
           if(driveOutput > 0) {
             if(driveOutput > driveSlewOutput + target[currTarget].rate) driveSlewOutput += target[currTarget].rate;
               else driveSlewOutput = driveOutput;
@@ -387,16 +446,31 @@ void Chassis::run() {
               else driveSlewOutput = driveOutput;
           }
         } else {
+          if(turnOutput > turnSlewOutput + target[currTarget].rate) {
+            turnSlewOutput += target[currTarget].rate;
+          } else if(turnOutput < turnSlewOutput - target[currTarget].rate) {
+            turnSlewOutput -= target[currTarget].rate;
+          } else {
+            turnSlewOutput = turnOutput;
+          }
 
+          if(target[currTarget].speed > driveSlewOutput) driveSlewOutput += target[currTarget].rate;
+          if(target[currTarget].speed < driveSlewOutput) driveSlewOutput -= target[currTarget].rate;
+
+          driveSlewOutput /= abs(turnOutput / 25);
         }
 
         if(driveSlewOutput > target[currTarget].speed) driveSlewOutput = target[currTarget].speed;
         if(driveSlewOutput < -target[currTarget].speed) driveSlewOutput = -target[currTarget].speed;
 
+        if(turnSlewOutput > target[currTarget].speed) turnSlewOutput = target[currTarget].speed;
+        if(turnSlewOutput < -target[currTarget].speed) turnSlewOutput = -target[currTarget].speed;
+
         if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
           if(target.size() - 1 == currTarget) {
             clearArr();
             isUsingOdom = true;
+            isUsingGyro = false;
             isSettled = true;
             withConst().withTol().withSlop().reset();
             break;
@@ -406,34 +480,63 @@ void Chassis::run() {
           }
         }
 
-        left(driveSlewOutput - slop());
-        right(driveSlewOutput + slop());
-        break;
+        if(isUsingGyro) {
+          totOutputL = turnSlewOutput + driveSlewOutput;
+          totOutputR = -turnSlewOutput + driveSlewOutput;
+        } else {
+          totOutputL = driveSlewOutput - slop();
+          totOutputR = driveSlewOutput + slop();
+        }
 
+        left(totOutputL);
+        right(totOutputR);
+        break;
       }
 
       case TURNING: { // Turning
-        if(isTurnToPoint) {
-          target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
-        }
-
-        if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
-          if(*theta > 0) {
-            thetaRel = floor((int)( *theta / 360 )) * 360;
-          } else {
-            thetaRel = ceil((int)( *theta / 360 )) * 360;
+        if(isUsingOdom) {
+          if(isTurnToPoint) {
+            target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
           }
-        } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta + 180 ) {
-          if(*theta < 0) {
-            thetaRel = ceil((int)( *theta / 360 )) * 360;
-          } else {
-            thetaRel = floor((int)( *theta / 360 )) * 360;
-          }
-        }
 
-        turnError = ( target[0].theta + thetaRel ) - *theta;
-        if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - *theta) ) {
-          turnError = ( (target[0].theta - 360) + thetaRel ) - *theta;
+          if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
+            if(*theta > 0) {
+              thetaRel = floor((int)( *theta / 360 )) * 360;
+            } else {
+              thetaRel = ceil((int)( *theta / 360 )) * 360;
+            }
+          } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta + 180 ) {
+            if(*theta < 0) {
+              thetaRel = ceil((int)( *theta / 360 )) * 360;
+            } else {
+              thetaRel = floor((int)( *theta / 360 )) * 360;
+            }
+          }
+
+          turnError = ( target[0].theta + thetaRel ) - *theta;
+          if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - *theta) ) {
+            turnError = ( (target[0].theta - 360) + thetaRel ) - *theta;
+          }
+        } else {
+          if( ( (int)( current / 360 ) * 360 ) > target[0].theta && ( (int)( current / 360 ) * 360 ) < target[0].theta + 180 ) {
+            if(current > 0) {
+              thetaRel = floor((int)( current / 360 )) * 360;
+            } else {
+              thetaRel = ceil((int)( current / 360 )) * 360;
+            }
+          } else if( ( (int)( current / 360 ) * 360 ) < target[0].theta && ( (int)( current / 360 ) * 360 ) > target[0].theta + 180 ) {
+            if(current < 0) {
+              thetaRel = ceil((int)( current / 360 )) * 360;
+            } else {
+              thetaRel = floor((int)( current / 360 )) * 360;
+            }
+          }
+
+
+          turnError = ( target[0].theta + thetaRel ) - current;
+          if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - current) ) {
+            turnError = ( (target[0].theta - 360) + thetaRel ) - current;
+          }
         }
 
         turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
@@ -453,13 +556,20 @@ void Chassis::run() {
 
         if(turnError > -tolerance && turnError < tolerance) {
           isSettled = true;
+          isUsingOdom = true;
           isTurnToPoint = false;
           withConst().withTol().withSlop().reset();
           break;
         }
 
-        left(-turnSlewOutput);
-        right(turnSlewOutput);
+        if(isUsingOdom) {
+          left(-turnSlewOutput);
+          right(turnSlewOutput);
+        } else {
+          left(turnSlewOutput);
+          right(-turnSlewOutput);
+        }
+
         break;
       }
 
@@ -499,7 +609,7 @@ void Chassis::run() {
         deltaL = *odomL - initL;
         deltaR = *odomR - initR;
 
-        driveError = target[currTarget].x - distance.get_value();
+        driveError = target[currTarget].x - Ultrasonic.get_value();
         driveOutput = driveError * kP_drive + ( driveError - driveLast ) * kD_drive;
         driveLast = driveError;
 
@@ -531,8 +641,8 @@ void Chassis::run() {
           }
         }
 
-        left(driveSlewOutput - (slop()*5));
-        right(driveSlewOutput + (slop()*5));
+        left(driveSlewOutput - ( slop() * 5 ));
+        right(driveSlewOutput + ( slop() * 5 ));
         break;
 
       }
@@ -545,6 +655,8 @@ void Chassis::run() {
     #ifdef DEBUG
     std::cout << "Left Front: " << LF.get_position() << ", Output: " << output << std::endl;
     #endif
+
+    std::cout << Imu_T.get_vex_heading() << " " << Imu_L.get_vex_heading() << " " << Imu_R.get_vex_heading() << std::endl;
 
     end:
     pros::delay(10);

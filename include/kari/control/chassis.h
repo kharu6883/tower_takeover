@@ -2,8 +2,8 @@
 #include "kari/util/misc.h"
 
 extern pros::Motor LF, LB, RF, RB;
-extern pros::ADIGyro Gyro;
-extern pros::ADIUltrasonic distance;
+extern pros::Imu Imu_T, Imu_L, Imu_R;
+extern pros::ADIUltrasonic Ultrasonic;
 
 #define DRIVING_POINT 1
 #define DRIVING_DIST 2
@@ -31,7 +31,9 @@ class Chassis {
     Chassis(double * odomL_, double * odomR_, double * theta_, double * posX_, double * posY_);
     ~Chassis();
 
+    // Gyro
     Chassis& calibrateGyro();
+    Chassis& tareGyro();
 
     // Constant Settings
     Chassis& withConst(double kPd = 0.9, double kDd = 0.3, double kPt = 3.3, double kDt = 0.3);
@@ -40,14 +42,15 @@ class Chassis {
 
     // Movement Settings
     Chassis& withoutOdom();
+    Chassis& withGyro(double theta_);
     Chassis& withPoint(Vector2 point, int speed_, double rate_ = 4, bool reverse_ = false);
     Chassis& withTarget(double target_, double theta_, int speed_, double rate_ = 4, bool reverse_ = false);
 
     // Actuators
-    Chassis& drive(); // For withTarget
+    Chassis& drive();
     Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse = false);
     Chassis& drive(double target_, int speed_, int rate_ = 4);
-    Chassis& driveultrasonic(double target_, int speed_, int rate_ = 4);
+    Chassis& driveUltrasonic(double target_, int speed_, int rate_ = 4);
     Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
     Chassis& turn(double theta_, int speed_, int rate_ = 4);
     Chassis& strafe(double target_, int speed_, int rate_ = 4);
@@ -88,7 +91,7 @@ class Chassis {
 
     static double *odomL, *odomR, *theta, *posX, *posY;
 
-    static double thetaRel, initL, initR, deltaL, deltaR;
+    static double current, gyroOffset, thetaRel, initL, initR, deltaL, deltaR;
     static double driveError, driveLast, turnError, turnLast;
     static double driveOutput, turnOutput, driveSlewOutput, turnSlewOutput;
     static double totOutputL, totOutputR;

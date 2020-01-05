@@ -24,18 +24,9 @@ using namespace io;
 // TURNING = 3
 // STRAFING = 4
 
-// Ignore below. Just for testing stuff.
 void tester() {
-  chassis.driveultrasonic(550, 127).withConst(0.6).withTol(5.5).waitUntilSettled();
-  chassis.driveultrasonic(550, 127).withConst(1.2).withTol(0);
-  delay(700);
-
-
-
-chassis.left(0);
-chassis.right(0);
-  arm.zero();
-
+  chassis.drive(1000, 50).withGyro(90).withConst(0.6, 0.2).withTol(4).waitUntilSettled();
+  io::master.rumble(" .");
 }
 
 /*===========================================
@@ -528,6 +519,111 @@ roller(0);
             LB.move(0);
             RF.move(0);
             RB.move(0);
+
+
+
+
+}
+
+void skills2() {
+
+
+    arm.move(1.05, 127);
+    chassis.lock();
+    chassis.withPoint({50, 0}, 30, 5)
+            .withPoint({700, -535}, 60, 5)
+            .withConst(2).withTol(100).drive().waitUntilSettled();
+    //deploy, drive to tower
+
+    arm.waitUntilSettled();
+    roller(-60);
+    delay(600);
+    //score red tower
+
+    roller(127);
+    chassis.drive({100, 0}, 80, 6, true).withTol(60);
+    delay(200);
+    arm.zero().waitUntilSettled();
+    chassis.waitUntilSettled();
+    delay(300);
+    chassis.unlock();
+    chassis.waitUntilSettled();
+    chassis.turn({1671, -185},70,5).withTol(20).waitUntilSettled();
+    chassis.withPoint({1500, -185}, 80, 12)
+            .withPoint({2965, -195}, 80, 12)
+            .withPoint({4100, -175}, 50, 12)
+            .withConst(2).withTol(200).drive().waitUntilSettled();
+            delay(600);
+            arm.tower(1);
+   chassis.turn(90, 70,4).withoutOdom().withTol(4).waitUntilSettled();
+   chassis.drive(100, 70).withGyro(90).withConst(0.6, 0.2).withTol(4).waitUntilSettled();
+   roller(-80);
+   delay(500);
+  roller(80);
+   chassis.drive(-100, 60).withGyro(90).withConst(0.6, 0.2).withTol(4).waitUntilSettled();
+   arm.zero();
+   chassis.turn(10, 70,4).withoutOdom().withTol(4).waitUntilSettled();
+   roller(0);
+   chassis.drive(200, 127).withConst(0.6, 0.2).withTol(20).waitUntilSettled();
+   roller(0);
+   LF.move(0);
+   LB.move(127);
+   RF.move(0);
+   RB.move(127);
+   delay(1000);
+   LF.move(-100);
+   LB.move(100);
+   RF.move(-100);
+   RB.move(100);
+   delay(1000);
+
+   chassis.left(50);
+   chassis.right(50);
+   rack.move(RACK_UP,127,5).withTol(20);
+   roller(-0.4,50);
+
+
+   delay(800);
+   chassis.left(30);
+   chassis.right(30);
+   rack.waitUntilSettled();
+   rack.move(RACK_DOWN,127,8).withTol(20);
+
+   roller(-70);
+   chassis.lock();
+   chassis.drive(-500, 80, 10).withTol(60).waitUntilSettled();
+   chassis.strafe(1700, 60).withSlop(-580).withTol(20).waitUntilSettled();
+
+   chassis.left(-70);
+   chassis.right(-70);
+   delay(500);
+   roller(127);
+   chassis.drive(1800, 70, 10).withGyro(180).withTol(6).waitUntilSettled();
+   arm.tower(1);
+   delay(500);
+chassis.turn(135, 50,4).withTol(4).withoutOdom().waitUntilSettled();
+chassis.drive(200, 50).withGyro(135).withConst(0.6, 0.2).withTol(4).waitUntilSettled();
+roller(-80);
+delay(500);
+roller(127);
+chassis.drive(-100, 80).withGyro(135).withConst(0.6, 0.2).withTol(4).waitUntilSettled();
+arm.zero();
+chassis.turn(180, 50,4).withoutOdom().withTol(4).waitUntilSettled();
+chassis.drive(2200, 70, 10).withGyro(180).withTol(6).waitUntilSettled();
+delay(400);
+arm.tower(2);
+chassis.turn(240, 70,4).withoutOdom().withTol(4).waitUntilSettled();
+delay(200);
+arm.move(1.5, 127);
+delay(100);
+chassis.drive(300, 60, 4).withGyro(240).withTol(6).waitUntilSettled();
+delay(400);
+roller(-100);
+delay(400);
+chassis.drive(-250, 60, 4).withGyro(240).withTol(6).waitUntilSettled();
+arm.zero();
+roller(50);
+
 
 
 
