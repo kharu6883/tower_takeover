@@ -65,3 +65,4 @@ void bluebigzonescore();
 
 // Skills
 void skills1();
+void skills2();

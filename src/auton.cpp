@@ -522,8 +522,6 @@ roller(0);
           chassis.drive(100,70,4).withConst(0.8).withTol(50).waitUntilSettled();
           roller(-80);
 
-
-
             LF.move(0);
             LB.move(0);
             RF.move(0);
@@ -532,4 +530,139 @@ roller(0);
 
 
 
+}
+
+
+void skills2() {
+
+  arm.move(1.05, 127);
+  chassis.lock();
+  chassis.withPoint({50, 0}, 40, 5)
+          .withPoint({700, -535}, 70, 5)
+          .withConst(2).withTol(100).drive().waitUntilSettled();
+  //deploy, drive to tower
+
+  arm.waitUntilSettled();
+  roller(-60);
+  delay(600);
+  //score red tower
+
+  roller(127);
+  chassis.drive({100, 0}, 80, 6, true).withTol(60);
+  delay(200);
+  arm.zero().waitUntilSettled();
+  chassis.waitUntilSettled();
+  delay(300);
+  chassis.unlock();
+  chassis.waitUntilSettled();
+  chassis.turn({1671, -185},80,5).withTol(20).waitUntilSettled();
+  chassis.withPoint({1500, -185}, 65, 12)
+          .withPoint({2965, -195}, 65, 12)
+          .withPoint({4900, -175}, 65, 12)
+          .withConst(2).withTol(230).drive().waitUntilSettled();
+
+
+          //score nine cube down
+
+          LF.move(0);
+          LB.move(127);
+          RF.move(0);
+          RB.move(127);
+          delay(1100);
+          roller(0);
+
+          LF.move(-100);
+          LB.move(100);
+          RF.move(-100);
+          RB.move(100);
+          delay(1200);
+
+          chassis.left(50);
+          chassis.right(50);
+          rack.move(RACK_UP,127,5).withTol(20);
+          roller(-0.4,50);
+
+
+          delay(800);
+          chassis.left(30);
+          chassis.right(30);
+          rack.waitUntilSettled();
+          rack.move(RACK_DOWN,127,8).withTol(20);
+
+          roller(-70);
+          chassis.lock();
+          chassis.drive(-500, 80, 10).withTol(60).waitUntilSettled();
+          chassis.strafe(1800, 70,4).withSlop(-580).withTol(20).waitUntilSettled();
+
+          chassis.left(-70);
+          chassis.right(-70);
+          delay(1100);
+          roller(127);
+          chassis.drive(4500, 75, 10).withTol(60).waitUntilSettled();
+          chassis.strafe(-2400, 127,2).withSlop(0).withTol(20).waitUntilSettled();
+          chassis.turn(270,80,4).withTol(8).waitUntilSettled();
+          chassis.strafe(1000, 127).withSlop(0).withTol(20).waitUntilSettled();
+
+          LF.move(127);
+          LB.move(-127);
+          RF.move(127);
+          RB.move(-127);
+          delay(1000);
+
+          chassis.left(50);
+          chassis.right(50);
+          roller(-0.5,50);
+          rack.move(RACK_UP,127,5).withTol(20);
+
+
+
+          delay(500);
+          chassis.left(30);
+          chassis.right(30);
+          rack.waitUntilSettled();
+          rack.move(RACK_DOWN,127,8).withTol(20);
+
+          roller(-70);
+          chassis.lock();
+
+          chassis.driveultrasonic(500, 127,7).withConst(0.5).withTol(5.5).waitUntilSettled();
+          roller(127);
+          LF.move(100);
+          LB.move(-100);
+          RF.move(100);
+          RB.move(-100);
+          delay(400);
+          odom.reset(0);
+          chassis.strafe(-1500,60,2).withTol(20).waitUntilSettled();
+          roller(127);
+          chassis.driveultrasonic(1500, 70).withConst(0.5).withTol(5.5).waitUntilSettled();
+          delay(1000);
+          arm.tower(2);
+          delay(800);
+          arm.move(1.5, 110);
+          delay(500);
+          chassis.drive(350,30,2).withConst(0.25).withTol(50).waitUntilSettled();
+          roller(-80);
+          delay(200);
+          chassis.driveultrasonic(1500, 127).withConst(0.5).withTol(5).waitUntilSettled();
+          delay(300);
+          arm.zero();
+          roller(127);
+          chassis.turn(90,60,4).withConst(0.2).withTol(8).waitUntilSettled();
+          chassis.left(-70);
+          chassis.right(-70);
+          delay(800);
+          odom.reset(0);
+          roller(127);
+          chassis.driveultrasonic(1800, 127).withConst(0.5).withTol(5).waitUntilSettled();
+
+          arm.tower(1).waitUntilSettled();
+          chassis.turn(25,60,4).withConst(0.2).withTol(8).waitUntilSettled();
+          chassis.drive(100,70,4).withConst(0.8).withTol(50).waitUntilSettled();
+          roller(-80);
+
+            LF.move(0);
+            LB.move(0);
+            RF.move(0);
+            RB.move(0);
 }
