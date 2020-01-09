@@ -122,7 +122,6 @@ void Arm::run() {
         io::roller(rollerRot, rollerSpeed);
         pros::delay(rollerWaitPrime);
         macroFin = true;
-
         target = ARM_LOW_TOWER;
         rate = 50;
         nextCmd = 0;

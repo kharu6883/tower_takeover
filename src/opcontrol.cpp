@@ -86,24 +86,24 @@ void opcontrol() {
 		--------------------------------*/
 		//if(master.get_digital_new_press(DIGITAL_DOWN)) towerMode = 10 ;
 
-		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && *rack.getPot() <= 1400) towerMode = 1;
+		//if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && *rack.getPot() <= 1400) towerMode = 1;
 
 		if(*rack.getPot() <= 1400) {
 			if(master.get_digital_new_press(DIGITAL_B)) towerMode = 4;
-			if(master.get_digital_new_press(DIGITAL_Y)) towerMode = 5;
-			if(master.get_digital_new_press(DIGITAL_X)) towerMode = 6;
-			if(master.get_digital_new_press(DIGITAL_UP)) towerMode = 3;
-			if(master.get_digital_new_press(DIGITAL_DOWN)) towerMode = 2;
+		//	if(master.get_digital_new_press(DIGITAL_Y)) towerMode = 5;//left
+			if(master.get_digital_new_press(DIGITAL_DOWN)) towerMode = 6;
+			if(master.get_digital_new_press(DIGITAL_RIGHT)) towerMode = 3;
+			if(master.get_digital_new_press(DIGITAL_Y)) towerMode = 2;
 		}
 
 		if(master.get_digital(DIGITAL_R1) && master.get_digital(DIGITAL_R2)) { towerMode = 0; arm.zero(); }
-		if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && *rack.getPot() <= 1400) towerMode = 1;
+		//if(master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2) && *rack.getPot() <= 1400) towerMode = 1;
 
 
 		switch(towerMode) {
 			case 1: {
-				if(!master.get_digital(DIGITAL_L2)) towerMode = 2;
-				if(!master.get_digital(DIGITAL_L1)) towerMode = 3;
+				//if(!master.get_digital(DIGITAL_L2)) towerMode = 2;
+				//if(!master.get_digital(DIGITAL_L1)) towerMode = 3;
 				break;
 			}
 
