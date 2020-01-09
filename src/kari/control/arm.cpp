@@ -47,7 +47,6 @@ Arm& Arm::tower(int tower) {
   isSettled = false;
 
   if(tower == 1 || tower == 2) {
-    macroFin = false;
     nextCmd = tower;
     mode = 11;
   } else {
@@ -96,6 +95,10 @@ bool Arm::getMacroState() {
   return macroFin;
 }
 
+double Arm::getPos() {
+  return ArmMotor.get_position();
+}
+
 bool Arm::getLimit() {
   return Limit.get_value();
 }
@@ -117,6 +120,7 @@ void Arm::run() {
 
       // Low Tower
       case 1: {
+        macroFin = false;
         io::roller(rollerPrePrime);
         pros::delay(rollerWait);
         io::roller(rollerRot, rollerSpeed);
@@ -131,12 +135,12 @@ void Arm::run() {
 
       // Mid Tower
       case 2: {
+        macroFin = false;
         io::roller(rollerPrePrime);
         pros::delay(rollerWait);
         io::roller(rollerRot, rollerSpeed);
         pros::delay(rollerWaitPrime);
         macroFin = true;
-
         target = ARM_MID_TOWER;
         rate = 50;
         nextCmd = 0;

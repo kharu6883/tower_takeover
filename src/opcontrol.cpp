@@ -16,9 +16,9 @@ void opcontrol() {
 	Rack rack;
 	Arm arm;
 
-	macro::Slew roller(60, 80); // Accel, Decel
-	macro::Slew rackSlew(50, 50, true); // Accel, Decel
+	macro::Slew rackSlew(80, 80, true); // Accel, Decel
 	macro::PID rackPID(0.08); // kP
+	macro::Slew roller(127, 80); // Accel, Decel
 
 	rack.setBrakeType(MOTOR_BRAKE_HOLD);
 	arm.setBrakeType(MOTOR_BRAKE_HOLD);
@@ -96,13 +96,13 @@ void opcontrol() {
 		switch(towerMode) {
 			case 1: {
 				arm.tower(1);
-				towerMode = 11;
+				towerMode = 5;
 				break;
 			}
 
 			case 2: {
 				arm.tower(2);
-				towerMode = 11;
+				towerMode = 5;
 				break;
 			}
 
@@ -118,7 +118,7 @@ void opcontrol() {
 				break;
 			}
 
-			case 11: {
+			case 5: {
 				if(arm.getState()) { towerMode = 0; break; }
 				break;
 			}
@@ -146,7 +146,7 @@ void opcontrol() {
 
 		}
 
-		if(towerMode == 0 || towerMode == 4 || towerMode == 5 || towerMode == 6) io::roller(roller.getOutput());
+		if( towerMode == 0 || towerMode == 3 || towerMode == 4 || ( arm.getMacroState() && arm.getPos() > 0.6 ) ) io::roller(roller.getOutput());
 
 		// std::cout << "Rack: " << RackMotor.get_current_draw() << "mA, Arm: " << ArmMotor.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
 		// std::cout << "Rack Output: " << rackSlew.getOutput() << ", Rack PID Output: " << rackPID.getOutput() << std::endl;
