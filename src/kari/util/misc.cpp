@@ -17,6 +17,11 @@ namespace io {
     RollerR.move(speed);
   }
 
+  void driveRoller(int speed) {
+    RollerL.move(speed);
+    RollerR.move(speed);
+  }
+
   void roller(double rot, int speed) {
     RollerL.move_relative(rot, speed);
     pros::delay(50);

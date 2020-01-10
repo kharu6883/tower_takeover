@@ -231,7 +231,7 @@ void Arm::run() {
       }
 
       default: {
-        ArmMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
+        if(pros::competition::is_autonomous()) ArmMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
         break;
       }
     }

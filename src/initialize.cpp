@@ -26,8 +26,8 @@ void initialize() {
   Display Disp;
 
   // Roller Init
-  io::RollerL.set_brake_mode(MOTOR_BRAKE_BRAKE);
-	io::RollerR.set_brake_mode(MOTOR_BRAKE_BRAKE);
+  io::RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
+	io::RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
 
   // Sensor Init
   chassis.calibrateGyro();
