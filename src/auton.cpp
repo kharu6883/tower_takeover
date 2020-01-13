@@ -42,41 +42,46 @@ void deploy() {
   RED MATCH AUTONOMOUSES
 ===========================================*/
 void redsmallzone9() {
-  chassis.lock();
-  deploy();
-  delay(200);
-    chassis.drive({1420,0}, 60,4).withTol(70);
-    delay(400);
+  odom.reset(0);
+  chassis.tareGyro();
+arm.move(ARM_LOW_TOWER, 127).withTol(0.5).waitUntilSettled();
+  arm.zero();
+
+    chassis.drive({1420,0}, 65,1).withTol(70);
+    delay(200);
     roller(127);
     chassis.waitUntilSettled();
 
-    chassis.drive({120,-900}, 100,4,true).withTol(150).waitUntilSettled();
+    chassis.drive({150,-1000}, 127,4,true).withConst(1.1).withTol(100).waitUntilSettled();
     roller(127);
+    chassis.turn({1300,-1000}, 127,8).withTol(10).waitUntilSettled();
+    chassis.drive({1300,-1000}, 45,6).withPoint({1980,-800}, 55,4).withTol(200).drive().waitUntilSettled();
 
-    chassis.drive({1300,-1000}, 50,4).withPoint({1980,-800}, 60,4).withTol(200).drive().waitUntilSettled();
+    chassis.drive({130,-900}, 127,6,true).withConst(0.3).withTol(150).waitUntilSettled();
+    chassis.left(0);
+    chassis.right(0);
+    chassis.turn(90, 127,8).withoutOdom().withTol(15).waitUntilSettled();
+    LF.move(127);
+    LB.move(-127);
+    RF.move(127);
+    RB.move(-127);
+    delay(100);
+    rack.move(RACK_UP,127,7).withConst(0.1).withTol(30);
+    delay(500);
 
-    chassis.drive({607,-1017}, 100,4,true).withConst(0.1).withTol(100).waitUntilSettled();
-    chassis.turn({270,-1420}, 85,4).withTol(50).waitUntilSettled();
-
-    chassis.drive({270,-1420}, 85,4).withTol(300);
+    chassis.left(50);
+    chassis.right(50);
     roller(-0.4,20);
-    rack.move(RACK_UP,127,8).withTol(30);
-    chassis.waitUntilSettled();
+    delay(400);
+    chassis.left(30);
+    chassis.right(30);
+    rack.waitUntilSettled();
+    rack.move(RACK_DOWN,127,8).withTol(30);
 
-    chassis.left(60);
-    chassis.right(60);
-  delay(400);
-  roller(0);
+    roller(-70);
+    chassis.lock();
+    chassis.drive(-350,127,2).withConst(0.2).withTol(50).waitUntilSettled();
 
-  delay(200);
-  chassis.left(0);
-  chassis.right(0);
-  rack.waitUntilSettled();
-  rack.move(RACK_DOWN,127,8).withTol(20);
-
-  roller(-90);
-  chassis.lock();
-    chassis.drive(-500, 127,4).withTol(70).waitUntilSettled();
 
 }
 
@@ -531,8 +536,8 @@ void skills2() {
    delay(600);
    arm.move(1.05, 127);
    chassis.lock();
-   chassis.withPoint({50, 0}, 65, 5)
-            .withPoint({650, -535}, 70, 5)
+   chassis.withPoint({50, 0}, 55, 5)
+            .withPoint({650, -535}, 60, 5)
             .withConst(2).withTol(100).drive().waitUntilSettled();
    arm.waitUntilSettled();
    roller(-60);
@@ -575,7 +580,7 @@ void skills2() {
    delay(1000);
    chassis.left(50);
    chassis.right(50);
-   rack.move(RACK_UP,127,5).withTol(20);
+   rack.move(RACK_UP,127,7).withConst(0.1).withTol(30);
    roller(-0.4,50);
    delay(800);
    chassis.left(30);
@@ -615,7 +620,7 @@ void skills2() {
    chassis.left(50);
    chassis.right(50);
    roller(-0.5,50);
-   rack.move(RACK_UP,127,5).withTol(20);
+   rack.move(RACK_UP,127,7).withConst(0.1).withTol(30);
    delay(600);
    chassis.left(30);
    chassis.right(30);
