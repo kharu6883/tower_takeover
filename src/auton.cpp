@@ -25,14 +25,16 @@ using namespace io;
 // STRAFING = 4
 
 void tester() {
-  chassis.turn(270, 75, 4).withoutOdom().withTol(10).waitUntilSettled();
+  chassis.lock();
+  chassis.turn(90, 100).withoutOdom().withTol(10).waitUntilSettled();
+  delay(1000);
+chassis.drive(1000, 50).withGyro(270).withTol(10).waitUntilSettled();
   io::master.rumble(" .");
 }
 
 /*===========================================
   PREMADE FUNCTIONS
 ===========================================*/
-
 void deploy() {
   arm.move(ARM_LOW_TOWER, 127).withTol(0.3).waitUntilSettled();
   arm.zero();

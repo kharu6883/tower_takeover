@@ -494,84 +494,84 @@ void Chassis::run() {
       }
 
       case TURNING: { // Turning
-        if(isUsingOdom) {
-          if(isTurnToPoint) {
-            target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
-          }
-
-          if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
-            if(*theta > 0) {
-              thetaRel = floor((int)( *theta / 360 )) * 360;
-            } else {
-              thetaRel = ceil((int)( *theta / 360 )) * 360;
+          if(isUsingOdom) {
+            if(isTurnToPoint) {
+              target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
             }
-          } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta + 180 ) {
-            if(*theta < 0) {
-              thetaRel = ceil((int)( *theta / 360 )) * 360;
-            } else {
-              thetaRel = floor((int)( *theta / 360 )) * 360;
+
+            if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
+              if(*theta > 0) {
+                thetaRel = floor((int)( *theta / 360 )) * 360;
+              } else {
+                thetaRel = ceil((int)( *theta / 360 )) * 360;
+              }
+            } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta + 180 ) {
+              if(*theta < 0) {
+                thetaRel = ceil((int)( *theta / 360 )) * 360;
+              } else {
+                thetaRel = floor((int)( *theta / 360 )) * 360;
+              }
+            }
+
+            turnError = ( target[0].theta + thetaRel ) - *theta;
+            if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - *theta) ) {
+              turnError = ( (target[0].theta - 360) + thetaRel ) - *theta;
+            }
+          } else {
+            if( ( (int)( current / 360 ) * 360 ) > target[0].theta && ( (int)( current / 360 ) * 360 ) < target[0].theta + 180 ) {
+              if(current > 0) {
+                thetaRel = floor((int)( current / 360 )) * 360;
+              } else {
+                thetaRel = ceil((int)( current / 360 )) * 360;
+              }
+            } else if( ( (int)( current / 360 ) * 360 ) < target[0].theta && ( (int)( current / 360 ) * 360 ) > target[0].theta + 180 ) {
+              if(current < 0) {
+                thetaRel = ceil((int)( current / 360 )) * 360;
+              } else {
+                thetaRel = floor((int)( current / 360 )) * 360;
+              }
+            }
+
+
+            turnError = ( target[0].theta + thetaRel ) - current;
+            if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - current) ) {
+              turnError = ( (target[0].theta - 360) + thetaRel ) - current;
             }
           }
 
-          turnError = ( target[0].theta + thetaRel ) - *theta;
-          if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - *theta) ) {
-            turnError = ( (target[0].theta - 360) + thetaRel ) - *theta;
-          }
-        } else {
-          if( ( (int)( current / 360 ) * 360 ) > target[0].theta && ( (int)( current / 360 ) * 360 ) < target[0].theta + 180 ) {
-            if(current > 0) {
-              thetaRel = floor((int)( current / 360 )) * 360;
-            } else {
-              thetaRel = ceil((int)( current / 360 )) * 360;
-            }
-          } else if( ( (int)( current / 360 ) * 360 ) < target[0].theta && ( (int)( current / 360 ) * 360 ) > target[0].theta + 180 ) {
-            if(current < 0) {
-              thetaRel = ceil((int)( current / 360 )) * 360;
-            } else {
-              thetaRel = floor((int)( current / 360 )) * 360;
-            }
+          turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
+
+          turnLast = turnError;
+
+          if(turnOutput > 0) {
+            if(turnOutput > turnSlewOutput + target[0].rate) turnSlewOutput += target[0].rate;
+              else turnSlewOutput = turnOutput;
+          } else if(turnOutput < 0) {
+            if(turnOutput < turnSlewOutput - target[0].rate) turnSlewOutput -= target[0].rate;
+              else turnSlewOutput = turnOutput;
           }
 
+          if(turnSlewOutput > target[0].speed) turnSlewOutput = target[0].speed;
+          if(turnSlewOutput < -target[0].speed) turnSlewOutput = -target[0].speed;
 
-          turnError = ( target[0].theta + thetaRel ) - current;
-          if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - current) ) {
-            turnError = ( (target[0].theta - 360) + thetaRel ) - current;
+          if(turnError > -tolerance && turnError < tolerance) {
+            isSettled = true;
+            isUsingOdom = true;
+            isTurnToPoint = false;
+            withConst().withTol().withSlop().reset();
+            break;
           }
-        }
 
-        turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
+          if(isUsingOdom) {
+            left(-turnSlewOutput);
+            right(turnSlewOutput);
+          } else {
+            left(turnSlewOutput);
+            right(-turnSlewOutput);
+          }
 
-        turnLast = turnError;
-
-        if(turnOutput > 0) {
-          if(turnOutput > turnSlewOutput + target[0].rate) turnSlewOutput += target[0].rate;
-            else turnSlewOutput = turnOutput;
-        } else if(turnOutput < 0) {
-          if(turnOutput < turnSlewOutput - target[0].rate) turnSlewOutput -= target[0].rate;
-            else turnSlewOutput = turnOutput;
-        }
-
-        if(turnSlewOutput > target[0].speed) turnSlewOutput = target[0].speed;
-        if(turnSlewOutput < -target[0].speed) turnSlewOutput = -target[0].speed;
-
-        if(turnError > -tolerance && turnError < tolerance) {
-          isSettled = true;
-          isUsingOdom = true;
-          isTurnToPoint = false;
-          withConst().withTol().withSlop().reset();
           break;
         }
-
-        if(isUsingOdom) {
-          left(-turnSlewOutput);
-          right(turnSlewOutput);
-        } else {
-          left(turnSlewOutput);
-          right(-turnSlewOutput);
-        }
-
-        break;
-      }
 
       case STRAFING: { // Strafing
         deltaL = ( LF.get_position() - LB.get_position() ) / 2;
