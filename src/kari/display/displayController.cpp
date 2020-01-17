@@ -73,17 +73,6 @@ static lv_res_t auton_click_action(lv_obj_t * btn) {
   return LV_RES_OK;
 }
 
-// static lv_res_t camera_click_action(lv_obj_t * btn) {
-//   int id = lv_obj_get_free_num(btn);
-//
-//   switch(id) {
-//     case 1: CamFront.set_exposure(CamFront.get_exposure() - 15); break;
-//     case 2: CamFront.set_exposure(CamFront.get_exposure() + 15); break;
-//   }
-//
-//   return LV_RES_OK;
-// }
-
 static lv_res_t settings_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
@@ -116,8 +105,8 @@ static lv_res_t system_action(lv_obj_t * btn) {
 Display::Display() {
   if(!initialized) {
     // Theme & Style init
-    lv_theme_t *th = lv_theme_alien_init(120, NULL);
-    lv_theme_set_current(th);
+    lv_theme_t * th = lv_theme_material_init(120, NULL);
+    lv_theme_set_current(lv_theme_get_material());
 
     lv_style_plain.body.radius = 1;
 
@@ -204,25 +193,6 @@ Display::Display() {
     scr = lv_page_create(NULL, NULL);
     main();
   }
-}
-
-void Display::main() {
-  screen = 0;
-
-  lv_obj_t *img = lv_img_create(scr, NULL);
-  lv_img_set_src(img, &logo);
-
-  lv_obj_set_x(btnBack, -100);
-  lv_obj_set_x(btnRed, -100);
-  lv_obj_set_x(btnBlue, -100);
-  lv_obj_set_x(btnSkills, -100);
-
-  lv_obj_t * btnAuton = createButton(1, 250, 30, 200, 40, SYMBOL_LIST" Autonomous", scr, main_click_action);
-  lv_obj_t * btnSensor = createButton(2, 250, 95, 200, 40, SYMBOL_FILE" Status", scr, main_click_action);
-  lv_obj_t * btnCamera = createButton(3, 250, 140, 200, 40, SYMBOL_IMAGE" Camera", scr, main_click_action);
-  lv_obj_t * btnSetting = createButton(4, 250, 185, 200, 40, SYMBOL_SETTINGS" Settings", scr, main_click_action);
-
-  lv_scr_load(scr);
 }
 
 void Display::auton() {
