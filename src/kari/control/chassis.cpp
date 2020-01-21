@@ -24,7 +24,7 @@ double *Chassis::odomL, *Chassis::odomR, *Chassis::theta, *Chassis::posX, *Chass
 
 double Chassis::current = 0, Chassis::gyroOffset = 0, Chassis::thetaRel = 0, Chassis::initL = 0, Chassis::initR = 0, Chassis::deltaL = 0, Chassis::deltaR = 0,
 Chassis::driveError = 0, Chassis::driveLast = 0, Chassis::turnError = 0, Chassis::turnLast = 0,
-Chassis::driveOutput = 0, Chassis::turnOutput = 0, Chassis::driveSlewOutput = 0, Chassis::turnSlewOutput = 0,
+Chassis::driveOutput = 0, Chassis::driveOutput2 = 0, Chassis::driveOutput3 = 0, Chassis::driveOutput4 = 0, Chassis::turnOutput = 0, Chassis::driveSlewOutput = 0, Chassis::driveSlewOutput2 = 0 , Chassis::turnSlewOutput = 0,
 Chassis::totOutputL = 0, Chassis::totOutputR = 0;
 
 Chassis::Chassis() { }
@@ -203,6 +203,26 @@ Chassis& Chassis::strafe(double target_, int speed_, int rate_) {
   RF.tare_position();
   RB.tare_position();
   mode = STRAFING;
+  return *this;
+}
+
+Chassis& Chassis::smartstrafe(double direction_, double theta_, double drivespeed_, double turnspeed_, double rate_) {
+  currTarget = 0;
+  if(target.size() != 1) target.resize(1);
+  initL = *odomL;
+  initR = *odomR;
+  target[0].theta = theta_;
+  target[0].direction = direction_;
+  target[0].drivespeed = drivespeed_;
+  target[0].turnspeed = turnspeed_;
+  target[0].rate = rate_;
+  isSettled = false;
+  reset();
+  LF.tare_position();
+  LB.tare_position();
+  RF.tare_position();
+  RB.tare_position();
+  mode = SMART_STRAFE;
   return *this;
 }
 
@@ -644,6 +664,91 @@ void Chassis::run() {
         left(driveSlewOutput - ( slop() * 5 ));
         right(driveSlewOutput + ( slop() * 5 ));
         break;
+
+      }
+
+      case SMART_STRAFE: {
+
+
+// turn
+        if( ( (int)( current / 360 ) * 360 ) > target[0].theta && ( (int)( current / 360 ) * 360 ) < target[0].theta + 180 ) {
+          if(current > 0) {
+            thetaRel = floor((int)( current / 360 )) * 360;
+          } else {
+            thetaRel = ceil((int)( current / 360 )) * 360;
+          }
+        } else if( ( (int)( current / 360 ) * 360 ) < target[0].theta && ( (int)( current / 360 ) * 360 ) > target[0].theta + 180 ) {
+          if(current < 0) {
+            thetaRel = ceil((int)( current / 360 )) * 360;
+          } else {
+            thetaRel = floor((int)( current / 360 )) * 360;
+          }
+        }
+
+
+        turnError = ( target[0].theta + thetaRel ) - current;
+        if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - current) ) {
+          turnError = ( (target[0].theta - 360) + thetaRel ) - current;
+        }
+        turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
+
+        turnLast = turnError;
+
+// strafe
+ driveOutput = sin(((turnError-45)*PI)/180);
+driveOutput2 = -sin(((turnError+45)*PI)/180);
+  driveOutput = driveOutput * kP_drive;
+  driveOutput2 = driveOutput2 * kP_drive;
+
+
+//slew work
+
+           if(turnOutput > 0) {
+             if(turnOutput > turnSlewOutput + target[0].rate) turnSlewOutput += target[0].rate;
+               else turnSlewOutput = turnOutput;
+           } else if(turnOutput < 0) {
+             if(turnOutput < turnSlewOutput - target[0].rate) turnSlewOutput -= target[0].rate;
+               else turnSlewOutput = turnOutput;
+           }
+
+           if(turnSlewOutput > target[0].turnspeed) turnSlewOutput = target[0].speed;
+           if(turnSlewOutput < -target[0].turnspeed) turnSlewOutput = -target[0].speed;
+
+
+
+
+
+ if(driveOutput > 0) {
+   if(driveOutput > driveSlewOutput + target[0].rate) driveSlewOutput += target[0].rate;
+     else driveSlewOutput = driveOutput;
+ } else if(driveOutput < 0) {
+   if(driveOutput < driveSlewOutput - target[0].rate) driveSlewOutput -= target[0].rate;
+     else driveSlewOutput = driveOutput;
+ }
+
+ if(driveSlewOutput > target[0].drivespeed) driveSlewOutput = target[0].speed;
+ if(driveSlewOutput < -target[0].drivespeed) driveSlewOutput = -target[0].speed;
+
+
+
+
+  if(driveOutput2 > 0) {
+    if(driveOutput2 > driveSlewOutput2 + target[0].rate) driveSlewOutput2 += target[0].rate;
+      else driveSlewOutput2 = driveOutput2;
+  } else if(driveOutput2 < 0) {
+    if(driveOutput2 < driveSlewOutput2 - target[0].rate) driveSlewOutput2 -= target[0].rate;
+      else driveSlewOutput2 = driveOutput2;
+  }
+
+  if(driveSlewOutput2 > target[0].drivespeed) driveSlewOutput2 = target[0].speed;
+  if(driveSlewOutput2 < -target[0].drivespeed) driveSlewOutput2 = -target[0].speed;
+
+
+
+        LF.move(turnSlewOutput+driveSlewOutput2);
+        LB.move(-turnSlewOutput+driveSlewOutput);
+        RF.move(turnSlewOutput+driveSlewOutput);
+        RB.move(-turnSlewOutput+driveSlewOutput2);
 
       }
 

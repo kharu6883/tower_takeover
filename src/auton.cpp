@@ -25,6 +25,9 @@ using namespace io;
 // STRAFING = 4
 
 void tester() {
+
+  chassis.smartstrafe(180, 80);
+  delay(1000);
   chassis.lock();
   chassis.turn(90, 100).withoutOdom().withTol(10).waitUntilSettled();
   delay(1000);

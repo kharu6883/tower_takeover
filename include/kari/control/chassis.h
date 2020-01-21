@@ -10,6 +10,8 @@ extern pros::ADIUltrasonic Ultrasonic;
 #define DRIVING_ULTRASONIC 5
 #define TURNING 3
 #define STRAFING 4
+#define SMART_STRAFE 6
+
 
 struct Vector2 {
   double x;
@@ -20,6 +22,9 @@ struct ChassisTarget {
   double x;
   double y;
   double theta;
+  double direction;
+  double drivespeed;
+  double turnspeed;
   int speed;
   double rate;
   bool reverse;
@@ -54,6 +59,7 @@ class Chassis {
     Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
     Chassis& turn(double theta_, int speed_, int rate_ = 4);
     Chassis& strafe(double target_, int speed_, int rate_ = 4);
+    Chassis& smartstrafe(double direction_, double theta_, double drivespeed_ = 80, double turnspeed_ = 50, double rate_ = 4);
 
     void waitUntilSettled();
 
@@ -93,7 +99,7 @@ class Chassis {
 
     static double current, gyroOffset, thetaRel, initL, initR, deltaL, deltaR;
     static double driveError, driveLast, turnError, turnLast;
-    static double driveOutput, turnOutput, driveSlewOutput, turnSlewOutput;
+    static double driveOutput, driveOutput2, driveOutput3, driveOutput4, turnOutput, driveSlewOutput,driveSlewOutput2 , turnSlewOutput;
     static double totOutputL, totOutputR;
 
     double slop(int mode = 0);
