@@ -25,9 +25,17 @@ using namespace io;
 // STRAFING = 4
 
 void tester() {
-
-  chassis.smartstrafe(180, 80);
+  delay(500);
+  chassis.smartstrafe(90, 90, 80, 60,4,1);
+  delay(1500);
+  chassis.smartstrafe(90, 270, 80, 60,100,100);
+  delay(1500);
+  chassis.smartstrafe(90, 0, 80, 60,100,100);
+delay(2000);
+  chassis.left(0);
+  chassis.right(0);
   delay(1000);
+
   chassis.lock();
   chassis.turn(90, 100).withoutOdom().withTol(10).waitUntilSettled();
   delay(1000);
@@ -52,7 +60,7 @@ void redsmallzone9() {
 arm.move(ARM_LOW_TOWER, 127).withTol(0.5).waitUntilSettled();
   arm.zero();
 
-    chassis.drive({1420,0}, 68,1).withTol(70);
+    chassis.drive({1220,0}, 68,1).withTol(70);
     delay(200);
     roller(127);
     chassis.waitUntilSettled();
@@ -95,7 +103,7 @@ void redsmallzone8() {
 arm.move(ARM_LOW_TOWER, 127).withTol(0.5).waitUntilSettled();
   arm.zero();
 
-    chassis.drive({1420,0}, 65,1).withTol(70);
+    chassis.drive({1220,0}, 65,1).withTol(70);
     delay(200);
     roller(127);
     chassis.waitUntilSettled();
@@ -229,7 +237,7 @@ void bluesmallzone9() {
 arm.move(ARM_LOW_TOWER, 127).withTol(0.5).waitUntilSettled();
   arm.zero();
 
-    chassis.drive({1420,0}, 68,1).withTol(70);
+    chassis.drive({1220,0}, 68,1).withTol(70);
     delay(200);
     roller(127);
     chassis.waitUntilSettled();
@@ -272,7 +280,7 @@ void bluesmallzone8() {
 arm.move(ARM_LOW_TOWER, 127).withTol(0.5).waitUntilSettled();
   arm.zero();
 
-    chassis.drive({1420,0}, 65,1).withTol(70);
+    chassis.drive({1220,0}, 65,1).withTol(70);
     delay(200);
     roller(127);
     chassis.waitUntilSettled();
