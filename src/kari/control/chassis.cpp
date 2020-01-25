@@ -24,7 +24,7 @@ double *Chassis::odomL, *Chassis::odomR, *Chassis::theta, *Chassis::posX, *Chass
 
 double Chassis::current = 0, Chassis::gyroOffset = 0, Chassis::thetaRel = 0, Chassis::initL = 0, Chassis::initR = 0, Chassis::deltaL = 0, Chassis::deltaR = 0,
 Chassis::driveError = 0, Chassis::driveLast = 0, Chassis::turnError = 0, Chassis::turnLast = 0,
-Chassis::driveOutput = 0, Chassis::driveOutput2 = 0, Chassis::driveOutput3 = 0, Chassis::driveOutput4 = 0, Chassis::turnOutput = 0, Chassis::driveSlewOutput = 0, Chassis::driveSlewOutput2 = 0, Chassis::driveSlewOutput3 = 0, Chassis::driveSlewOutput4 = 0 , Chassis::turnSlewOutput = 0,
+Chassis::driveOutput = 0, Chassis::driveOutput2 = 0, Chassis::driveOutput3 = 0, Chassis::driveOutput4 = 0, Chassis::turnOutput = 0, Chassis::driveSlewOutput = 0, Chassis::driveSlewOutput2 = 0 , Chassis::turnSlewOutput = 0,
 Chassis::totOutputL = 0, Chassis::totOutputR = 0;
 
 Chassis::Chassis() { }
@@ -206,7 +206,7 @@ Chassis& Chassis::strafe(double target_, int speed_, int rate_) {
   return *this;
 }
 
-Chassis& Chassis::smartstrafe(double direction_, double theta_, double drivespeed_, double turnspeed_, double rate_, double rate2_) {
+Chassis& Chassis::smartstrafe(double direction_, double theta_, double drivespeed_, double turnspeed_, double rate_) {
   currTarget = 0;
   if(target.size() != 1) target.resize(1);
   initL = *odomL;
@@ -216,7 +216,6 @@ Chassis& Chassis::smartstrafe(double direction_, double theta_, double drivespee
   target[0].drivespeed = drivespeed_;
   target[0].turnspeed = turnspeed_;
   target[0].rate = rate_;
-  target[0].rate2 = rate2_;
   isSettled = false;
   reset();
   LF.tare_position();
@@ -696,31 +695,24 @@ void Chassis::run() {
         turnLast = turnError;
 
 // strafe
-   turnError=((current-target[0].direction)*PI)/180;
-  driveOutput = cos(turnError);
- driveOutput2 = cos(turnError);
- driveOutput3 = sin(turnError);
-driveOutput4 = sin(turnError);
-//driveOutput = 10;
-//driveOutput2 = -10;
-  driveOutput = driveOutput * kP_drive*150;
-  driveOutput2 = driveOutput2 * kP_drive*150;
-  driveOutput3 = driveOutput3 * kP_drive*150;
-  driveOutput4 = driveOutput4 * kP_drive*150;
+ driveOutput = sin(((turnError-45)*PI)/180);
+driveOutput2 = -sin(((turnError+45)*PI)/180);
+  driveOutput = driveOutput * kP_drive;
+  driveOutput2 = driveOutput2 * kP_drive;
 
 
 //slew work
 
            if(turnOutput > 0) {
-             if(turnOutput > turnSlewOutput + target[0].rate2) turnSlewOutput += target[0].rate2;
+             if(turnOutput > turnSlewOutput + target[0].rate) turnSlewOutput += target[0].rate;
                else turnSlewOutput = turnOutput;
            } else if(turnOutput < 0) {
-             if(turnOutput < turnSlewOutput - target[0].rate2) turnSlewOutput -= target[0].rate2;
+             if(turnOutput < turnSlewOutput - target[0].rate) turnSlewOutput -= target[0].rate;
                else turnSlewOutput = turnOutput;
            }
 
-           if(turnSlewOutput > target[0].turnspeed) turnSlewOutput = target[0].turnspeed;
-           if(turnSlewOutput < -target[0].turnspeed) turnSlewOutput = -target[0].turnspeed;
+           if(turnSlewOutput > target[0].turnspeed) turnSlewOutput = target[0].speed;
+           if(turnSlewOutput < -target[0].turnspeed) turnSlewOutput = -target[0].speed;
 
 
 
@@ -734,8 +726,8 @@ driveOutput4 = sin(turnError);
      else driveSlewOutput = driveOutput;
  }
 
- if(driveSlewOutput > target[0].drivespeed) driveSlewOutput = target[0].drivespeed;
- if(driveSlewOutput < -target[0].drivespeed) driveSlewOutput = -target[0].drivespeed;
+ if(driveSlewOutput > target[0].drivespeed) driveSlewOutput = target[0].speed;
+ if(driveSlewOutput < -target[0].drivespeed) driveSlewOutput = -target[0].speed;
 
 
 
@@ -748,59 +740,16 @@ driveOutput4 = sin(turnError);
       else driveSlewOutput2 = driveOutput2;
   }
 
-  if(driveSlewOutput2 > target[0].drivespeed) driveSlewOutput2 = target[0].drivespeed;
-  if(driveSlewOutput2 < -target[0].drivespeed) driveSlewOutput2 = -target[0].drivespeed;
+  if(driveSlewOutput2 > target[0].drivespeed) driveSlewOutput2 = target[0].speed;
+  if(driveSlewOutput2 < -target[0].drivespeed) driveSlewOutput2 = -target[0].speed;
 
 
 
+        LF.move(turnSlewOutput+driveSlewOutput2);
+        LB.move(-turnSlewOutput+driveSlewOutput);
+        RF.move(turnSlewOutput+driveSlewOutput);
+        RB.move(-turnSlewOutput+driveSlewOutput2);
 
-
-  if(driveOutput3 > 0) {
-    if(driveOutput3 > driveSlewOutput3 + target[0].rate) driveSlewOutput3 += target[0].rate;
-      else driveSlewOutput3 = driveOutput3;
-  } else if(driveOutput3 < 0) {
-    if(driveOutput3 < driveSlewOutput3 - target[0].rate) driveSlewOutput3 -= target[0].rate;
-      else driveSlewOutput3 = driveOutput3;
-  }
-
-  if(driveSlewOutput3 > target[0].drivespeed) driveSlewOutput3 = target[0].drivespeed;
-  if(driveSlewOutput3 < -target[0].drivespeed) driveSlewOutput3 = -target[0].drivespeed;
-
-
-
-
-
-  if(driveOutput4 > 0) {
-    if(driveOutput4 > driveSlewOutput4 + target[0].rate) driveSlewOutput4 += target[0].rate;
-      else driveSlewOutput4 = driveOutput4;
-  } else if(driveOutput4 < 0) {
-    if(driveOutput4 < driveSlewOutput4 - target[0].rate) driveSlewOutput4 -= target[0].rate;
-      else driveSlewOutput4 = driveOutput4;
-  }
-
-  if(driveSlewOutput4 > target[0].drivespeed) driveSlewOutput4 = target[0].drivespeed;
-  if(driveSlewOutput4 < -target[0].drivespeed) driveSlewOutput4 = -target[0].drivespeed;
-
-
-
-        // LF.move(turnSlewOutput+driveSlewOutput2);
-        // LB.move(-turnSlewOutput+driveSlewOutput);
-        // RF.move(turnSlewOutput+driveSlewOutput);
-        // RB.move(-turnSlewOutput+driveSlewOutput2);
-         // LF.move(driveSlewOutput2);
-         // LB.move(driveSlewOutput);
-         // RF.move(-driveSlewOutput);
-         // RB.move(-driveSlewOutput2);
-
-         LF.move(driveSlewOutput2-driveSlewOutput3+turnSlewOutput);
-         LB.move(driveSlewOutput+driveSlewOutput4+turnSlewOutput);
-         RF.move(-driveSlewOutput-driveSlewOutput4+turnSlewOutput);
-         RB.move(-driveSlewOutput2+driveSlewOutput3+turnSlewOutput);
-        // LF.move(turnSlewOutput);
-        // LB.move(turnSlewOutput);
-        // RF.move(turnSlewOutput);
-        // RB.move(turnSlewOutput);
-      break;
       }
 
       default: {
