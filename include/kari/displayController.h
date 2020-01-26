@@ -30,7 +30,7 @@ class Display {
     void run();
     static void start(void* ignore);
 
-    void addInfo(std::string text, double * info);
+    Display& addInfo(std::string text, void *info);
 
     void setRemoteText(std::string text_);
 

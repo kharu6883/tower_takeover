@@ -6,6 +6,7 @@
 
 #include "kari/util/misc.h"
 #include "kari/autonController.h"
+#include "kari/displayController.h"
 
 using namespace okapi;
 using namespace std;
@@ -50,6 +51,8 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
     addAuton(SLOT_SKILLS, "Tester", "Tester", tester); // Slot 0
     addAuton(SLOT_SKILLS, "Skills 1", "Skills1", skills1);
     addAuton(SLOT_SKILLS, "Skills 2", "Skills2", skills2);
+    addAuton(SLOT_SKILLS, "Skills 3", "Skills3", skills3);
+
 
 
     isInitialized = true;
@@ -171,10 +174,17 @@ std::string Autonomous::getAbbv(int type_, int slot_) {
   }
 }
 
-void Autonomous::run() { }
-
 void Autonomous::start(void* ignore) {
   pros::delay(500);
   Autonomous* that = static_cast<Autonomous*>(ignore);
   that -> run();
+}
+
+void Autonomous::run() {
+  Display display;
+
+  while(true) {
+    display.setRemoteText(getName(getType(), getSlot()));
+    pros::delay(50);
+  }
 }

@@ -36,6 +36,7 @@ class Arm {
     bool getMacroState();
 
     // Sensors
+    double getPos();
     bool getLimit();
 
     static void start(void *ignore);

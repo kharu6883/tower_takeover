@@ -394,18 +394,19 @@ void Display::run() {
   }
 }
 
-void Display::start(void* ignore) {
+void Display::start(void *ignore) {
   pros::delay(500);
   Display* that = static_cast<Display*>(ignore);
   that -> run();
 }
 
-void Display::addInfo(std::string text, double * info) {
+Display& Display::addInfo(std::string text, void *info) {
   updateInfo.push_back(::info());
   updateInfo[updateInfo.size() - 1].labelObj = nullptr;
   updateInfo[updateInfo.size() - 1].text = text;
   updateInfo[updateInfo.size() - 1].data = info;
   updateInfo[updateInfo.size() - 1].last = 1;
+  return *this;
 }
 
 void Display::setRemoteText(std::string text_) {
