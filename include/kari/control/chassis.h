@@ -55,7 +55,7 @@ class Chassis {
     // Actuators
     Chassis& drive();
     Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse = false);
-    Chassis& drive(double target_, int speed_, int rate_ = 4);
+    Chassis& drive(double target_, int speed_, double rate_ = 4, int rate2_ =4);
     Chassis& driveUltrasonic(double target_, int speed_, int rate_ = 4);
     Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
     Chassis& turn(double theta_, int speed_, int rate_ = 4);

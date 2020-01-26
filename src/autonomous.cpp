@@ -6,6 +6,7 @@
 
 #include "kari/util/misc.h"
 #include "kari/autonController.h"
+#include "kari/displayController.h"
 
 using namespace okapi;
 using namespace std;
@@ -173,10 +174,17 @@ std::string Autonomous::getAbbv(int type_, int slot_) {
   }
 }
 
-void Autonomous::run() { }
-
 void Autonomous::start(void* ignore) {
   pros::delay(500);
   Autonomous* that = static_cast<Autonomous*>(ignore);
   that -> run();
+}
+
+void Autonomous::run() {
+  Display display;
+
+  while(true) {
+    display.setRemoteText(getName(getType(), getSlot()));
+    pros::delay(50);
+  }
 }

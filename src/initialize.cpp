@@ -47,6 +47,9 @@ void initialize() {
   pros::Task b_display(Disp.start, NULL, "Display Controller");
   b_display.set_priority(TASK_PRIORITY_MIN);
 
+  pros::Task b_auton(Auton.start, NULL, "Auton Controller");
+  b_display.set_priority(TASK_PRIORITY_MIN);
+
   Disp.addInfo("Left", odom.getL())
       .addInfo("Right", odom.getR())
       .addInfo("Rad Theta", odom.getThetaRad())
