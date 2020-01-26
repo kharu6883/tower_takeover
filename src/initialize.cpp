@@ -19,7 +19,7 @@ void initialize() {
   macro::print("Auton Set!");
 
   // Class Initialization
-  Odometry odom;
+  Odom odom;
   Chassis chassis(odom.getL(), odom.getR(), odom.getThetaDeg(), odom.getX(), odom.getY());
   Rack rack;
   Arm arm;

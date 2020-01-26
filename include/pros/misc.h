@@ -10,7 +10,7 @@
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * Copyright (c) 2017-2019, Purdue University ACM SIGBots.
+ * Copyright (c) 2017-2020, Purdue University ACM SIGBots.
  * All rights reservered.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -423,6 +423,13 @@ double battery_get_temperature(void);
  * \return The current capacity of the battery
  */
 double battery_get_capacity(void);
+
+/**
+ * Checks if the SD card is installed.
+ *
+ * \return 1 if the SD card is installed, 0 otherwise
+ */
+int32_t usd_is_installed(void);
 
 #ifdef __cplusplus
 }

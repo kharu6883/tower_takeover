@@ -11,7 +11,7 @@
 static Chassis chassis;
 static Rack rack;
 static Arm arm;
-static Odometry odom;
+static Odom odom;
 
 using namespace io;
 
