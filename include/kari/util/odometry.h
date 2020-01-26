@@ -2,7 +2,7 @@
 
 extern pros::ADIEncoder LEncoder, REncoder;
 
-class Odometry {
+class Odom {
   public:
 
     // Getters & Setters

@@ -73,17 +73,6 @@ static lv_res_t auton_click_action(lv_obj_t * btn) {
   return LV_RES_OK;
 }
 
-// static lv_res_t camera_click_action(lv_obj_t * btn) {
-//   int id = lv_obj_get_free_num(btn);
-//
-//   switch(id) {
-//     case 1: CamFront.set_exposure(CamFront.get_exposure() - 15); break;
-//     case 2: CamFront.set_exposure(CamFront.get_exposure() + 15); break;
-//   }
-//
-//   return LV_RES_OK;
-// }
-
 static lv_res_t settings_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
@@ -424,18 +413,19 @@ void Display::run() {
   }
 }
 
-void Display::start(void* ignore) {
+void Display::start(void *ignore) {
   pros::delay(500);
   Display* that = static_cast<Display*>(ignore);
   that -> run();
 }
 
-void Display::addInfo(std::string text, double * info) {
+Display& Display::addInfo(std::string text, void *info) {
   updateInfo.push_back(::info());
   updateInfo[updateInfo.size() - 1].labelObj = nullptr;
   updateInfo[updateInfo.size() - 1].text = text;
   updateInfo[updateInfo.size() - 1].data = info;
   updateInfo[updateInfo.size() - 1].last = 1;
+  return *this;
 }
 
 void Display::setRemoteText(std::string text_) {

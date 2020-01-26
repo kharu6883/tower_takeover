@@ -4,61 +4,61 @@
 pros::ADIEncoder LEncoder(5, 6, true),
                  REncoder(3, 4);
 
-bool Odometry::isRunning = false;
+bool Odom::isRunning = false;
 
-double Odometry::currentL = 0, Odometry::currentR = 0;
-double Odometry::deltaL = 0, Odometry::deltaR = 0, Odometry::lastDeltaL = 0, Odometry::lastDeltaR = 0;
+double Odom::currentL = 0, Odom::currentR = 0;
+double Odom::deltaL = 0, Odom::deltaR = 0, Odom::lastDeltaL = 0, Odom::lastDeltaR = 0;
 
-double Odometry::thetaRad = 0, Odometry::thetaDeg = 0, Odometry::posX = 0, Odometry::posY = 0;
+double Odom::thetaRad = 0, Odom::thetaDeg = 0, Odom::posX = 0, Odom::posY = 0;
 
-double Odometry::output = 0, Odometry::Desiredtheta = 0, Odometry::DesiredX = 0, Odometry::DesiredY = 0;
+double Odom::output = 0, Odom::Desiredtheta = 0, Odom::DesiredX = 0, Odom::DesiredY = 0;
 
-double * Odometry::getL() {
+double * Odom::getL() {
   return &currentL;
 }
 
-double * Odometry::getR() {
+double * Odom::getR() {
   return &currentR;
 }
 
-double * Odometry::getDL() {
+double * Odom::getDL() {
   return &deltaL;
 }
 
-double * Odometry::getDR() {
+double * Odom::getDR() {
   return &deltaR;
 }
 
-double * Odometry::getThetaRad() {
+double * Odom::getThetaRad() {
   return &thetaRad;
 }
 
-double * Odometry::getThetaDeg() {
+double * Odom::getThetaDeg() {
   return &thetaDeg;
 }
 
-double * Odometry::getX() {
+double * Odom::getX() {
   return &posX;
 }
 
-double * Odometry::getY() {
+double * Odom::getY() {
   return &posY;
 }
 
-void Odometry::reset(int theta_) {
+void Odom::reset(int theta_) {
   posX = posY = 0;
   thetaRad = theta_ * ( PI * 180 );
 }
 
-void Odometry::start(void *ignore) {
+void Odom::start(void *ignore) {
   if(!isRunning) {
     pros::delay(500);
-    Odometry *that = static_cast<Odometry*>(ignore);
+    Odom *that = static_cast<Odom*>(ignore);
     that -> run();
   }
 }
 
-void Odometry::run() {
+void Odom::run() {
   isRunning = true;
 
   while(isRunning) {
@@ -88,6 +88,6 @@ void Odometry::run() {
   }
 }
 
-void Odometry::stop() {
+void Odom::stop() {
   isRunning = false;
 }
