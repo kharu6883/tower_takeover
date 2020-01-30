@@ -36,6 +36,7 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
     // RED
     addAuton(SLOT_RED, "Red small zone9", "RSZ", redsmallzone9);
     addAuton(SLOT_RED, "Red small zone8", "RSZ", redsmallzone8);
+    addAuton(SLOT_RED, "Red small zone7", "RSZU", redsmallzone7);
     addAuton(SLOT_RED, "Red small zone5", "RSZ", redsmallzone5);
     addAuton(SLOT_RED, "Red big zone", "RBZ", redbigzone);
     addAuton(SLOT_RED, "Red big zone score", "RBZs", redbigzonescore);

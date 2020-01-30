@@ -297,7 +297,7 @@ void Chassis::run() {
   while(isRunning) {
     if(!pros::competition::is_autonomous()) goto end;
 
-    current = ( Imu_L.get_heading() + Imu_L.get_heading() ) / 2 - gyroOffset;
+    current = ( Imu_L.get_yaw() + Imu_L.get_yaw() ) / 2 - gyroOffset;
 
     switch(mode) {
       case DRIVING_POINT: { // Driving
@@ -814,7 +814,7 @@ driveOutput4 = sin(turnError);
     std::cout << "Left Front: " << LF.get_position() << ", Output: " << output << std::endl;
     #endif
 
-    std::cout << Imu_T.get_heading() << " " << Imu_L.get_heading() << " " << Imu_R.get_heading() << std::endl;
+    std::cout << Imu_T.get_yaw() << " " << Imu_L.get_yaw() << " " << Imu_R.get_yaw() << std::endl;
 
     end:
     pros::delay(10);
