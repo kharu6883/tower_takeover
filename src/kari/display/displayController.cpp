@@ -309,6 +309,22 @@ void Display::setting() {
   lv_scr_load(scr);
 }
 
+void Display::tab_main() {
+  
+}
+
+void Display::tab_auton() {
+
+}
+
+void Display::tab_sensor() {
+
+}
+
+void Display::tab_setting() {
+
+}
+
 void Display::run() {
   int nowType, lastType, nowSlot, lastSlot;
   std::string name;

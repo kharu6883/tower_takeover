@@ -27,6 +27,11 @@ class Display {
     void camera();
     void setting();
 
+    void tab_main();
+    void tab_auton();
+    void tab_sensor();
+    void tab_setting();
+
     void run();
     static void start(void* ignore);
 
