@@ -229,9 +229,9 @@ void Display::auton() {
       int size = Auton.getSize(SLOT_RED);
       for(int i = 0; i < size; i++) {
         if(i == 0) {
-          btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+          btnm[i] = createButton(i, 200, 40, 250, 30, Auton.getName(auton_type, i), scr, auton_click_action);
         } else {
-          btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+          btnm[i] = createButton(i, 200, i * 35 + 20, 250, 30, Auton.getName(auton_type, i), scr, auton_click_action);
         }
 
         lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_red);
@@ -245,9 +245,9 @@ void Display::auton() {
       int size = Auton.getSize(SLOT_BLUE);
       for(int i = 0; i < size; i++) {
         if(i == 0) {
-          btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+          btnm[i] = createButton(i, 200, 40, 250, 30, Auton.getName(auton_type, i), scr, auton_click_action);
         } else {
-          btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+          btnm[i] = createButton(i, 200, i * 35 + 20, 250, 30, Auton.getName(auton_type, i), scr, auton_click_action);
         }
 
         lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_blue);
@@ -261,9 +261,9 @@ void Display::auton() {
       int size = Auton.getSize(SLOT_SKILLS);
       for(int i = 0; i < size; i++) {
         if(i == 0) {
-          btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+          btnm[i] = createButton(i, 200, 40, 250, 30, Auton.getName(auton_type, i), scr, auton_click_action);
         } else {
-          btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+          btnm[i] = createButton(i, 200, i * 35 + 20, 250, 30, Auton.getName(auton_type, i), scr, auton_click_action);
         }
 
         lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_skills);
@@ -277,9 +277,9 @@ void Display::auton() {
       int size = Auton.getSize(SLOT_RED);
       for(int i = 0; i < size; i++) {
         if(i == 0) {
-          btnm[i] = createButton(i, 200, 40, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+          btnm[i] = createButton(i, 200, 40, 250, 30, Auton.getName(auton_type, i), scr, auton_click_action);
         } else {
-          btnm[i] = createButton(i, 200, i * 45 + 20, 250, 40, Auton.getName(auton_type, i), scr, auton_click_action);
+          btnm[i] = createButton(i, 200, i * 35 + 20, 250, 30, Auton.getName(auton_type, i), scr, auton_click_action);
         }
 
         lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_red);
