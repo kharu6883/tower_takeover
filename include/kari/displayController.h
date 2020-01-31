@@ -27,11 +27,6 @@ class Display {
     void camera();
     void setting();
 
-    void tab_main();
-    void tab_auton();
-    void tab_sensor();
-    void tab_setting();
-
     void run();
     static void start(void* ignore);
 
@@ -43,6 +38,11 @@ class Display {
     static std::string setText, lastText;
 
     static std::vector<info> updateInfo;
+
+    void tabMain(lv_obj_t * parent);
+    void tabAuton(lv_obj_t * parent);
+    void tabSensor(lv_obj_t * parent);
+    void tabSetting(lv_obj_t * parent);
 
     void remoteUpdate();
 
