@@ -21,25 +21,23 @@ class Display {
   public:
     Display();
 
-    void main();
-    void auton();
-    void sensor();
-    void camera();
-    void setting();
-
-    void run();
     static void start(void* ignore);
+    void run();
+    void stop();
 
     Display& addInfo(std::string text, void *info);
 
     void setRemoteText(std::string text_);
 
   private:
+    static bool isRunning, isInitialized;
+
+    static int currScr;
+
     static std::string setText, lastText;
 
     static std::vector<info> updateInfo;
 
-    void tabMain(lv_obj_t * parent);
     void tabAuton(lv_obj_t * parent);
     void tabSensor(lv_obj_t * parent);
     void tabSetting(lv_obj_t * parent);
