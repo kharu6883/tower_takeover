@@ -41,6 +41,8 @@ class Chassis {
     Chassis& calibrateGyro();
     Chassis& tareGyro();
 
+    Chassis& getGyro();
+
     // Constant Settings
     Chassis& withConst(double kPd = 0.9, double kDd = 0.3, double kPt = 3.3, double kDt = 0.3);
     Chassis& withTol(double tolerance_ = 1);
