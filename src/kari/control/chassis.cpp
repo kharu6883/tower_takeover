@@ -55,6 +55,10 @@ Chassis& Chassis::tareGyro() {
   return *this;
 }
 
+Chassis& Chassis::getGyro() {
+  return *this;
+}
+
 Chassis& Chassis::withConst(double kPd, double kDd, double kPt, double kDt) {
   kP_drive = kPd;
   kD_drive = kDd;
