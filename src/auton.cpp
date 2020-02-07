@@ -15,6 +15,8 @@ static Odom odom;
 
 using namespace io;
 
+// Make Trigger
+
 /*===========================================
   DICTIONARY
 ===========================================*/
@@ -498,7 +500,7 @@ void skills1() {
     delay(500);
     arm.move(1.05, 127);
     chassis.lock();
-    chassis.drive(950,80,4).withGyro(45).withConst(0.2).withTol(50).waitUntilSettled();
+    chassis.drive(850,80,4).withGyro(40).withConst(0.2).withTol(50).waitUntilSettled();
 
     arm.waitUntilSettled();
      roller(-80);
@@ -515,7 +517,7 @@ void skills1() {
      chassis.setMode(IDLE);
      chassis.drive(1200,60,5).withGyro(0).withTol(10).waitUntilSettled();
      chassis.drive(500,60,5).withGyro(10).withTol(10).waitUntilSettled();
-     chassis.drive(2300,60,5).withGyro(355).withTol(10).waitUntilSettled();
+     chassis.drive(2300,60,5).withGyro(359).withTol(10).waitUntilSettled();
 
               delay(600);
               arm.tower(1);
@@ -574,7 +576,7 @@ void skills1() {
      delay(500);
      roller(127);
      chassis.lock();
-     chassis.drive(-180, 50).withGyro(135).withConst(0.4, 0.2).withTol(5).waitUntilSettled();
+     chassis.drive(-150, 50).withGyro(135).withConst(0.4, 0.2).withTol(5).waitUntilSettled();
      arm.zero();
      delay(200);
      chassis.turn(180, 55,4).withoutOdom().withTol(4).waitUntilSettled();
