@@ -186,8 +186,11 @@ void Display::tabSkills(lv_obj_t * parent) {
 
 void Display::tabSensor(lv_obj_t * parent) {
   for(int i = 0; i < updateInfo.size(); i++) {
-    if(i == 0) updateInfo[i].labelObj = createLabel(20, 50, updateInfo[i].name, parent);
-      else updateInfo[i].labelObj = createLabel(20, i * 20 + 20, updateInfo[i].name, parent);
+    if((i + 1) % 2 == 1) {
+      updateInfo[i].labelObj = createLabel(20, (int)( i / 2 ) * 20 + 20, updateInfo[i].name, parent);
+    } else {
+      updateInfo[i].labelObj = createLabel(180, (int)( i / 2 ) * 20 + 20, updateInfo[i].name, parent);
+    }
   }
 }
 
@@ -202,11 +205,7 @@ void Display::start(void *ignore) {
 }
 
 void Display::run() {
-  int nowType, lastType, nowSlot, lastSlot;
-  std::string name;
-  const char * c;
-
-  name = "Auton Selected: ";
+  // int nowType, lastType, nowSlot, lastSlot;
 
   while(isRunning) {
 
@@ -230,7 +229,7 @@ void Display::run() {
 
           if(temp != updateInfo[i].last) {
             std::string update = updateInfo[i].name + ": " + temp;
-            lv_label_set_text(updateInfo[i].labelObj, temp.c_str());
+            lv_label_set_text(updateInfo[i].labelObj, update.c_str());
             updateInfo[i].last = temp;
           }
         }
