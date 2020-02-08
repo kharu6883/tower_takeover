@@ -34,13 +34,16 @@ static lv_style_t style_skills_released;
 
 static lv_obj_t * scr;
 
-// static lv_style_t overlay;
-// static lv_obj_t * autonStat;
-// static lv_obj_t * status;
-
 static lv_res_t btn_click_action(lv_obj_t * btn) {
+  int id = lv_obj_get_free_num(btn);
 
   Display display;
+
+  switch(id) {
+    case 1: auton_type = 1;
+    case 2: auton_type = 2;
+    case 3: auton_type = 3;
+  }
 
   return LV_RES_OK;
 }
@@ -58,16 +61,10 @@ Display::Display() {
   if(!isInitialized) {
     // Theme & Style init
     lv_theme_t * th = lv_theme_material_init(120, NULL);
+
     lv_theme_set_current(th);
 
     lv_style_plain.body.radius = 1;
-
-    // lv_style_copy(&overlay, &lv_style_plain);
-    // overlay.body.main_color = LV_COLOR_RED;
-    // overlay.body.grad_color = LV_COLOR_RED;
-    // overlay.body.border.color = LV_COLOR_BLACK;
-    // overlay.body.border.width = 2;
-    // overlay.text.color = LV_COLOR_WHITE;
 
     // Auton Btn Style
     lv_style_copy(&style_red, &lv_style_plain);
@@ -113,113 +110,84 @@ Display::Display() {
     style_skills_released.body.border.width = 2;
     style_skills_released.text.color = LV_COLOR_WHITE;
 
-    // Overlay & Screen setup
-    // status = lv_cont_create(lv_layer_top(), NULL);
-    // lv_obj_set_style(status, &overlay);
-    // lv_obj_set_pos(status, 2, 2);
-    // lv_obj_set_size(status, 476, 20);
-    // lv_cont_set_layout(status, LV_LAYOUT_CENTER);
-    //
-    // autonStat = lv_label_create(status, NULL);
-    // lv_obj_set_style(autonStat, &overlay);
-    // lv_obj_set_y(autonStat, 2);
-
-    isInitialized = true;
-
     pros::delay(200);
 
     scr = lv_cont_create(NULL, NULL);
     lv_scr_load(scr);
 
     lv_obj_t * tv = lv_tabview_create(scr, NULL);
-    lv_obj_set_size(tv, 480, 250);
     lv_obj_set_pos(tv, 0, 0);
-    lv_obj_t * tab1 = lv_tabview_add_tab(tv, SYMBOL_LIST" Auton");
-    lv_obj_t * tab2 = lv_tabview_add_tab(tv, SYMBOL_GPS" Sensor");
-    lv_obj_t * tab3 = lv_tabview_add_tab(tv, SYMBOL_SETTINGS" Settings");
+    lv_obj_set_size(tv, 480, 250);
+    lv_tabview_set_sliding(tv, false);
 
-    tabAuton(tab1);
-    tabSensor(tab2);
-    tabSetting(tab3);
+    lv_obj_t * tab1 = lv_tabview_add_tab(tv, "Red");
+    lv_obj_t * tab2 = lv_tabview_add_tab(tv, "Blue");
+    lv_obj_t * tab3 = lv_tabview_add_tab(tv, "Skills");
+    lv_obj_t * tab4 = lv_tabview_add_tab(tv, "Sensor");
+    lv_obj_t * tab5 = lv_tabview_add_tab(tv, "Settings");
+
+    tabRed(tab1);
+    tabBlue(tab2);
+    tabSkills(tab3);
+    tabSensor(tab4);
+    tabSetting(tab5);
+
+    isInitialized = true;
   }
 }
 
-void Display::tabAuton(lv_obj_t * parent) {
+void Display::tabRed(lv_obj_t * parent) {
+  lv_obj_t * btnmr[50];
 
-  lv_obj_t * btnTypeCont = lv_cont_create(parent, NULL);
-  lv_obj_set_size(btnTypeCont, 100, 170);
-  lv_obj_set_pos(btnTypeCont, 0, 0);
-  lv_cont_set_layout(btnTypeCont, LV_LAYOUT_COL_M);
-
-  lv_obj_t * btnRed = createButton(1, 5, 35, 80, 40, "Red", btnTypeCont, btn_click_action);
-  lv_btn_set_style(btnRed, LV_BTN_STYLE_PR, &style_red);
-  lv_btn_set_style(btnRed, LV_BTN_STYLE_REL, &style_red_released);
-
-  lv_obj_t * btnBlue = createButton(2, 5, 80, 80, 40, "Blue", btnTypeCont, btn_click_action);
-  lv_btn_set_style(btnBlue, LV_BTN_STYLE_PR, &style_blue);
-  lv_btn_set_style(btnBlue, LV_BTN_STYLE_REL, &style_blue_released);
-
-  lv_obj_t * btnSkills = createButton(3, 5, 125, 80, 40, "Skills", btnTypeCont, btn_click_action);
-  lv_btn_set_style(btnSkills, LV_BTN_STYLE_PR, &style_skills);
-  lv_btn_set_style(btnSkills, LV_BTN_STYLE_REL, &style_skills_released);
-
-  lv_obj_t * btnm[50];
-
-  switch(auton_type) {
-    case SLOT_RED: {
-      int size = Auton.getSize(SLOT_RED);
-      for(int i = 0; i < size; i++) {
-        btnm[i] = createButton(i, 200, i * 35 + 20, 250, 30, Auton.getName(auton_type, i), parent, auton_click_action);
-
-        lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_red);
-        lv_btn_set_style(btnm[i], LV_BTN_STYLE_REL, &style_red_released);
-      }
-
-      break;
+  int size = Auton.getSize(SLOT_RED);
+  for(int i = 0; i < size; i++) {
+    if((i + 1) % 2 == 1) {
+      btnmr[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(1, i), parent, auton_click_action);
+    } else {
+      btnmr[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(1, i), parent, auton_click_action);
     }
 
-    case SLOT_BLUE: {
-      int size = Auton.getSize(SLOT_BLUE);
-      for(int i = 0; i < size; i++) {
-        btnm[i] = createButton(i, 200, i * 35 + 20, 250, 30, Auton.getName(auton_type, i), parent, auton_click_action);
+    lv_btn_set_style(btnmr[i], LV_BTN_STYLE_PR, &style_red);
+    lv_btn_set_style(btnmr[i], LV_BTN_STYLE_REL, &style_red_released);
+  }
+}
 
-        lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_blue);
-        lv_btn_set_style(btnm[i], LV_BTN_STYLE_REL, &style_blue_released);
-      }
+void Display::tabBlue(lv_obj_t * parent) {
+  lv_obj_t * btnmb[50];
 
-      break;
+  int size = Auton.getSize(SLOT_BLUE);
+  for(int i = 0; i < size; i++) {
+    if((i + 1) % 2 == 1) {
+      btnmb[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(2, i), parent, auton_click_action);
+    } else {
+      btnmb[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(2, i), parent, auton_click_action);
     }
 
-    case SLOT_SKILLS: {
-      int size = Auton.getSize(SLOT_SKILLS);
-      for(int i = 0; i < size; i++) {
-        btnm[i] = createButton(i, 200, i * 35 + 20, 250, 30, Auton.getName(auton_type, i), parent, auton_click_action);
+    lv_btn_set_style(btnmb[i], LV_BTN_STYLE_PR, &style_blue);
+    lv_btn_set_style(btnmb[i], LV_BTN_STYLE_REL, &style_blue_released);
+  }
+}
 
-        lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_skills);
-        lv_btn_set_style(btnm[i], LV_BTN_STYLE_REL, &style_skills_released);
-      }
+void Display::tabSkills(lv_obj_t * parent) {
+  lv_obj_t * btnms[50];
 
-      break;
+  int size = Auton.getSize(SLOT_SKILLS);
+  for(int i = 0; i < size; i++) {
+    if((i + 1) % 2 == 1) {
+      btnms[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(3, i), parent, auton_click_action);
+    } else {
+      btnms[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(3, i), parent, auton_click_action);
     }
 
-    default: {
-      int size = Auton.getSize(SLOT_RED);
-      for(int i = 0; i < size; i++) {
-        btnm[i] = createButton(i, 200, i * 35 + 20, 250, 30, Auton.getName(auton_type, i), parent, auton_click_action);
-
-        lv_btn_set_style(btnm[i], LV_BTN_STYLE_PR, &style_red);
-        lv_btn_set_style(btnm[i], LV_BTN_STYLE_REL, &style_red_released);
-      }
-
-      break;
-    }
+    lv_btn_set_style(btnms[i], LV_BTN_STYLE_PR, &style_skills);
+    lv_btn_set_style(btnms[i], LV_BTN_STYLE_REL, &style_skills_released);
   }
 }
 
 void Display::tabSensor(lv_obj_t * parent) {
   for(int i = 0; i < updateInfo.size(); i++) {
-    if(i == 0) updateInfo[i].labelObj = createLabel(20, 50, updateInfo[i].text, parent);
-      else updateInfo[i].labelObj = createLabel(20, i * 20 + 20, updateInfo[i].text, parent);
+    if(i == 0) updateInfo[i].labelObj = createLabel(20, 50, updateInfo[i].name, parent);
+      else updateInfo[i].labelObj = createLabel(20, i * 20 + 20, updateInfo[i].name, parent);
   }
 }
 
@@ -251,8 +219,23 @@ void Display::run() {
       case 2: { // Sensor
         for(int i = 0; i < updateInfo.size(); i++) {
           if(updateInfo[i].labelObj == nullptr) break;
+
+          switch(updateInfo[i].type) {
+            case 'i': {
+              
+            }
+
+            case 'd': {
+
+            }
+
+            case 'b': {
+
+            }
+          }
+
           if(*(double*)updateInfo[i].data != updateInfo[i].last) {
-            std::string temp = updateInfo[i].text + ": " + std::to_string(*(double*)updateInfo[i].data);
+            std::string temp = updateInfo[i].name + ": " + std::to_string(*(double*)updateInfo[i].data);
             lv_label_set_text(updateInfo[i].labelObj, temp.c_str());
             updateInfo[i].last = *(double*)updateInfo[i].data;
           }
@@ -317,10 +300,11 @@ void Display::stop() {
   isRunning = false;
 }
 
-Display& Display::addInfo(std::string text, void *info) {
+Display& Display::addInfo(std::string name, char type, void *info) {
   updateInfo.push_back(::info());
   updateInfo[updateInfo.size() - 1].labelObj = nullptr;
-  updateInfo[updateInfo.size() - 1].text = text;
+  updateInfo[updateInfo.size() - 1].name = name;
+  updateInfo[updateInfo.size() - 1].type = type;
   updateInfo[updateInfo.size() - 1].data = info;
   updateInfo[updateInfo.size() - 1].last = 1;
   return *this;

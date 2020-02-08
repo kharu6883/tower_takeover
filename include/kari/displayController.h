@@ -12,7 +12,8 @@ LV_IMG_DECLARE(michael2);
 
 struct info {
   lv_obj_t * labelObj;
-  std::string text;
+  std::string name;
+  char type;
   void * data;
   double last;
 };
@@ -25,7 +26,7 @@ class Display {
     void run();
     void stop();
 
-    Display& addInfo(std::string text, void *info);
+    Display& addInfo(std::string name, char type, void *info);
 
     void setRemoteText(std::string text_);
 
@@ -38,7 +39,9 @@ class Display {
 
     static std::vector<info> updateInfo;
 
-    void tabAuton(lv_obj_t * parent);
+    void tabRed(lv_obj_t * parent);
+    void tabBlue(lv_obj_t * parent);
+    void tabSkills(lv_obj_t * parent);
     void tabSensor(lv_obj_t * parent);
     void tabSetting(lv_obj_t * parent);
 
