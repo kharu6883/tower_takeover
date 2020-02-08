@@ -50,14 +50,12 @@ void initialize() {
   pros::Task b_auton(Auton.start, NULL, "Auton Controller");
   b_display.set_priority(TASK_PRIORITY_MIN);
 
-  Disp.addInfo("Left", odom.getL())
-      .addInfo("Right", odom.getR())
-      .addInfo("Rad Theta", odom.getThetaRad())
-      .addInfo("Deg Theta", odom.getThetaDeg())
-      .addInfo("X", odom.getX())
-      .addInfo("Y", odom.getY());
-
-  Disp.addInfo("Yeet", odom.getL());
+  Disp.addInfo("Left", 'i', odom.getL())
+      .addInfo("Right", 'i', odom.getR())
+      .addInfo("Rad Theta", 'd', odom.getThetaRad())
+      .addInfo("Deg Theta", 'd', odom.getThetaDeg())
+      .addInfo("X", 'd', odom.getX())
+      .addInfo("Y", 'd', odom.getY());
 
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;

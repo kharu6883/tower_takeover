@@ -15,7 +15,7 @@ struct info {
   std::string name;
   char type;
   void * data;
-  double last;
+  std::string last;
 };
 
 class Display {

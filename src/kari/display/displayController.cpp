@@ -220,24 +220,18 @@ void Display::run() {
         for(int i = 0; i < updateInfo.size(); i++) {
           if(updateInfo[i].labelObj == nullptr) break;
 
+          std::string temp = "";
+
           switch(updateInfo[i].type) {
-            case 'i': {
-              
-            }
-
-            case 'd': {
-
-            }
-
-            case 'b': {
-
-            }
+            case 'i': temp = std::to_string(*(int*)updateInfo[i].data);
+            case 'd': temp = std::to_string(*(double*)updateInfo[i].data);
+            case 'b': temp = std::to_string(*(bool*)updateInfo[i].data);
           }
 
-          if(*(double*)updateInfo[i].data != updateInfo[i].last) {
-            std::string temp = updateInfo[i].name + ": " + std::to_string(*(double*)updateInfo[i].data);
+          if(temp != updateInfo[i].last) {
+            std::string update = updateInfo[i].name + ": " + temp;
             lv_label_set_text(updateInfo[i].labelObj, temp.c_str());
-            updateInfo[i].last = *(double*)updateInfo[i].data;
+            updateInfo[i].last = temp;
           }
         }
         break;
