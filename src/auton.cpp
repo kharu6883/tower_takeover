@@ -142,9 +142,9 @@ void redbigzone() {
     chassis.drive(600, 60,1).withGyro(0).withTol(15).waitUntilSettled();
     chassis.turn(90, 70).withoutOdom().withTol(15).waitUntilSettled();
     chassis.drive(300, 60,1,5).withGyro(90).withTol(15).waitUntilSettled();
-    chassis.drive(-300, 80,1,5).withGyro(90).withTol(15).waitUntilSettled();
+    chassis.drive(-200, 80,1,5).withGyro(90).withTol(15).waitUntilSettled();
     chassis.turn(270, 127).withoutOdom().withTol(15).waitUntilSettled();
-    chassis.drive(700, 50,1,5).withGyro(270).withTol(15).waitUntilSettled();
+    chassis.drive(800, 50,1,5).withGyro(270).withTol(15).waitUntilSettled();
 
 }
 
@@ -161,9 +161,9 @@ void redbigzonescore() {
     chassis.drive(600, 60,1).withGyro(0).withTol(15).waitUntilSettled();
     chassis.turn(90, 70).withoutOdom().withTol(15).waitUntilSettled();
     chassis.drive(300, 60,1,5).withGyro(90).withTol(15).waitUntilSettled();
-    chassis.drive(-300, 80,1,5).withGyro(90).withTol(15).waitUntilSettled();
+    chassis.drive(-200, 80,1,5).withGyro(90).withTol(15).waitUntilSettled();
     chassis.turn(270, 127).withoutOdom().withTol(15).waitUntilSettled();
-    chassis.drive(700, 50,1,5).withGyro(270).withTol(15).waitUntilSettled();
+    chassis.drive(800, 50,1,5).withGyro(270).withTol(15).waitUntilSettled();
     chassis.turn(225, 127).withoutOdom().withTol(15).waitUntilSettled();
     delay(200);
     rack.move(RACK_UP,127,7).withConst(0.1).withTol(30);
