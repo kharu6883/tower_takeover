@@ -57,6 +57,9 @@ void initialize() {
       .addInfo("X", 'd', odom.getX())
       .addInfo("Y", 'd', odom.getY());
 
+
+  // Disp.addInfo("Yeet", 'b', df);
+
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;
   io::master.rumble(" .");

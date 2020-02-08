@@ -187,12 +187,10 @@ void Display::tabSkills(lv_obj_t * parent) {
 }
 
 void Display::tabSensor(lv_obj_t * parent) {
+  // lv_obj_t * yeet = createLabel(20, 0, "Cyka blyat", parent);
   for(int i = 0; i < updateInfo.size(); i++) {
-    if((i + 1) % 2 == 1) {
-      updateInfo[i].labelObj = createLabel(20, (int)( i / 2 ) * 20 + 20, updateInfo[i].name, parent);
-    } else {
-      updateInfo[i].labelObj = createLabel(180, (int)( i / 2 ) * 20 + 20, updateInfo[i].name, parent);
-    }
+    updateInfo[i].labelObj = createLabel(20, 100, updateInfo[i].name + ": ", parent);
+    // updateInfo[i].labelObj = createLabel(180, 200, updateInfo[i].name + ": ", parent);
   }
 }
 
