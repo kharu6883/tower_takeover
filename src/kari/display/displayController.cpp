@@ -62,6 +62,8 @@ Display::Display() {
     // Theme & Style init
     lv_theme_t * th = lv_theme_material_init(120, NULL);
 
+    // th->tabview.btn.tgl_rel->body.main_color = LV_COLOR_RED;
+
     lv_theme_set_current(th);
 
     lv_style_plain.body.radius = 1;
