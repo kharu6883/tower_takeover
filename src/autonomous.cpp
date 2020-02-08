@@ -44,7 +44,7 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
     // BLUE
     //addAuton(SLOT_BLUE, "blue small zone9", "BSZ", bluesmallzone9);
     addAuton(SLOT_BLUE, "blue small zone8", "BSZ", bluesmallzone8);
-    //addAuton(SLOT_BLUE, "blue small zone5", "BSZ", bluesmallzone5);
+    addAuton(SLOT_BLUE, "blue small zone5", "BSZ", bluesmallzone5);
     addAuton(SLOT_BLUE, "blue big zone", "BBZ", bluebigzone);
     addAuton(SLOT_BLUE, "blue big zone score", "BBZs", bluebigzonescore);
 

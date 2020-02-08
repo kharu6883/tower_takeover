@@ -103,7 +103,6 @@ void redsmallzone5() {
     chassis.waitUntilSettled();
   chassis.drive(950,40,5).withGyro(0).withTol(10).waitUntilSettled();
 
-  chassis.turn(0,127,4).withoutOdom().withTol(4).waitUntilSettled();
   chassis.drive(-1000,60,5).withGyro(0).withTol(10).waitUntilSettled();
   rack.move(1000,127);
   chassis.turn(90,127,4).withoutOdom().withTol(4).waitUntilSettled();
@@ -246,7 +245,6 @@ void bluesmallzone5() {
     chassis.waitUntilSettled();
   chassis.drive(950,40,5).withGyro(0).withTol(10).waitUntilSettled();
 
-  chassis.turn(0,127,4).withoutOdom().withTol(4).waitUntilSettled();
   chassis.drive(-1000,60,5).withGyro(0).withTol(10).waitUntilSettled();
   rack.move(1000,127);
   chassis.turn(270,127,4).withoutOdom().withTol(4).waitUntilSettled();
