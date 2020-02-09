@@ -37,13 +37,7 @@ static lv_obj_t * scr;
 static lv_res_t btn_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
-  Display display;
-
-  switch(id) {
-    case 1: auton_type = 1;
-    case 2: auton_type = 2;
-    case 3: auton_type = 3;
-  }
+  
 
   return LV_RES_OK;
 }
