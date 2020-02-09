@@ -47,8 +47,8 @@ void redsmallzone9() {
 }
 
 void redsmallzone8() {
-  chassis.drive(250,50,4).withTol(5);
   chassis.tareGyro();
+  chassis.drive(250,50,4).withTol(5);
 
   arm.move(1.05, 127);
   delay(800);
@@ -91,8 +91,9 @@ void redsmallzone7() {
 }
 
 void redsmallzone5() {
-  chassis.drive(50,50,4).withTol(5);
   chassis.tareGyro();
+
+  chassis.drive(50,50,4).withTol(5);
 
   arm.move(1.05, 127);
   delay(800);
@@ -189,8 +190,9 @@ void bluesmallzone9() {
 }
 
 void bluesmallzone8() {
-  chassis.drive(250,50,4).withTol(5);
   chassis.tareGyro();
+
+  chassis.drive(250,50,4).withTol(5);
 
   arm.move(1.05, 127);
   delay(800);
@@ -233,8 +235,9 @@ void bluesmallzone7() {
 }
 
 void bluesmallzone5() {
-  chassis.drive(50,50,4).withTol(5);
   chassis.tareGyro();
+
+  chassis.drive(50,50,4).withTol(5);
 
   arm.move(1.05, 127);
   delay(800);
