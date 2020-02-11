@@ -729,7 +729,10 @@ driveOutput4 = sin(turnError);
            if(turnSlewOutput < -target[0].turnspeed) turnSlewOutput = -target[0].turnspeed;
 
 
-
+driveOutput/=abs(turnSlewOutput);
+driveOutput2/=abs(turnSlewOutput);
+driveOutput3/=abs(turnSlewOutput);
+driveOutput4/=abs(turnSlewOutput);
 
 
  if(driveOutput > 0) {
