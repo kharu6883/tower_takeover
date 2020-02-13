@@ -13,7 +13,7 @@ using namespace std;
 
 bool Autonomous::isInitialized = false;
 int Autonomous::type = SLOT_SKILLS,
-Autonomous::slot = 0;
+Autonomous::slot = 2;
 
 std::map<int, void(*)()> Autonomous::redAuton;
 std::map<int, void(*)()> Autonomous::blueAuton;

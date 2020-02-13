@@ -494,6 +494,36 @@ void skills1() {
 
 void skills2() {
 
+      chassis.tareGyro();
+      chassis.lock();
+      chassis.drive(250,70,4).withTol(5);
+
+      arm.move(1.05, 127);
+      delay(800);
+      arm.zero();
+      odom.reset(0);
+      delay(800);
+        roller(127);
+        chassis.waitUntilSettled();
+      chassis.drive(600,55,5).withGyro(0).withTol(10).waitUntilSettled();
+      arm.move(0.3, 127);
+      delay(200);
+      chassis.drive(250,55,5).withGyro(0).withTol(10).waitUntilSettled();
+      arm.zero();
+      delay(200);
+      chassis.drive(-1350,110,6,2).withGyro(290).withTol(10).waitUntilSettled();
+      chassis.turn(0,127,4).withoutOdom().withTol(4).waitUntilSettled();
+      chassis.drive(1400,60,5).withGyro(0).withTol(10).waitUntilSettled();
+      chassis.drive(500,40,5).withGyro(0).withTol(10).waitUntilSettled();
+      chassis.drive(-650,80,5).withGyro(5).withTol(10).waitUntilSettled();
+      chassis.drive(300,40,1,5).withGyro(315).withTol(10).waitUntilSettled();
+      chassis.drive(-1000,127,5).withGyro(0).withTol(10);
+      rack.move(RACK_DOWN, 127).withTol(0);
+      delay(200);
+      roller(0);
+      chassis.waitUntilSettled();
+
+
 }
 
 
