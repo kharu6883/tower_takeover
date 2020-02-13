@@ -135,7 +135,7 @@ void opcontrol() {
 
 		}
 
-		if( towerMode == 0 || ( arm.getMacroState() && arm.getPos() > 0.6 ) ) io::driveRoller(roller.getOutput());
+		if( towerMode == 0 || ( arm.getMacroState() && *arm.getPos() > 0.6 ) ) io::driveRoller(roller.getOutput());
 
 		// std::cout << "Rack: " << RackMotor.get_current_draw() << "mA, Arm: " << ArmMotor.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
 		// std::cout << "Rack Output: " << rackSlew.getOutput() << ", Rack PID Output: " << rackPID.getOutput() << std::endl;

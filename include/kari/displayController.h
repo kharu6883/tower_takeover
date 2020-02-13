@@ -4,9 +4,8 @@
 #include "pros/apix.h"
 
 // Image Declaration
-LV_IMG_DECLARE(logo);
-
-LV_IMG_DECLARE(michael1);
+LV_IMG_DECLARE(splash);
+LV_IMG_DECLARE(michael);
 
 struct info {
   lv_obj_t * labelObj;

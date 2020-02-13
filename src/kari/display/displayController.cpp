@@ -81,6 +81,7 @@ static lv_res_t skills_click_action(lv_obj_t * btn) {
 
 Display::Display() {
   if(!isInitialized) {
+    
     // Theme & Style init
     lv_theme_t * th = lv_theme_material_init(120, NULL);
 
