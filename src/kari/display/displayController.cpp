@@ -24,6 +24,7 @@ std::string Display::setText = "",
 Display::lastText = "";
 
 std::vector<info> Display::updateInfo;
+std::vector<lv_obj_t*> Display::autonm;
 
 static int auton_type = 1;
 
@@ -37,6 +38,8 @@ static lv_style_t style_skills_released;
 
 static lv_obj_t * scr;
 static lv_obj_t * tv;
+
+static lv_obj_t * autonName;
 
 static lv_res_t btn_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
@@ -81,6 +84,7 @@ static lv_res_t skills_click_action(lv_obj_t * btn) {
 
 Display::Display() {
   if(!isInitialized) {
+    // Splash screen
     lv_obj_t * splashImg = lv_img_create(lv_layer_sys(), nullptr);
     lv_img_set_src(splashImg, &splash);
     lv_obj_set_pos(splashImg, 0, -15);
@@ -97,6 +101,14 @@ Display::Display() {
     lv_obj_set_size(preload, 40, 40);
     lv_obj_align(preload, NULL, LV_ALIGN_CENTER, 0, 80);
     lv_preload_set_style(preload, LV_PRELOAD_STYLE_MAIN, &style);
+
+    // Overlay
+    lv_obj_t * overlay = lv_cont_create(lv_layer_top(), NULL);
+    lv_obj_set_size(overlay, 480, 35);
+    lv_obj_set_pos(overlay, 0, 215);
+
+    autonName = createLabel(0, 0, "Selected Autonomous: ", overlay);
+    lv_obj_align(autonName, NULL, LV_ALIGN_IN_LEFT_MID, 5, -4);
 
     // Theme & Style init
     lv_theme_t * th = lv_theme_material_init(120, NULL);
@@ -159,11 +171,11 @@ Display::Display() {
     lv_obj_set_size(tv, 480, 250);
     lv_tabview_set_sliding(tv, false);
 
-    lv_obj_t * tab1 = lv_tabview_add_tab(tv, "Red");
-    lv_obj_t * tab2 = lv_tabview_add_tab(tv, "Blue");
-    lv_obj_t * tab3 = lv_tabview_add_tab(tv, "Skills");
-    lv_obj_t * tab4 = lv_tabview_add_tab(tv, "Sensor");
-    lv_obj_t * tab5 = lv_tabview_add_tab(tv, "Settings");
+    tab1 = lv_tabview_add_tab(tv, "Red");
+    tab2 = lv_tabview_add_tab(tv, "Blue");
+    tab3 = lv_tabview_add_tab(tv, "Skills");
+    tab4 = lv_tabview_add_tab(tv, "Sensor");
+    tab5 = lv_tabview_add_tab(tv, "Settings");
 
     tabRed(tab1);
     tabBlue(tab2);
@@ -246,10 +258,23 @@ void Display::start(void *ignore) {
 }
 
 void Display::run() {
-  // int nowType, lastType, nowSlot, lastSlot;
+  int nowType, lastType, nowSlot, lastSlot;
+
   isRunning = true;
 
   while(isRunning) {
+
+    nowType = Auton.getType();
+    nowSlot = Auton.getSlot();
+
+    if(nowType != lastType || nowSlot != lastSlot) {
+      std::string temp = "Selected Autonomous: " + Auton.getName(nowType, nowSlot);
+      lv_label_set_text(autonName, temp.c_str());
+
+      lastType = nowType;
+      lastSlot = nowSlot;
+    }
+
     for(int i = 0; i < updateInfo.size(); i++) {
       if(updateInfo[i].labelObj == nullptr) break;
 
