@@ -83,10 +83,20 @@ Display::Display() {
   if(!isInitialized) {
     lv_obj_t * splashImg = lv_img_create(lv_layer_sys(), nullptr);
     lv_img_set_src(splashImg, &splash);
-    lv_obj_set_pos(splashImg, 0, 0);
+    lv_obj_set_pos(splashImg, 0, -15);
 
-    lv_obj_t * preload = lv_preload_create(splashImg, nullptr);
-    lv_obj_set_size(preload, 100, 100);
+    static lv_style_t style;
+    lv_style_copy(&style, &lv_style_plain);
+    style.line.width = 3;
+    style.line.color = LV_COLOR_LIME;
+
+    style.body.border.color = LV_COLOR_TRANSP;
+    style.body.padding.hor = 0;
+
+    lv_obj_t * preload = lv_preload_create(lv_layer_sys(), NULL);
+    lv_obj_set_size(preload, 40, 40);
+    lv_obj_align(preload, NULL, LV_ALIGN_CENTER, 0, 80);
+    lv_preload_set_style(preload, LV_PRELOAD_STYLE_MAIN, &style);
 
     // Theme & Style init
     lv_theme_t * th = lv_theme_material_init(120, NULL);
@@ -139,7 +149,7 @@ Display::Display() {
     style_skills_released.body.border.width = 2;
     style_skills_released.text.color = LV_COLOR_WHITE;
 
-    pros::delay(200);
+    pros::delay(2000);
 
     scr = lv_cont_create(NULL, NULL);
     lv_scr_load(scr);
@@ -160,6 +170,8 @@ Display::Display() {
     tabSkills(tab3);
     tabSensor(tab4);
     tabSetting(tab5);
+
+    cleanUp();
 
     isInitialized = true;
   }

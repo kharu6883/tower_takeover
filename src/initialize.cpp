@@ -31,6 +31,7 @@ void initialize() {
 
   // Sensor Init
   chassis.calibrateGyro();
+  std::cout << "Motors / Sensors Initialized!" << std::endl;
 
   // Threads
   pros::Task odomController(odom.start, NULL, "Odometry Tracker");
@@ -49,6 +50,8 @@ void initialize() {
 
   pros::Task b_auton(Auton.start, NULL, "Auton Controller");
   b_display.set_priority(TASK_PRIORITY_MIN);
+
+  std::cout << "Tasks Initialized!" << std::endl;
 
   Disp.addInfo("Left", 'i', odom.getL())
       .addInfo("Right", 'i', odom.getR())
