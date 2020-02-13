@@ -81,7 +81,13 @@ static lv_res_t skills_click_action(lv_obj_t * btn) {
 
 Display::Display() {
   if(!isInitialized) {
-    
+    lv_obj_t * splashImg = lv_img_create(lv_layer_sys(), nullptr);
+    lv_img_set_src(splashImg, &splash);
+    lv_obj_set_pos(splashImg, 0, 0);
+
+    lv_obj_t * preload = lv_preload_create(splashImg, nullptr);
+    lv_obj_set_size(preload, 100, 100);
+
     // Theme & Style init
     lv_theme_t * th = lv_theme_material_init(120, NULL);
 
@@ -157,6 +163,10 @@ Display::Display() {
 
     isInitialized = true;
   }
+}
+
+void Display::cleanUp() {
+  lv_obj_clean(lv_layer_sys());
 }
 
 void Display::tabRed(lv_obj_t * parent) {

@@ -19,6 +19,8 @@ class Display {
   public:
     Display();
 
+    void cleanUp();
+
     static void start(void* ignore);
     void run();
     void stop();

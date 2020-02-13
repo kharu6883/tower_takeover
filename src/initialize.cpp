@@ -62,6 +62,8 @@ void initialize() {
       .addInfo("Arm", 'd', arm.getPos())
       .addInfo("Arm Limit", 'b', arm.getLimit());
 
+  Disp.cleanUp();
+
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;
   io::master.rumble(" .");
