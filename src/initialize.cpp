@@ -57,8 +57,10 @@ void initialize() {
       .addInfo("X", 'd', odom.getX())
       .addInfo("Y", 'd', odom.getY());
 
-
-  // Disp.addInfo("Yeet", 'b', df);
+  Disp.addInfo("Gyro", 'd', chassis.getGyro())
+      .addInfo("Rack", 'i', rack.getPot())
+      .addInfo("Arm", 'd', arm.getPos())
+      .addInfo("Arm Limit", 'b', arm.getLimit());
 
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;

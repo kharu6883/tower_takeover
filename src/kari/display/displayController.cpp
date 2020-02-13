@@ -2,6 +2,8 @@
 
 #include "kari/displayController.h"
 #include "kari/autonController.h"
+
+#include "kari/util/odometry.h"
 #include "kari/util/misc.h"
 
 #include "kari/control/chassis.h"
@@ -9,13 +11,14 @@
 
 static Autonomous Auton;
 
+static Odom odom;
 static Chassis chassis;
 static Arm arm;
 
 bool Display::isRunning = false,
 Display::isInitialized = false;
 
-int Display::currScr = 1;
+int Display::currScr = 2;
 
 std::string Display::setText = "",
 Display::lastText = "";
@@ -33,19 +36,44 @@ static lv_style_t style_blue_released;
 static lv_style_t style_skills_released;
 
 static lv_obj_t * scr;
+static lv_obj_t * tv;
 
 static lv_res_t btn_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
-  
+  switch(id) {
+    case 1: chassis.calibrateGyro(); break;
+    case 2: odom.reset(0); break;
+    case 3: arm.tarePos(); break;
+
+    default: break;
+  }
 
   return LV_RES_OK;
 }
 
-static lv_res_t auton_click_action(lv_obj_t * btn) {
+static lv_res_t red_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
-  Auton.setType(auton_type);
+  Auton.setType(1);
+  Auton.setSlot(id);
+
+  return LV_RES_OK;
+}
+
+static lv_res_t blue_click_action(lv_obj_t * btn) {
+  int id = lv_obj_get_free_num(btn);
+
+  Auton.setType(2);
+  Auton.setSlot(id);
+
+  return LV_RES_OK;
+}
+
+static lv_res_t skills_click_action(lv_obj_t * btn) {
+  int id = lv_obj_get_free_num(btn);
+
+  Auton.setType(3);
   Auton.setSlot(id);
 
   return LV_RES_OK;
@@ -55,8 +83,6 @@ Display::Display() {
   if(!isInitialized) {
     // Theme & Style init
     lv_theme_t * th = lv_theme_material_init(120, NULL);
-
-    // th->tabview.btn.tgl_rel->body.main_color = LV_COLOR_RED;
 
     lv_theme_set_current(th);
 
@@ -111,7 +137,7 @@ Display::Display() {
     scr = lv_cont_create(NULL, NULL);
     lv_scr_load(scr);
 
-    lv_obj_t * tv = lv_tabview_create(scr, NULL);
+    tv = lv_tabview_create(scr, NULL);
     lv_obj_set_pos(tv, 0, 0);
     lv_obj_set_size(tv, 480, 250);
     lv_tabview_set_sliding(tv, false);
@@ -138,9 +164,9 @@ void Display::tabRed(lv_obj_t * parent) {
   int size = Auton.getSize(SLOT_RED);
   for(int i = 0; i < size; i++) {
     if((i + 1) % 2 == 1) {
-      btnmr[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(1, i), parent, auton_click_action);
+      btnmr[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(1, i), parent, red_click_action);
     } else {
-      btnmr[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(1, i), parent, auton_click_action);
+      btnmr[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(1, i), parent, red_click_action);
     }
 
     lv_btn_set_style(btnmr[i], LV_BTN_STYLE_PR, &style_red);
@@ -154,9 +180,9 @@ void Display::tabBlue(lv_obj_t * parent) {
   int size = Auton.getSize(SLOT_BLUE);
   for(int i = 0; i < size; i++) {
     if((i + 1) % 2 == 1) {
-      btnmb[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(2, i), parent, auton_click_action);
+      btnmb[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(2, i), parent, blue_click_action);
     } else {
-      btnmb[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(2, i), parent, auton_click_action);
+      btnmb[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(2, i), parent, blue_click_action);
     }
 
     lv_btn_set_style(btnmb[i], LV_BTN_STYLE_PR, &style_blue);
@@ -170,9 +196,9 @@ void Display::tabSkills(lv_obj_t * parent) {
   int size = Auton.getSize(SLOT_SKILLS);
   for(int i = 0; i < size; i++) {
     if((i + 1) % 2 == 1) {
-      btnms[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(3, i), parent, auton_click_action);
+      btnms[i] = createButton(i, 0, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(3, i), parent, skills_click_action);
     } else {
-      btnms[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(3, i), parent, auton_click_action);
+      btnms[i] = createButton(i, 230, (int)( i / 2 ) * 35 + 20, 220, 30, Auton.getName(3, i), parent, skills_click_action);
     }
 
     lv_btn_set_style(btnms[i], LV_BTN_STYLE_PR, &style_skills);
@@ -181,15 +207,13 @@ void Display::tabSkills(lv_obj_t * parent) {
 }
 
 void Display::tabSensor(lv_obj_t * parent) {
-  // lv_obj_t * yeet = createLabel(20, 0, "Cyka blyat", parent);
-  for(int i = 0; i < updateInfo.size(); i++) {
-    updateInfo[i].labelObj = createLabel(20, 100, updateInfo[i].name + ": ", parent);
-    // updateInfo[i].labelObj = createLabel(180, 200, updateInfo[i].name + ": ", parent);
-  }
+
 }
 
 void Display::tabSetting(lv_obj_t * parent) {
-
+  lv_obj_t * resetGyro = createButton(1, 0, 20, 200, 40, "Reset Gyro", parent, btn_click_action, &style_skills, &style_skills_released);
+  lv_obj_t * resetOdom = createButton(2, 0, 70, 200, 40, "Reset Odom", parent, btn_click_action, &style_skills, &style_skills_released);
+  lv_obj_t * resetArm = createButton(3, 0, 120, 200, 40, "Reset Arm", parent, btn_click_action, &style_skills, &style_skills_released);
 }
 
 void Display::start(void *ignore) {
@@ -200,82 +224,27 @@ void Display::start(void *ignore) {
 
 void Display::run() {
   // int nowType, lastType, nowSlot, lastSlot;
+  isRunning = true;
 
   while(isRunning) {
+    for(int i = 0; i < updateInfo.size(); i++) {
+      if(updateInfo[i].labelObj == nullptr) break;
 
-    switch(currScr) {
+      std::string temp = "";
 
-      case 1: { // Auton
-        break;
+      switch(updateInfo[i].type) {
+        case 'i': temp = std::to_string(*(int*)updateInfo[i].data); break;
+        case 'd': temp = std::to_string(*(double*)updateInfo[i].data); break;
+        case 'b': temp = std::to_string(*(bool*)updateInfo[i].data); break;
+        default: temp = std::to_string(*(double*)updateInfo[i].data); break;
       }
 
-      case 2: { // Sensor
-        for(int i = 0; i < updateInfo.size(); i++) {
-          if(updateInfo[i].labelObj == nullptr) break;
-
-          std::string temp = "";
-
-          switch(updateInfo[i].type) {
-            case 'i': temp = std::to_string(*(int*)updateInfo[i].data);
-            case 'd': temp = std::to_string(*(double*)updateInfo[i].data);
-            case 'b': temp = std::to_string(*(bool*)updateInfo[i].data);
-          }
-
-          if(temp != updateInfo[i].last) {
-            std::string update = updateInfo[i].name + ": " + temp;
-            lv_label_set_text(updateInfo[i].labelObj, update.c_str());
-            updateInfo[i].last = temp;
-          }
-        }
-        break;
-      }
-
-      case 3: { // Settings
-        break;
-      }
-
-      default: {
-        break;
+      if(temp != updateInfo[i].last) {
+        std::string update = updateInfo[i].name + ": " + temp;
+        lv_label_set_text(updateInfo[i].labelObj, update.c_str());
+        updateInfo[i].last = temp;
       }
     }
-
-    // nowType = Auton.getType();
-    // nowSlot = Auton.getSlot();
-    // if(lastType != nowType || lastSlot != nowSlot) {
-    //   name.erase(name.begin() + 16, name.end());
-    //   name.append(Auton.getName(Auton.getType(), Auton.getSlot()));
-    //   c = name.c_str();
-    //   lv_label_set_text(autonStat, c);
-    //
-    //   switch(Auton.getType()) {
-    //     case SLOT_RED: {
-    //       overlay.body.main_color = LV_COLOR_RED;
-    //       overlay.body.grad_color = LV_COLOR_RED;
-    //       break;
-    //     }
-    //
-    //     case SLOT_BLUE: {
-    //       overlay.body.main_color = LV_COLOR_BLUE;
-    //       overlay.body.grad_color = LV_COLOR_BLUE;
-    //       break;
-    //     }
-    //
-    //     case SLOT_SKILLS: {
-    //       overlay.body.main_color = LV_COLOR_GRAY;
-    //       overlay.body.grad_color = LV_COLOR_GRAY;
-    //       break;
-    //     }
-    //
-    //     default: {
-    //       overlay.body.main_color = LV_COLOR_BLACK;
-    //       overlay.body.grad_color = LV_COLOR_BLACK;
-    //       break;
-    //     }
-    //   }
-    // }
-    //
-    // lastType = nowType;
-    // lastSlot = nowSlot;
 
     remoteUpdate();
 
@@ -289,11 +258,18 @@ void Display::stop() {
 
 Display& Display::addInfo(std::string name, char type, void *info) {
   updateInfo.push_back(::info());
-  updateInfo[updateInfo.size() - 1].labelObj = nullptr;
-  updateInfo[updateInfo.size() - 1].name = name;
-  updateInfo[updateInfo.size() - 1].type = type;
-  updateInfo[updateInfo.size() - 1].data = info;
-  updateInfo[updateInfo.size() - 1].last = 1;
+
+  int current = updateInfo.size() - 1;
+
+  updateInfo[current].labelObj = lv_label_create(lv_tabview_get_tab(tv, 3), nullptr);
+
+  if((current + 1) % 2 == 1) lv_obj_set_pos(updateInfo[current].labelObj, 0, (int)( current / 2 ) * 20 + 20);
+    else lv_obj_set_pos(updateInfo[current].labelObj, 250, (int)( current / 2 ) * 20 + 20);
+
+  updateInfo[current].name = name;
+  updateInfo[current].type = type;
+  updateInfo[current].data = info;
+  updateInfo[current].last = "";
   return *this;
 }
 
@@ -316,12 +292,21 @@ lv_obj_t * Display::createLabel(int x, int y, std::string text_, lv_obj_t * pare
   return label;
 }
 
-lv_obj_t * Display::createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action) {
+lv_obj_t * Display::createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action, lv_style_t * btn_pr, lv_style_t * btn_rel) {
   lv_obj_t * button = lv_btn_create(parent, NULL);
   lv_obj_set_pos(button, x, y);
   lv_obj_set_size(button, width, height);
   lv_obj_set_free_num(button, id);
   lv_btn_set_action(button, LV_BTN_ACTION_CLICK, action);
+
+  if(btn_pr != nullptr || btn_rel != nullptr) {
+    lv_btn_set_style(button, LV_BTN_STYLE_PR, btn_pr);
+    lv_btn_set_style(button, LV_BTN_STYLE_REL, btn_rel);
+  } else {
+    lv_btn_set_style(button, LV_BTN_STYLE_PR, lv_theme_get_current()->btn.pr);
+    lv_btn_set_style(button, LV_BTN_STYLE_REL, lv_theme_get_current()->btn.rel);
+  }
+
   lv_obj_t * buttonLabel = createLabel(0, 0, text, button);
   lv_obj_align(buttonLabel, button, LV_ALIGN_CENTER, 0, 0);
 
