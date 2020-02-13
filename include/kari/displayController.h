@@ -37,6 +37,13 @@ class Display {
     static std::string setText, lastText;
 
     static std::vector<info> updateInfo;
+    static std::vector<lv_obj_t*> autonm;
+
+    lv_obj_t * tab1;
+    lv_obj_t * tab2;
+    lv_obj_t * tab3;
+    lv_obj_t * tab4;
+    lv_obj_t * tab5;
 
     void tabRed(lv_obj_t * parent);
     void tabBlue(lv_obj_t * parent);
