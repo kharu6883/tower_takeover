@@ -69,7 +69,6 @@ void initialize() {
 
   double end = timer.millis().convert(millisecond);
   std::cout << "Initialization Done! Took " << end - init << "ms." << std::endl;
-  io::master.rumble(" .");
 }
 
 void disabled() {

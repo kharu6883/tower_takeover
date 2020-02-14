@@ -42,8 +42,6 @@ Chassis::~Chassis() {
 }
 
 Chassis& Chassis::calibrateGyro() {
-  io::master.rumble(" .");
-
   Imu_T.reset();
   Imu_L.reset();
   Imu_R.reset();
