@@ -107,18 +107,18 @@ Display::Display() {
     lv_img_set_src(splashImg, &splash);
     lv_obj_set_pos(splashImg, 0, -15);
 
-    static lv_style_t style;
-    lv_style_copy(&style, &lv_style_plain);
-    style.line.width = 3;
-    style.line.color = LV_COLOR_LIME;
+    static lv_style_t preloadStyle;
+    lv_style_copy(&preloadStyle, &lv_style_plain);
+    preloadStyle.line.width = 3;
+    preloadStyle.line.color = LV_COLOR_LIME;
 
-    style.body.border.color = LV_COLOR_TRANSP;
-    style.body.padding.hor = 0;
+    preloadStyle.body.border.color = LV_COLOR_TRANSP;
+    preloadStyle.body.padding.hor = 0;
 
     lv_obj_t * preload = lv_preload_create(lv_layer_sys(), NULL);
     lv_obj_set_size(preload, 40, 40);
     lv_obj_align(preload, NULL, LV_ALIGN_CENTER, 0, 80);
-    lv_preload_set_style(preload, LV_PRELOAD_STYLE_MAIN, &style);
+    lv_preload_set_style(preload, LV_PRELOAD_STYLE_MAIN, &preloadStyle);
 
     // Overlay
     lv_obj_t * overlay = lv_cont_create(lv_layer_top(), NULL);
@@ -172,7 +172,7 @@ Display::Display() {
     style_skills_released.body.border.width = 2;
     style_skills_released.text.color = LV_COLOR_WHITE;
 
-    pros::delay(2000);
+    pros::delay(200);
 
     scr = lv_cont_create(NULL, NULL);
     lv_scr_load(scr);
@@ -194,7 +194,7 @@ Display::Display() {
     tabSensor(tab4);
     tabSetting(tab5);
 
-    cleanUp();
+    // cleanUp();
 
     isInitialized = true;
   }
@@ -326,6 +326,11 @@ Display& Display::addInfo(std::string name, char type, void *info) {
 
   if((current + 1) % 2 == 1) lv_obj_set_pos(updateInfo[current].labelObj, 0, (int)( current / 2 ) * 20 + 20);
     else lv_obj_set_pos(updateInfo[current].labelObj, 250, (int)( current / 2 ) * 20 + 20);
+
+  static lv_style_t infoStyle;
+  lv_style_copy(&infoStyle, &lv_style_plain);
+  infoStyle.text.color = LV_COLOR_WHITE;
+  lv_obj_set_style(updateInfo[current].labelObj, &infoStyle);
 
   updateInfo[current].name = name;
   updateInfo[current].type = type;
