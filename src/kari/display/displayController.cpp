@@ -84,6 +84,24 @@ static lv_res_t skills_click_action(lv_obj_t * btn) {
 
 Display::Display() {
   if(!isInitialized) {
+    // Theme & Style init
+    lv_theme_t * th = lv_theme_material_init(120, NULL);
+
+    th->bg->body.main_color = LV_COLOR_HEX(0x4a4a4a);
+    th->bg->body.grad_color = LV_COLOR_HEX(0x4a4a4a);
+
+    th->tabview.btn.bg->body.main_color = LV_COLOR_HEX(0x4a4a4a);
+    th->tabview.btn.bg->body.grad_color = LV_COLOR_HEX(0x4a4a4a);
+    th->tabview.btn.bg->body.shadow.width = 0;
+
+    th->tabview.btn.bg->text.color = LV_COLOR_WHITE;
+    // th->tabview.btn.rel->text.color = LV_COLOR_WHITE;
+    // th->tabview.btn.tgl_rel->text.color = LV_COLOR_WHITE;
+
+    lv_theme_set_current(th);
+
+    lv_style_plain.body.radius = 1;
+
     // Splash screen
     lv_obj_t * splashImg = lv_img_create(lv_layer_sys(), nullptr);
     lv_img_set_src(splashImg, &splash);
@@ -109,13 +127,6 @@ Display::Display() {
 
     autonName = createLabel(0, 0, "Selected Autonomous: ", overlay);
     lv_obj_align(autonName, NULL, LV_ALIGN_IN_LEFT_MID, 5, -4);
-
-    // Theme & Style init
-    lv_theme_t * th = lv_theme_material_init(120, NULL);
-
-    lv_theme_set_current(th);
-
-    lv_style_plain.body.radius = 1;
 
     // Auton Btn Style
     lv_style_copy(&style_red, &lv_style_plain);
@@ -295,6 +306,8 @@ void Display::run() {
     }
 
     remoteUpdate();
+
+    // std::cout << "Display Running" << std::endl;
 
     pros::delay(10);
   }
