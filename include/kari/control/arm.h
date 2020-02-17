@@ -36,8 +36,8 @@ class Arm {
     bool getMacroState();
 
     // Sensors
-    double getPos();
-    bool getLimit();
+    double * getPos();
+    bool * getLimit();
 
     static void start(void *ignore);
     void run();
@@ -50,6 +50,9 @@ class Arm {
     static bool isSettled;
     static int mode;
     static int nextCmd;
+
+    static double armPos;
+    static bool limitStat;
 
     static bool macroFin;
     static bool reached;

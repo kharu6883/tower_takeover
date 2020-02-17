@@ -12,6 +12,9 @@ Arm::reached = false;
 int Arm::mode = 0,
 Arm::nextCmd = 0;
 
+double Arm::armPos = 0;
+bool Arm::limitStat = true;
+
 double Arm::target = 0, Arm::tolerance = 0.1;
 int Arm::speed = 0, Arm::rate = 9;
 
@@ -95,12 +98,12 @@ bool Arm::getMacroState() {
   return macroFin;
 }
 
-double Arm::getPos() {
-  return ArmMotor.get_position();
+double * Arm::getPos() {
+  return &armPos;
 }
 
-bool Arm::getLimit() {
-  return Limit.get_value();
+bool * Arm::getLimit() {
+  return &limitStat;
 }
 
 void Arm::start(void *ignore) {
@@ -116,6 +119,9 @@ void Arm::run() {
   double rollerPrePrime = 50, rollerWait = 100, rollerRot = -0.4, rollerSpeed = 60, rollerWaitPrime = 0;
 
   while(isRunning) {
+    armPos = ArmMotor.get_position();
+    limitStat = Limit.get_value();
+
     switch(mode) {
 
       // Low Tower

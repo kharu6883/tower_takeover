@@ -47,6 +47,7 @@ Chassis& Chassis::calibrateGyro() {
   Imu_R.reset();
 
   while(Imu_T.is_calibrating() || Imu_L.is_calibrating() || Imu_R.is_calibrating()) pros::delay(20);
+  io::master.rumble(" . .");
   return *this;
 }
 
@@ -55,8 +56,8 @@ Chassis& Chassis::tareGyro() {
   return *this;
 }
 
-Chassis& Chassis::getGyro() {
-  return *this;
+double * Chassis::getGyro() {
+  return &current;
 }
 
 Chassis& Chassis::withConst(double kPd, double kDd, double kPt, double kDt) {
@@ -299,9 +300,9 @@ void Chassis::run() {
   isRunning = true;
 
   while(isRunning) {
-    if(!pros::competition::is_autonomous()) goto end;
-
     current = ( Imu_L.get_yaw() + Imu_L.get_yaw() ) / 2 - gyroOffset;
+
+    if(!pros::competition::is_autonomous()) goto end;
 
     switch(mode) {
       case DRIVING_POINT: { // Driving
