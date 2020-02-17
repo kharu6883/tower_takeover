@@ -7,11 +7,10 @@ extern pros::ADIUltrasonic Ultrasonic;
 
 #define DRIVING_POINT 1
 #define DRIVING_DIST 2
-#define DRIVING_ULTRASONIC 5
-#define TURNING 3
-#define STRAFING 4
-#define SMART_STRAFE 6
-
+#define DRIVING_ULTRASONIC 3
+#define TURNING 4
+#define STRAFING 5
+#define STRAFING_SMART 6
 
 struct Vector2 {
   double x;
@@ -37,14 +36,8 @@ class Chassis {
     Chassis(double * odomL_, double * odomR_, double * theta_, double * posX_, double * posY_);
     ~Chassis();
 
-    // Gyro
-    Chassis& calibrateGyro();
-    Chassis& tareGyro();
-
-    double * getGyro();
-
     // Constant Settings
-    Chassis& withConst(double kPd = 0.9, double kDd = 0.3, double kPt = 3.3, double kDt = 0.3);
+    Chassis& withGain(double kP = 0.9, double kI = 0, double kD = 3.3, bool isTurn = false);
     Chassis& withTol(double tolerance_ = 1);
     Chassis& withSlop(double offset_ = 0, double amp_ = 0.2);
 
@@ -65,6 +58,12 @@ class Chassis {
     Chassis& smartstrafe(double direction_, double theta_, double drivespeed_ = 80, double turnspeed_ = 50, double rate_ = 4, double rate2_ = 4);
 
     void waitUntilSettled();
+
+    // Gyro
+    Chassis& calibrateGyro();
+    Chassis& tareGyro();
+
+    double * getGyro();
 
     // Chassis Motor Settings
     void tarePos();
@@ -92,7 +91,7 @@ class Chassis {
     static bool isSettled;
     static int mode;
 
-    static double kP_drive, kD_drive, kP_turn, kD_turn;
+    static double kP_drive, kI_drive, kD_drive, kP_turn, kI_turn, kD_turn;
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currTarget;
@@ -101,8 +100,8 @@ class Chassis {
     static double *odomL, *odomR, *theta, *posX, *posY;
 
     static double current, gyroOffset, thetaRel, initL, initR, deltaL, deltaR;
-    static double driveError, driveLast, turnError, turnLast;
-    static double driveOutput, driveOutput2, driveOutput3, driveOutput4, turnOutput, driveSlewOutput,driveSlewOutput2,driveSlewOutput3, driveSlewOutput4 , turnSlewOutput;
+    static double driveError, driveIntegral, driveLast, turnError, turnIntegral, turnLast;
+    static double driveOutput, driveOutput2, driveOutput3, driveOutput4, turnOutput, driveSlewOutput, driveSlewOutput2, driveSlewOutput3, driveSlewOutput4, turnSlewOutput;
     static double totOutputL, totOutputR;
 
     double slop(int mode = 0);
