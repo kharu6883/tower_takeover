@@ -105,7 +105,7 @@ void Rack::run() {
 
       if(output > -tolerance && output < tolerance) {
         isSettled = true;
-        withConst().withTol().reset();
+        withGain().withTol().reset();
         goto end;
       }
 

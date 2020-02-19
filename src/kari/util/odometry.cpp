@@ -4,6 +4,8 @@
 pros::ADIEncoder LEncoder(5, 6, true),
                  REncoder(3, 4);
 
+pros::Imu Imu_T(7), Imu_L(4), Imu_R(8);
+
 bool Odom::isRunning = false;
 
 double Odom::currentL = 0, Odom::currentR = 0;
@@ -67,8 +69,8 @@ void Odom::run() {
     deltaL = currentL - lastDeltaL;
     deltaR = currentR - lastDeltaR;
 
-    thetaRad = thetaRad + ((( deltaL - deltaR ) / 2) / 7.5 / 23.34) * -1;
-    thetaDeg = thetaRad * ( 180 / PI );
+    thetaDeg = ( Imu_L.get_yaw() + Imu_R.get_yaw() ) / 2;
+    thetaRad = thetaDeg * ( PI / 180 );
 
     if(thetaDeg < 0) {
       thetaDeg = (-thetaDeg);

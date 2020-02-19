@@ -6,7 +6,6 @@ pros::Motor LF(14, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
             RF(19, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
             RB(20, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS);
 
-pros::Imu Imu_T(7), Imu_L(4), Imu_R(8);
 pros::ADIUltrasonic Ultrasonic(7, 8);
 
 bool Chassis::isRunning = false,
@@ -39,25 +38,6 @@ Chassis::Chassis(double * odomL_, double * odomR_, double * theta_, double * pos
 
 Chassis::~Chassis() {
   reset();
-}
-
-Chassis& Chassis::calibrateGyro() {
-  Imu_T.reset();
-  Imu_L.reset();
-  Imu_R.reset();
-
-  while(Imu_T.is_calibrating() || Imu_L.is_calibrating() || Imu_R.is_calibrating()) pros::delay(20);
-  io::master.rumble(" . .");
-  return *this;
-}
-
-Chassis& Chassis::tareGyro() {
-  gyroOffset = current;
-  return *this;
-}
-
-double * Chassis::getGyro() {
-  return &current;
 }
 
 Chassis& Chassis::withGain(double kP, double kI, double kD, bool isTurn) {
@@ -306,14 +286,18 @@ void Chassis::run() {
   isRunning = true;
 
   while(isRunning) {
-    current = ( Imu_L.get_yaw() + Imu_L.get_yaw() ) / 2 - gyroOffset;
 
     if(!pros::competition::is_autonomous()) goto end;
 
     switch(mode) {
       case DRIVING_POINT: { // Driving
         driveError = sqrt( pow( target[currTarget].x - *posX, 2) + pow( target[currTarget].y - *posY, 2) );
-        driveOutput = driveError * kP_drive + ( driveError - driveLast ) * kD_drive;
+
+        driveIntegral += driveError;
+        if( driveIntegral > 100 ) driveIntegral = 100;
+        if( driveIntegral < -100 ) driveIntegral = -100;
+
+        driveOutput = ( driveError * kP_drive ) + ( driveIntegral * kI_drive ) + ( driveError - driveLast ) * kD_drive;
 
         target[currTarget].theta = atan2( target[currTarget].y - *posY, target[currTarget].x - *posX ) * ( 180 / PI );
 
@@ -321,7 +305,11 @@ void Chassis::run() {
         turnError = atan2( sin( turnError ), cos( turnError ) );
         turnError = turnError * 180 / PI;
 
-        turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
+        turnIntegral += turnError;
+        if( turnIntegral > 100 ) turnIntegral = 100;
+         else if( turnIntegral < -100 ) turnIntegral = -100;
+
+        turnOutput = ( turnError * kP_turn ) + ( turnIntegral * kI_turn ) + ( turnError - turnLast ) * kD_turn;
 
         driveLast = driveError;
         turnLast = turnError;
@@ -803,8 +791,6 @@ driveOutput4/=abs(turnSlewOutput);
     #ifdef DEBUG
     std::cout << "Left Front: " << LF.get_position() << ", Output: " << output << std::endl;
     #endif
-
-    std::cout << Imu_T.get_yaw() << " " << Imu_L.get_yaw() << " " << Imu_R.get_yaw() << std::endl;
 
     end:
     pros::delay(10);

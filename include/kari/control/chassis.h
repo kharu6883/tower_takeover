@@ -2,7 +2,6 @@
 #include "kari/util/misc.h"
 
 extern pros::Motor LF, LB, RF, RB;
-extern pros::Imu Imu_T, Imu_L, Imu_R;
 extern pros::ADIUltrasonic Ultrasonic;
 
 #define DRIVING_POINT 1
