@@ -49,7 +49,7 @@ class Autonomous {
 void tester();
 
 // Red
-void redsmallzone9();
+void redsmallzone11();
 void redsmallzone8();
 void redsmallzone7();
 void redsmallzone5();
@@ -58,8 +58,9 @@ void redbigzonescore();
 
 
 // Blue
-void bluesmallzone9();
+void bluesmallzone11();
 void bluesmallzone8();
+void bluesmallzone7();
 void bluesmallzone5();
 void bluebigzone();
 void bluebigzonescore();

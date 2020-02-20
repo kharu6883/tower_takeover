@@ -34,16 +34,17 @@ Autonomous::Autonomous() { // The autons will be stored in this order, starting 
   if(!isInitialized) {
 
     // RED
-    //addAuton(SLOT_RED, "Red small zone9", "RSZ", redsmallzone9);
-    addAuton(SLOT_RED, "Red small zone8", "RSZ", redsmallzone8);
-    //addAuton(SLOT_RED, "Red small zone7", "RSZU", redsmallzone7);
+    addAuton(SLOT_RED, "Red small zone 11", "RSZns", redsmallzone11);
+    //addAuton(SLOT_RED, "Red small zone8", "RSZ", redsmallzone8);
+    addAuton(SLOT_RED, "Red small zone7", "RSZU", redsmallzone7);
     addAuton(SLOT_RED, "Red small zone5", "RSZ", redsmallzone5);
     addAuton(SLOT_RED, "Red big zone", "RBZ", redbigzone);
     addAuton(SLOT_RED, "Red big zone score", "RBZs", redbigzonescore);
 
     // BLUE
+    addAuton(SLOT_BLUE, "blue small zone 11", "RSZns", bluesmallzone11);
     //addAuton(SLOT_BLUE, "blue small zone9", "BSZ", bluesmallzone9);
-    addAuton(SLOT_BLUE, "blue small zone8", "BSZ", bluesmallzone8);
+    addAuton(SLOT_BLUE, "blue small zone7", "BSZ", bluesmallzone7);
     addAuton(SLOT_BLUE, "blue small zone5", "BSZ", bluesmallzone5);
     addAuton(SLOT_BLUE, "blue big zone", "BBZ", bluebigzone);
     addAuton(SLOT_BLUE, "blue big zone score", "BBZs", bluebigzonescore);

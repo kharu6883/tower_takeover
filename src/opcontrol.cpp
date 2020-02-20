@@ -17,7 +17,7 @@ void opcontrol() {
 	Arm arm;
 
 	macro::Slew rackSlew(9, 9, true); // Accel, Decel
-	macro::PID rackPID(0.11); // kP
+	macro::PID rackPID(0.09); // kP
 	macro::Slew roller(5, 10); // Accel, Decel
 
 	rack.setBrakeType(MOTOR_BRAKE_HOLD);
