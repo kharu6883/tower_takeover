@@ -74,7 +74,7 @@ void Odom::run() {
   isRunning = true;
 
   while(isRunning) {
-    thetaDeg = abs( Imu_L.get_heading() - 360 );
+    thetaDeg = abs( ( Imu_L.get_heading() + Imu_R.get_heading() ) / 2 - 360 );
     thetaRad = thetaDeg * PI / 180;
 
     currentL = LEncoder.get_value();
@@ -82,14 +82,6 @@ void Odom::run() {
 
     deltaL = currentL - lastDeltaL;
     deltaR = currentR - lastDeltaR;
-
-    // if(thetaDeg < 0) {
-    //   thetaDeg = (-thetaDeg);
-    //   thetaDeg = fmod(thetaDeg, 360.0);
-    //   thetaDeg = (-thetaDeg);
-    // } else {
-    //   thetaDeg = fmod(thetaDeg, 360.0);
-    // }
 
     posX = posX + (( deltaL + deltaR ) / 2) * cos( thetaRad );
     posY = posY + (( deltaL + deltaR ) / 2) * sin( thetaRad );
