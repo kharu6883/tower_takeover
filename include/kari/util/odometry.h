@@ -6,10 +6,10 @@ class Odom {
   public:
 
     // Getters & Setters
-    double * getL();
-    double * getR();
-    double * getDL();
-    double * getDR();
+    int * getL();
+    int * getR();
+    int * getDL();
+    int * getDR();
 
     double * getThetaDeg();
     double * getThetaRad();
@@ -26,8 +26,8 @@ class Odom {
   private:
     static bool isRunning;
 
-    static double currentL, currentR;
-    static double deltaL, deltaR, lastDeltaL, lastDeltaR;
+    static int currentL, currentR;
+    static int deltaL, deltaR, lastDeltaL, lastDeltaR;
 
     static double thetaRad, thetaDeg, posX, posY;
 

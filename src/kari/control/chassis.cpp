@@ -12,14 +12,15 @@ bool Chassis::isRunning = false,
 Chassis::isSettled = true;
 int Chassis::mode = IDLE;
 
-double Chassis::kP_drive = 0.9, Chassis::kI_drive = 0, Chassis::kD_drive = 0.3, Chassis::kP_turn = 2, Chassis::kI_turn = 0.3, Chassis::kD_turn = 3.3;
+double Chassis::kP_drive = 0.9, Chassis::kI_drive = 0.3, Chassis::kD_drive = 0.3, Chassis::kP_turn = 2, Chassis::kI_turn = 0.3, Chassis::kD_turn = 3.3;
 
 double Chassis::tolerance = 1, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<ChassisTarget> Chassis::target;
 int Chassis::currTarget = 0;
-bool Chassis::isUsingPoint = false;
+bool Chassis::isUsingPoint = false, Chassis::isUsingAngle = false;
 
-double *Chassis::odomL, *Chassis::odomR, *Chassis::theta, *Chassis::posX, *Chassis::posY;
+int *Chassis::odomL, *Chassis::odomR;
+double *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
 double Chassis::current = 0, Chassis::initL = 0, Chassis::initR = 0, Chassis::deltaL = 0, Chassis::deltaR = 0,
 Chassis::driveError = 0, Chassis::driveIntegral = 0, Chassis::driveLast = 0, Chassis::turnError = 0, Chassis::turnIntegral = 0, Chassis::turnLast = 0,
@@ -28,7 +29,7 @@ Chassis::totOutputL = 0, Chassis::totOutputR = 0;
 
 Chassis::Chassis() { }
 
-Chassis::Chassis(double * odomL_, double * odomR_, double * theta_, double * posX_, double * posY_) {
+Chassis::Chassis(int * odomL_, int * odomR_, double * theta_, double * posX_, double * posY_) {
   odomL = odomL_;
   odomR = odomR_;
   theta = theta_;
@@ -40,16 +41,18 @@ Chassis::~Chassis() {
   reset();
 }
 
-Chassis& Chassis::withGain(double kP, double kI, double kD, bool isTurn) {
-  if(!isTurn) {
-    kP_drive = kP;
-    kI_drive = kI;
-    kD_drive = kD;
-  } else {
-    kP_turn = kP;
-    kI_turn = kI;
-    kD_turn = kD;
-  }
+Chassis& Chassis::withGain(double kP, double kI, double kD) {
+  kP_drive = kP;
+  kI_drive = kI;
+  kD_drive = kD;
+
+  return *this;
+}
+
+Chassis& Chassis::withTurnGain(double kP, double kI, double kD) {
+  kP_turn = kP;
+  kI_turn = kI;
+  kD_turn = kD;
 
   return *this;
 }
@@ -67,6 +70,7 @@ Chassis& Chassis::withSlop(double offset_, double amp_) {
 
 Chassis& Chassis::withAngle(double theta_, int speed_, double rate_) {
   currTarget = 0;
+  isUsingAngle = true;
   if( target.size() != 1 ) target.resize(1);
   target[0].theta = theta_;
   target[0].speedTurn = speed_;
@@ -89,6 +93,7 @@ Chassis& Chassis::withPoint(Vector2 point, int speed, double rate, bool reverse_
 
 Chassis& Chassis::withTarget(double target_, double theta_, int speed, double rate, bool reverse_) {
   isUsingPoint = false;
+  isUsingAngle = true;
   target.push_back(ChassisTarget());
   target[target.size() - 1].x = target_;
   target[target.size() - 1].theta = theta_;
@@ -230,7 +235,7 @@ void Chassis::tarePos() {
 }
 
 void Chassis::reset() {
-  driveError = driveLast = turnError = turnLast = 0;
+  driveError = driveIntegral = driveLast = turnError = turnIntegral = turnLast = 0;
   driveOutput = driveSlewOutput = turnOutput = turnSlewOutput = 0;
   totOutputL = totOutputR = 0;
 
@@ -362,7 +367,7 @@ void Chassis::run() {
             clearArr();
             isUsingPoint = false;
             isSettled = true;
-            withGain().withTol().withSlop().reset();
+            withGain().withTurnGain().withTol().withSlop().reset();
             break;
           } else {
             currTarget++;
@@ -380,7 +385,7 @@ void Chassis::run() {
         deltaR = *odomR - initR;
 
         driveError = target[currTarget].x - ( deltaL + deltaR ) / 2;
-        driveOutput = driveError * kP_drive + ( driveError - driveLast ) * kD_drive;
+        driveOutput = ( driveError * kP_drive ) + ( driveError - driveLast ) * kD_drive;
 
         turnError = ( target[currTarget].theta - *theta ) * PI / 180;
         turnError = atan2( sin( turnError ), cos( turnError ) );
@@ -404,7 +409,7 @@ void Chassis::run() {
               else turnSlewOutput = turnOutput;
           }
 
-          driveOutput /= abs(turnSlewOutput / 10);
+          if( isUsingAngle ) driveOutput /= abs(turnSlewOutput / 10);
 
           if(driveOutput > 0) {
             if(driveOutput > driveSlewOutput + target[currTarget].rateDrive) driveSlewOutput += target[currTarget].rateDrive;
@@ -434,13 +439,22 @@ void Chassis::run() {
           if(target.size() - 1 == currTarget) {
             clearArr();
             isUsingPoint = false;
+            isUsingAngle = false;
             isSettled = true;
-            withGain().withTol().withSlop().reset();
+            withGain().withTurnGain().withTol().withSlop().reset();
             break;
           } else {
             currTarget++;
             break;
           }
+        }
+
+        if( !isUsingAngle ) {
+          totOutputL = driveSlewOutput - ( slop() * 5 );
+          totOutputR = driveSlewOutput + ( slop() * 5 );
+        } else {
+          totOutputL = -turnSlewOutput + driveSlewOutput;
+          totOutputR = turnSlewOutput + driveSlewOutput;
         }
 
         left(totOutputL);
@@ -475,7 +489,7 @@ void Chassis::run() {
           if(target.size() - 1 == currTarget) {
             clearArr();
             isSettled = true;
-            withGain().withTol().withSlop().reset();
+            withGain().withTurnGain().withTol().withSlop().reset();
             break;
           } else {
             currTarget++;
@@ -518,7 +532,7 @@ void Chassis::run() {
         if(turnError > -tolerance && turnError < tolerance) {
           isSettled = true;
           isUsingPoint = false;
-          withGain().withTol().withSlop().reset();
+          withGain().withTurnGain().withTol().withSlop().reset();
           break;
         }
 
@@ -549,7 +563,7 @@ void Chassis::run() {
 
         if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
           isSettled = true;
-          withGain().withTol().withSlop().reset();
+          withGain().withTurnGain().withTol().withSlop().reset();
           break;
         }
 
@@ -660,9 +674,7 @@ void Chassis::run() {
       }
     }
 
-    #ifdef DEBUG
-    std::cout << "Left Front: " << LF.get_position() << ", Output: " << output << std::endl;
-    #endif
+    std::cout << "Error: " << driveError << ", Drive Output: " << driveOutput << std::endl;
 
     end:
     pros::delay(10);

@@ -33,11 +33,12 @@ struct ChassisTarget {
 class Chassis {
   public:
     Chassis();
-    Chassis(double * odomL_, double * odomR_, double * theta_, double * posX_, double * posY_);
+    Chassis(int * odomL_, int * odomR_, double * theta_, double * posX_, double * posY_);
     ~Chassis();
 
     // Constant Settings
-    Chassis& withGain(double kP = 0.9, double kI = 0.3, double kD = 3.3, bool isTurn = false);
+    Chassis& withGain(double kP = 0.9, double kI = 0.3, double kD = 3.3);
+    Chassis& withTurnGain(double kP = 2, double kI = 0.3, double kD = 3.3);
     Chassis& withTol(double tolerance_ = 1);
     Chassis& withSlop(double offset_ = 0, double amp_ = 0.2);
 
@@ -88,9 +89,10 @@ class Chassis {
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currTarget;
-    static bool isUsingPoint;
+    static bool isUsingPoint, isUsingAngle;
 
-    static double *odomL, *odomR, *theta, *posX, *posY;
+    static int *odomL, *odomR;
+    static double *theta, *posX, *posY;
 
     static double current, initL, initR, deltaL, deltaR;
     static double driveError, driveIntegral, driveLast, turnError, turnIntegral, turnLast;

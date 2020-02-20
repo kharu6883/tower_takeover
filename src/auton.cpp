@@ -27,7 +27,8 @@ using namespace io;
 // STRAFING = 4
 
 void tester() {
-  chassis.withGain(2, 0.3, 3.3).withTol(0).drive(1000, 127, 4).waitUntilSettled();
+  chassis.withGain(0.32, 10, 3.5).withTol(0).drive(1000, 127, 4).waitUntilSettled();
+  chassis.turn(90,100,5).waitUntilSettled();
   io::master.rumble(" . .");
 }
 
