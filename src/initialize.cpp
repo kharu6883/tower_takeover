@@ -30,7 +30,7 @@ void initialize() {
 	io::RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
 
   // Sensor Init
-  chassis.calibrateGyro();
+  odom.calibrateGyro();
   std::cout << "Motors / Sensors Initialized!" << std::endl;
 
   // Threads
@@ -55,13 +55,12 @@ void initialize() {
 
   Disp.addInfo("Left", 'i', odom.getL())
       .addInfo("Right", 'i', odom.getR())
-      .addInfo("Rad Theta", 'd', odom.getThetaRad())
       .addInfo("Deg Theta", 'd', odom.getThetaDeg())
+      .addInfo("Rad Theta", 'd', odom.getThetaRad())
       .addInfo("X", 'd', odom.getX())
       .addInfo("Y", 'd', odom.getY());
 
-  Disp.addInfo("Gyro", 'd', chassis.getGyro())
-      .addInfo("Rack", 'i', rack.getPot())
+  Disp.addInfo("Rack", 'i', rack.getPot())
       .addInfo("Arm", 'd', arm.getPos())
       .addInfo("Arm Limit", 'b', arm.getLimit());
 

@@ -11,6 +11,8 @@ extern pros::ADIUltrasonic Ultrasonic;
 #define STRAFING 5
 #define STRAFING_SMART 6
 
+#define WINDUP_LIMIT 50
+
 struct Vector2 {
   double x;
   double y;
@@ -21,11 +23,10 @@ struct ChassisTarget {
   double y;
   double theta;
   double direction;
-  double drivespeed;
-  double turnspeed;
-  int speed;
-  double rate;
-  double rate2;
+  int speedDrive;
+  int speedTurn;
+  double rateDrive;
+  double rateTurn;
   bool reverse;
 };
 
@@ -36,20 +37,19 @@ class Chassis {
     ~Chassis();
 
     // Constant Settings
-    Chassis& withGain(double kP = 0.9, double kI = 0, double kD = 3.3, bool isTurn = false);
+    Chassis& withGain(double kP = 0.9, double kI = 0.3, double kD = 3.3, bool isTurn = false);
     Chassis& withTol(double tolerance_ = 1);
     Chassis& withSlop(double offset_ = 0, double amp_ = 0.2);
 
     // Movement Settings
-    Chassis& withoutOdom();
-    Chassis& withGyro(double theta_);
+    Chassis& withAngle(double theta_, int speed_, double rate_ = 4);
     Chassis& withPoint(Vector2 point, int speed_, double rate_ = 4, bool reverse_ = false);
     Chassis& withTarget(double target_, double theta_, int speed_, double rate_ = 4, bool reverse_ = false);
 
     // Actuators
     Chassis& drive();
-    Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse = false);
-    Chassis& drive(double target_, int speed_, double rate_ = 4, int rate2_ =4);
+    Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse_ = false);
+    Chassis& drive(double target_, int speed_, double rate_ = 4);
     Chassis& driveUltrasonic(double target_, int speed_, int rate_ = 4);
     Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
     Chassis& turn(double theta_, int speed_, int rate_ = 4);
@@ -57,12 +57,6 @@ class Chassis {
     Chassis& smartstrafe(double direction_, double theta_, double drivespeed_ = 80, double turnspeed_ = 50, double rate_ = 4, double rate2_ = 4);
 
     void waitUntilSettled();
-
-    // Gyro
-    Chassis& calibrateGyro();
-    Chassis& tareGyro();
-
-    double * getGyro();
 
     // Chassis Motor Settings
     void tarePos();
@@ -94,11 +88,11 @@ class Chassis {
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currTarget;
-    static bool isUsingOdom, isUsingGyro, isTurnToPoint;
+    static bool isUsingPoint;
 
     static double *odomL, *odomR, *theta, *posX, *posY;
 
-    static double current, gyroOffset, thetaRel, initL, initR, deltaL, deltaR;
+    static double current, initL, initR, deltaL, deltaR;
     static double driveError, driveIntegral, driveLast, turnError, turnIntegral, turnLast;
     static double driveOutput, driveOutput2, driveOutput3, driveOutput4, turnOutput, driveSlewOutput, driveSlewOutput2, driveSlewOutput3, driveSlewOutput4, turnSlewOutput;
     static double totOutputL, totOutputR;

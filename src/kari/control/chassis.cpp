@@ -12,17 +12,17 @@ bool Chassis::isRunning = false,
 Chassis::isSettled = true;
 int Chassis::mode = IDLE;
 
-double Chassis::kP_drive = 0.9, Chassis::kD_drive = 0.3, Chassis::kP_turn = 3.3, Chassis::kD_turn = 0.3;
+double Chassis::kP_drive = 0.9, Chassis::kI_drive = 0, Chassis::kD_drive = 0.3, Chassis::kP_turn = 2, Chassis::kI_turn = 0.3, Chassis::kD_turn = 3.3;
 
 double Chassis::tolerance = 1, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<ChassisTarget> Chassis::target;
 int Chassis::currTarget = 0;
-bool Chassis::isUsingOdom = true, Chassis::isUsingGyro = false, Chassis::isTurnToPoint = false;
+bool Chassis::isUsingPoint = false;
 
 double *Chassis::odomL, *Chassis::odomR, *Chassis::theta, *Chassis::posX, *Chassis::posY;
 
-double Chassis::current = 0, Chassis::gyroOffset = 0, Chassis::thetaRel = 0, Chassis::initL = 0, Chassis::initR = 0, Chassis::deltaL = 0, Chassis::deltaR = 0,
-Chassis::driveError = 0, Chassis::driveLast = 0, Chassis::turnError = 0, Chassis::turnLast = 0,
+double Chassis::current = 0, Chassis::initL = 0, Chassis::initR = 0, Chassis::deltaL = 0, Chassis::deltaR = 0,
+Chassis::driveError = 0, Chassis::driveIntegral = 0, Chassis::driveLast = 0, Chassis::turnError = 0, Chassis::turnIntegral = 0, Chassis::turnLast = 0,
 Chassis::driveOutput = 0, Chassis::driveOutput2 = 0, Chassis::driveOutput3 = 0, Chassis::driveOutput4 = 0, Chassis::turnOutput = 0, Chassis::driveSlewOutput = 0, Chassis::driveSlewOutput2 = 0, Chassis::driveSlewOutput3 = 0, Chassis::driveSlewOutput4 = 0 , Chassis::turnSlewOutput = 0,
 Chassis::totOutputL = 0, Chassis::totOutputR = 0;
 
@@ -65,35 +65,37 @@ Chassis& Chassis::withSlop(double offset_, double amp_) {
   return *this;
 }
 
-Chassis& Chassis::withoutOdom() {
-  isUsingOdom = false;
-  return *this;
-}
-
-Chassis& Chassis::withGyro(double theta_) {
-  isUsingGyro = true;
-  target[target.size() - 1].theta = theta_;
+Chassis& Chassis::withAngle(double theta_, int speed_, double rate_) {
+  currTarget = 0;
+  if( target.size() != 1 ) target.resize(1);
+  target[0].theta = theta_;
+  target[0].speedTurn = speed_;
+  target[0].rateTurn = rate_;
   return *this;
 }
 
 Chassis& Chassis::withPoint(Vector2 point, int speed, double rate, bool reverse_) {
-  isUsingOdom = true;
+  isUsingPoint = true;
   target.push_back(ChassisTarget());
   target[target.size() - 1].x = point.x;
   target[target.size() - 1].y = point.y;
-  target[target.size() - 1].speed = speed;
-  target[target.size() - 1].rate = rate;
+  target[target.size() - 1].speedDrive = speed;
+  target[target.size() - 1].speedTurn = speed;
+  target[target.size() - 1].rateDrive = rate;
+  target[target.size() - 1].rateTurn = rate;
   target[target.size() - 1].reverse = reverse_;
   return *this;
 }
 
 Chassis& Chassis::withTarget(double target_, double theta_, int speed, double rate, bool reverse_) {
-  isUsingOdom = false;
+  isUsingPoint = false;
   target.push_back(ChassisTarget());
   target[target.size() - 1].x = target_;
   target[target.size() - 1].theta = theta_;
-  target[target.size() - 1].speed = speed;
-  target[target.size() - 1].rate = rate;
+  target[target.size() - 1].speedDrive = speed;
+  target[target.size() - 1].speedTurn = speed;
+  target[target.size() - 1].rateDrive = rate;
+  target[target.size() - 1].rateTurn = rate;
   target[target.size() - 1].reverse = reverse_;
   return *this;
 }
@@ -102,11 +104,9 @@ Chassis& Chassis::drive() {
   currTarget = 0;
   isSettled = false;
   reset();
-  if(isUsingOdom) {
-    mode = DRIVING_POINT;
-  } else {
-    mode = DRIVING_DIST;
-  }
+  if(isUsingPoint) mode = DRIVING_POINT;
+    else mode = DRIVING_DIST;
+
   return *this;
 }
 
@@ -115,8 +115,8 @@ Chassis& Chassis::drive(Vector2 point, int speed_, int rate_, bool reverse_) {
   if(target.size() != 1) target.resize(1);
   target[0].x = point.x;
   target[0].y = point.y;
-  target[0].speed = speed_;
-  target[0].rate = rate_;
+  target[0].speedDrive = speed_;
+  target[0].rateDrive = rate_;
   target[0].reverse = reverse_;
   isSettled = false;
   reset();
@@ -124,15 +124,14 @@ Chassis& Chassis::drive(Vector2 point, int speed_, int rate_, bool reverse_) {
   return *this;
 }
 
-Chassis& Chassis::drive(double target_, int speed_, double rate_, int rate2_) {
+Chassis& Chassis::drive(double target_, int speed_, double rate_) {
   currTarget = 0;
   if(target.size() != 1) target.resize(1);
   initL = *odomL;
   initR = *odomR;
   target[0].x = target_;
-  target[0].speed = speed_;
-  target[0].rate = rate_;
-  target[0].rate2 = rate2_;
+  target[0].speedDrive = speed_;
+  target[0].rateDrive = rate_;
   isSettled = false;
   reset();
   mode = DRIVING_DIST;
@@ -145,8 +144,8 @@ Chassis& Chassis::driveUltrasonic(double target_, int speed_, int rate_) {
   initL = *odomL;
   initR = *odomR;
   target[0].x = target_;
-  target[0].speed = speed_;
-  target[0].rate = rate_;
+  target[0].speedDrive = speed_;
+  target[0].rateDrive = rate_;
   isSettled = false;
   reset();
   mode = DRIVING_ULTRASONIC;
@@ -155,12 +154,12 @@ Chassis& Chassis::driveUltrasonic(double target_, int speed_, int rate_) {
 
 Chassis& Chassis::turn(Vector2 point, int speed_, int rate_) {
   currTarget = 0;
-  isTurnToPoint = true;
+  isUsingPoint = true;
   if(target.size() != 1) target.resize(1);
   target[0].x = point.x;
   target[0].y = point.y;
-  target[0].speed = speed_;
-  target[0].rate = rate_;
+  target[0].speedTurn = speed_;
+  target[0].rateTurn = rate_;
   isSettled = false;
   reset();
   mode = TURNING;
@@ -169,11 +168,11 @@ Chassis& Chassis::turn(Vector2 point, int speed_, int rate_) {
 
 Chassis& Chassis::turn(double theta_, int speed_, int rate_) {
   currTarget = 0;
-  isTurnToPoint = false;
+  isUsingPoint = false;
   if(target.size() != 1) target.resize(1);
   target[0].theta = theta_;
-  target[0].speed = speed_;
-  target[0].rate = rate_;
+  target[0].speedTurn = speed_;
+  target[0].rateTurn = rate_;
   isSettled = false;
   reset();
   mode = TURNING;
@@ -186,8 +185,8 @@ Chassis& Chassis::strafe(double target_, int speed_, int rate_) {
   initL = *odomL;
   initR = *odomR;
   target[0].x = target_;
-  target[0].speed = speed_;
-  target[0].rate = rate_;
+  target[0].speedDrive = speed_;
+  target[0].rateDrive = rate_;
   isSettled = false;
   reset();
   LF.tare_position();
@@ -205,10 +204,10 @@ Chassis& Chassis::smartstrafe(double direction_, double theta_, double drivespee
   initR = *odomR;
   target[0].theta = theta_;
   target[0].direction = direction_;
-  target[0].drivespeed = drivespeed_;
-  target[0].turnspeed = turnspeed_;
-  target[0].rate = rate_;
-  target[0].rate2 = rate2_;
+  target[0].speedDrive = drivespeed_;
+  target[0].speedTurn = turnspeed_;
+  target[0].rateDrive = rate_;
+  target[0].rateTurn = rate2_;
   isSettled = false;
   reset();
   LF.tare_position();
@@ -290,15 +289,16 @@ void Chassis::run() {
     if(!pros::competition::is_autonomous()) goto end;
 
     switch(mode) {
-      case DRIVING_POINT: { // Driving
+      case DRIVING_POINT: { // Drive to Point
         driveError = sqrt( pow( target[currTarget].x - *posX, 2) + pow( target[currTarget].y - *posY, 2) );
 
         driveIntegral += driveError;
-        if( driveIntegral > 100 ) driveIntegral = 100;
-        if( driveIntegral < -100 ) driveIntegral = -100;
+        if( driveIntegral > WINDUP_LIMIT ) driveIntegral = WINDUP_LIMIT;
+         else if( driveIntegral < -WINDUP_LIMIT ) driveIntegral = -WINDUP_LIMIT;
 
         driveOutput = ( driveError * kP_drive ) + ( driveIntegral * kI_drive ) + ( driveError - driveLast ) * kD_drive;
 
+        // Turn Component
         target[currTarget].theta = atan2( target[currTarget].y - *posY, target[currTarget].x - *posX ) * ( 180 / PI );
 
         turnError = ( target[currTarget].theta - *theta ) * PI / 180;
@@ -306,8 +306,8 @@ void Chassis::run() {
         turnError = turnError * 180 / PI;
 
         turnIntegral += turnError;
-        if( turnIntegral > 100 ) turnIntegral = 100;
-         else if( turnIntegral < -100 ) turnIntegral = -100;
+        if( turnIntegral > WINDUP_LIMIT ) turnIntegral = WINDUP_LIMIT;
+         else if( turnIntegral < -WINDUP_LIMIT ) turnIntegral = -WINDUP_LIMIT;
 
         turnOutput = ( turnError * kP_turn ) + ( turnIntegral * kI_turn ) + ( turnError - turnLast ) * kD_turn;
 
@@ -316,48 +316,38 @@ void Chassis::run() {
 
         if(target.size() - 1 == currTarget) {
           if(turnOutput > 0) {
-            if(turnOutput > turnSlewOutput + target[currTarget].rate) turnSlewOutput += target[currTarget].rate;
+            if(turnOutput > turnSlewOutput + target[currTarget].rateTurn) turnSlewOutput += target[currTarget].rateTurn;
               else turnSlewOutput = turnOutput;
           } else if(turnOutput < 0) {
-            if(turnOutput < turnSlewOutput - target[currTarget].rate) turnSlewOutput -= target[currTarget].rate;
+            if(turnOutput < turnSlewOutput - target[currTarget].rateTurn) turnSlewOutput -= target[currTarget].rateTurn;
               else turnSlewOutput = turnOutput;
           }
 
           driveOutput /= abs(turnOutput / 5);
 
           if(driveOutput > 0) {
-            if(driveOutput > driveSlewOutput + target[currTarget].rate) {
-              driveSlewOutput += target[currTarget].rate;
-            } else {
-              driveSlewOutput = driveOutput;
-            }
+            if(driveOutput > driveSlewOutput + target[currTarget].rateDrive) driveSlewOutput += target[currTarget].rateDrive;
+              else driveSlewOutput = driveOutput;
           } else if(driveOutput < 0) {
-            if(driveOutput < driveSlewOutput - target[currTarget].rate) {
-              driveSlewOutput -= target[currTarget].rate;
-            } else {
-              driveSlewOutput = driveOutput;
-            }
+            if(driveOutput < driveSlewOutput - target[currTarget].rateDrive) driveSlewOutput -= target[currTarget].rateDrive;
+              else driveSlewOutput = driveOutput;
           }
         } else {
-          if(turnOutput > turnSlewOutput + target[currTarget].rate) {
-            turnSlewOutput += target[currTarget].rate;
-          } else if(turnOutput < turnSlewOutput - target[currTarget].rate) {
-            turnSlewOutput -= target[currTarget].rate;
-          } else {
-            turnSlewOutput = turnOutput;
-          }
+          if(turnOutput > turnSlewOutput + target[currTarget].rateTurn) turnSlewOutput += target[currTarget].rateTurn;
+            else if(turnOutput < turnSlewOutput - target[currTarget].rateTurn) turnSlewOutput -= target[currTarget].rateTurn;
+            else turnSlewOutput = turnOutput;
 
-          if(target[currTarget].speed > driveSlewOutput) driveSlewOutput += target[currTarget].rate;
-          if(target[currTarget].speed < driveSlewOutput) driveSlewOutput -= target[currTarget].rate;
+          if(target[currTarget].speedDrive > driveSlewOutput) driveSlewOutput += target[currTarget].rateDrive;
+          if(target[currTarget].speedDrive < driveSlewOutput) driveSlewOutput -= target[currTarget].rateDrive;
 
           driveSlewOutput /= abs(turnOutput / 25);
         }
 
-        if(driveSlewOutput > target[currTarget].speed) driveSlewOutput = target[currTarget].speed;
-        if(driveSlewOutput < -target[currTarget].speed) driveSlewOutput = -target[currTarget].speed;
+        if(driveSlewOutput > target[currTarget].speedDrive) driveSlewOutput = target[currTarget].speedDrive;
+        if(driveSlewOutput < -target[currTarget].speedDrive) driveSlewOutput = -target[currTarget].speedDrive;
 
-        if(turnSlewOutput > target[currTarget].speed) turnSlewOutput = target[currTarget].speed;
-        if(turnSlewOutput < -target[currTarget].speed) turnSlewOutput = -target[currTarget].speed;
+        if(turnSlewOutput > target[currTarget].speedTurn) turnSlewOutput = target[currTarget].speedTurn;
+        if(turnSlewOutput < -target[currTarget].speedTurn) turnSlewOutput = -target[currTarget].speedTurn;
 
         if(target[currTarget].reverse) {
           totOutputL = -turnSlewOutput - driveSlewOutput;
@@ -370,6 +360,7 @@ void Chassis::run() {
         if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
           if(target.size() - 1 == currTarget) {
             clearArr();
+            isUsingPoint = false;
             isSettled = true;
             withGain().withTol().withSlop().reset();
             break;
@@ -384,41 +375,20 @@ void Chassis::run() {
         break;
       }
 
-      case DRIVING_DIST: {
-       deltaL = *odomL - initL;
+      case DRIVING_DIST: { // Drive to Distance
+        deltaL = *odomL - initL;
         deltaR = *odomR - initR;
 
         driveError = target[currTarget].x - ( deltaL + deltaR ) / 2;
         driveOutput = driveError * kP_drive + ( driveError - driveLast ) * kD_drive;
 
-        if(isUsingGyro) {
-          if(target[currTarget].reverse) target[currTarget].theta += 180;
+        turnError = ( target[currTarget].theta - *theta ) * PI / 180;
+        turnError = atan2( sin( turnError ), cos( turnError ) );
+        turnError = turnError * 180 / PI;
 
-          if( ( (int)( current / 360 ) * 360 ) > target[currTarget].theta && ( (int)( current / 360 ) * 360 ) < target[currTarget].theta + 180 ) {
-            if(current > 0) {
-              thetaRel = floor((int)( current / 360 )) * 360;
-            } else {
-              thetaRel = ceil((int)( current / 360 )) * 360;
-            }
-          } else if( ( (int)( current / 360 ) * 360 ) < target[currTarget].theta && ( (int)( current / 360 ) * 360 ) > target[currTarget].theta + 180 ) {
-            if(current < 0) {
-              thetaRel = ceil((int)( current / 360 )) * 360;
-            } else {
-              thetaRel = floor((int)( current / 360 )) * 360;
-            }
-          } else {
-            if(current > 0) {
-              thetaRel = floor((int)( current / 360 )) * 360;
-            } else {
-              thetaRel = ceil((int)( current / 360 )) * 360;
-            }
-          }
-
-          turnError = ( target[currTarget].theta + thetaRel ) - current;
-          if( abs(turnError) > abs( ( (target[currTarget].theta - 360) + thetaRel ) - current) ) {
-            turnError = ( (target[currTarget].theta - 360) + thetaRel ) - current;
-          }
-        }
+        turnIntegral += turnError;
+        if( turnIntegral > WINDUP_LIMIT ) turnIntegral = WINDUP_LIMIT;
+         else if( turnIntegral < -WINDUP_LIMIT ) turnIntegral = -WINDUP_LIMIT;
 
         turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
 
@@ -427,48 +397,43 @@ void Chassis::run() {
 
         if(target.size() - 1 == currTarget) {
           if(turnOutput > 0) {
-            if(turnOutput > turnSlewOutput + target[currTarget].rate2) turnSlewOutput += target[currTarget].rate2;
+            if(turnOutput > turnSlewOutput + target[currTarget].rateTurn) turnSlewOutput += target[currTarget].rateTurn;
               else turnSlewOutput = turnOutput;
           } else if(turnOutput < 0) {
-            if(turnOutput < turnSlewOutput - target[currTarget].rate2) turnSlewOutput -= target[currTarget].rate2;
+            if(turnOutput < turnSlewOutput - target[currTarget].rateTurn) turnSlewOutput -= target[currTarget].rateTurn;
               else turnSlewOutput = turnOutput;
           }
 
           driveOutput /= abs(turnSlewOutput / 10);
 
           if(driveOutput > 0) {
-            if(driveOutput > driveSlewOutput + target[currTarget].rate) driveSlewOutput += target[currTarget].rate;
+            if(driveOutput > driveSlewOutput + target[currTarget].rateDrive) driveSlewOutput += target[currTarget].rateDrive;
               else driveSlewOutput = driveOutput;
           } else if(driveOutput < 0) {
-            if(driveOutput < driveSlewOutput - target[currTarget].rate) driveSlewOutput -= target[currTarget].rate;
+            if(driveOutput < driveSlewOutput - target[currTarget].rateDrive) driveSlewOutput -= target[currTarget].rateDrive;
               else driveSlewOutput = driveOutput;
           }
         } else {
-          if(turnOutput > turnSlewOutput + target[currTarget].rate2) {
-            turnSlewOutput += target[currTarget].rate2;
-          } else if(turnOutput < turnSlewOutput - target[currTarget].rate2) {
-            turnSlewOutput -= target[currTarget].rate2;
-          } else {
-            turnSlewOutput = turnOutput;
-          }
+          if(turnOutput > turnSlewOutput + target[currTarget].rateTurn) turnSlewOutput += target[currTarget].rateTurn;
+            else if(turnOutput < turnSlewOutput - target[currTarget].rateTurn) turnSlewOutput -= target[currTarget].rateTurn;
+            else turnSlewOutput = turnOutput;
 
-          if(target[currTarget].speed > driveSlewOutput) driveSlewOutput += target[currTarget].rate;
-          if(target[currTarget].speed < driveSlewOutput) driveSlewOutput -= target[currTarget].rate;
+          if(target[currTarget].speedDrive > driveSlewOutput) driveSlewOutput += target[currTarget].rateDrive;
+          if(target[currTarget].speedDrive < driveSlewOutput) driveSlewOutput -= target[currTarget].rateDrive;
 
           driveSlewOutput /= abs(turnOutput / 25);
         }
 
-        if(driveSlewOutput > target[currTarget].speed) driveSlewOutput = target[currTarget].speed;
-        if(driveSlewOutput < -target[currTarget].speed) driveSlewOutput = -target[currTarget].speed;
+        if(driveSlewOutput > target[currTarget].speedDrive) driveSlewOutput = target[currTarget].speedDrive;
+        if(driveSlewOutput < -target[currTarget].speedDrive) driveSlewOutput = -target[currTarget].speedDrive;
 
-        if(turnSlewOutput > target[currTarget].speed) turnSlewOutput = target[currTarget].speed;
-        if(turnSlewOutput < -target[currTarget].speed) turnSlewOutput = -target[currTarget].speed;
+        if(turnSlewOutput > target[currTarget].speedTurn) turnSlewOutput = target[currTarget].speedTurn;
+        if(turnSlewOutput < -target[currTarget].speedTurn) turnSlewOutput = -target[currTarget].speedTurn;
 
         if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
           if(target.size() - 1 == currTarget) {
             clearArr();
-            isUsingOdom = true;
-            isUsingGyro = false;
+            isUsingPoint = false;
             isSettled = true;
             withGain().withTol().withSlop().reset();
             break;
@@ -478,20 +443,12 @@ void Chassis::run() {
           }
         }
 
-        if(isUsingGyro) {
-          totOutputL = turnSlewOutput + driveSlewOutput;
-          totOutputR = -turnSlewOutput + driveSlewOutput;
-        } else {
-          totOutputL = driveSlewOutput - slop();
-          totOutputR = driveSlewOutput + slop();
-        }
-
         left(totOutputL);
         right(totOutputR);
         break;
       }
 
-      case DRIVING_ULTRASONIC: {
+      case DRIVING_ULTRASONIC: { // Drive with Ultrasonic
         deltaL = *odomL - initL;
         deltaR = *odomR - initR;
 
@@ -501,23 +458,22 @@ void Chassis::run() {
 
         if(target.size() - 1 == currTarget) {
           if(driveOutput > 0) {
-            if(driveOutput > driveSlewOutput + target[currTarget].rate) driveSlewOutput += target[currTarget].rate;
+            if(driveOutput > driveSlewOutput + target[currTarget].rateDrive) driveSlewOutput += target[currTarget].rateDrive;
               else driveSlewOutput = driveOutput;
           } else if(driveOutput < 0) {
-            if(driveOutput < driveSlewOutput - target[currTarget].rate) driveSlewOutput -= target[currTarget].rate;
+            if(driveOutput < driveSlewOutput - target[currTarget].rateDrive) driveSlewOutput -= target[currTarget].rateDrive;
               else driveSlewOutput = driveOutput;
           }
         } else {
 
         }
 
-        if(driveSlewOutput > target[currTarget].speed) driveSlewOutput = target[currTarget].speed;
-        if(driveSlewOutput < -target[currTarget].speed) driveSlewOutput = -target[currTarget].speed;
+        if(driveSlewOutput > target[currTarget].speedDrive) driveSlewOutput = target[currTarget].speedDrive;
+        if(driveSlewOutput < -target[currTarget].speedDrive) driveSlewOutput = -target[currTarget].speedDrive;
 
         if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
           if(target.size() - 1 == currTarget) {
             clearArr();
-            isUsingOdom = true;
             isSettled = true;
             withGain().withTol().withSlop().reset();
             break;
@@ -534,84 +490,43 @@ void Chassis::run() {
       }
 
       case TURNING: { // Turning
-          if(isUsingOdom) {
-            if(isTurnToPoint) {
-              target[0].theta = atan2( target[0].y - *posY, target[0].x - *posX ) * ( 180 / PI );
-            }
+        if( isUsingPoint ) target[currTarget].theta = atan2( target[currTarget].y - *posY, target[currTarget].x - *posX ) * ( 180 / PI );
 
-            if( ( (int)( *theta / 360 ) * 360 ) > target[0].theta && ( (int)( *theta / 360 ) * 360 ) < target[0].theta + 180 ) {
-              if(*theta > 0) {
-                thetaRel = floor((int)( *theta / 360 )) * 360;
-              } else {
-                thetaRel = ceil((int)( *theta / 360 )) * 360;
-              }
-            } else if( ( (int)( *theta / 360 ) * 360 ) < target[0].theta && ( (int)( *theta / 360 ) * 360 ) > target[0].theta + 180 ) {
-              if(*theta < 0) {
-                thetaRel = ceil((int)( *theta / 360 )) * 360;
-              } else {
-                thetaRel = floor((int)( *theta / 360 )) * 360;
-              }
-            }
+        turnError = ( target[currTarget].theta - *theta ) * PI / 180;
+        turnError = atan2( sin( turnError ), cos( turnError ) );
+        turnError = turnError * 180 / PI;
 
-            turnError = ( target[0].theta + thetaRel ) - *theta;
-            if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - *theta) ) {
-              turnError = ( (target[0].theta - 360) + thetaRel ) - *theta;
-            }
-          } else {
-            if( ( (int)( current / 360 ) * 360 ) > target[0].theta && ( (int)( current / 360 ) * 360 ) < target[0].theta + 180 ) {
-              if(current > 0) {
-                thetaRel = floor((int)( current / 360 )) * 360;
-              } else {
-                thetaRel = ceil((int)( current / 360 )) * 360;
-              }
-            } else if( ( (int)( current / 360 ) * 360 ) < target[0].theta && ( (int)( current / 360 ) * 360 ) > target[0].theta + 180 ) {
-              if(current < 0) {
-                thetaRel = ceil((int)( current / 360 )) * 360;
-              } else {
-                thetaRel = floor((int)( current / 360 )) * 360;
-              }
-            }
+        turnIntegral += turnError;
+        if( turnIntegral > WINDUP_LIMIT ) turnIntegral = WINDUP_LIMIT;
+         else if( turnIntegral < -WINDUP_LIMIT ) turnIntegral = -WINDUP_LIMIT;
 
+        turnOutput = ( turnError * kP_turn ) + ( turnIntegral * kI_turn ) + ( turnError - turnLast ) * kD_turn;
 
-            turnError = ( target[0].theta + thetaRel ) - current;
-            if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - current) ) {
-              turnError = ( (target[0].theta - 360) + thetaRel ) - current;
-            }
-          }
+        turnLast = turnError;
 
-          turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
+        if(turnOutput > 0) {
+          if(turnOutput > turnSlewOutput + target[0].rateTurn) turnSlewOutput += target[0].rateTurn;
+            else turnSlewOutput = turnOutput;
+        } else if(turnOutput < 0) {
+          if(turnOutput < turnSlewOutput - target[0].rateTurn) turnSlewOutput -= target[0].rateTurn;
+            else turnSlewOutput = turnOutput;
+        }
 
-          turnLast = turnError;
+        if(turnSlewOutput > target[0].speedTurn) turnSlewOutput = target[0].speedTurn;
+        if(turnSlewOutput < -target[0].speedTurn) turnSlewOutput = -target[0].speedTurn;
 
-          if(turnOutput > 0) {
-            if(turnOutput > turnSlewOutput + target[0].rate) turnSlewOutput += target[0].rate;
-              else turnSlewOutput = turnOutput;
-          } else if(turnOutput < 0) {
-            if(turnOutput < turnSlewOutput - target[0].rate) turnSlewOutput -= target[0].rate;
-              else turnSlewOutput = turnOutput;
-          }
-
-          if(turnSlewOutput > target[0].speed) turnSlewOutput = target[0].speed;
-          if(turnSlewOutput < -target[0].speed) turnSlewOutput = -target[0].speed;
-
-          if(turnError > -tolerance && turnError < tolerance) {
-            isSettled = true;
-            isUsingOdom = true;
-            isTurnToPoint = false;
-            withGain().withTol().withSlop().reset();
-            break;
-          }
-
-          if(isUsingOdom) {
-            left(-turnSlewOutput);
-            right(turnSlewOutput);
-          } else {
-            left(turnSlewOutput);
-            right(-turnSlewOutput);
-          }
-
+        if(turnError > -tolerance && turnError < tolerance) {
+          isSettled = true;
+          isUsingPoint = false;
+          withGain().withTol().withSlop().reset();
           break;
         }
+
+        left(-turnSlewOutput);
+        right(turnSlewOutput);
+
+        break;
+      }
 
       case STRAFING: { // Strafing
         deltaL = ( LF.get_position() - LB.get_position() ) / 2;
@@ -622,15 +537,15 @@ void Chassis::run() {
         driveLast = driveError;
 
         if(driveOutput > 0) {
-          if(driveOutput > driveSlewOutput + target[currTarget].rate) driveSlewOutput += target[currTarget].rate;
+          if(driveOutput > driveSlewOutput + target[currTarget].rateDrive) driveSlewOutput += target[currTarget].rateDrive;
             else driveSlewOutput = driveOutput;
         } else if(driveOutput < 0) {
-          if(driveOutput < driveSlewOutput - target[currTarget].rate) driveSlewOutput -= target[currTarget].rate;
+          if(driveOutput < driveSlewOutput - target[currTarget].rateDrive) driveSlewOutput -= target[currTarget].rateDrive;
             else driveSlewOutput = driveOutput;
         }
 
-        if(driveSlewOutput > target[currTarget].speed) driveSlewOutput = target[currTarget].speed;
-        if(driveSlewOutput < -target[currTarget].speed) driveSlewOutput = -target[currTarget].speed;
+        if(driveSlewOutput > target[currTarget].speedDrive) driveSlewOutput = target[currTarget].speedDrive;
+        if(driveSlewOutput < -target[currTarget].speedDrive) driveSlewOutput = -target[currTarget].speedDrive;
 
         if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
           isSettled = true;
@@ -645,142 +560,99 @@ void Chassis::run() {
         break;
       }
 
-      case STRAFING_SMART: {
+      case STRAFING_SMART: { // Strafing to angle to angle lol
+        // Turning
+        turnError = ( target[currTarget].theta - *theta ) * PI / 180;
+        turnError = atan2( sin( turnError ), cos( turnError ) );
+        turnError = turnError * 180 / PI;
 
-
-// turn
-        if( ( (int)( current / 360 ) * 360 ) > target[0].theta && ( (int)( current / 360 ) * 360 ) < target[0].theta + 180 ) {
-          if(current > 0) {
-            thetaRel = floor((int)( current / 360 )) * 360;
-          } else {
-            thetaRel = ceil((int)( current / 360 )) * 360;
-          }
-        } else if( ( (int)( current / 360 ) * 360 ) < target[0].theta && ( (int)( current / 360 ) * 360 ) > target[0].theta + 180 ) {
-          if(current < 0) {
-            thetaRel = ceil((int)( current / 360 )) * 360;
-          } else {
-            thetaRel = floor((int)( current / 360 )) * 360;
-          }
-        }
-
-
-        turnError = ( target[0].theta + thetaRel ) - current;
-        if( abs(turnError) > abs( ( (target[0].theta - 360) + thetaRel ) - current) ) {
-          turnError = ( (target[0].theta - 360) + thetaRel ) - current;
-        }
         turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
 
         turnLast = turnError;
 
-// strafe
-   turnError=((current-target[0].direction)*PI)/180;
-  driveOutput = cos(turnError);
- driveOutput2 = cos(turnError);
- driveOutput3 = sin(turnError);
-driveOutput4 = sin(turnError);
-//driveOutput = 10;
-//driveOutput2 = -10;
-  driveOutput = driveOutput * kP_drive*150;
-  driveOutput2 = driveOutput2 * kP_drive*150;
-  driveOutput3 = driveOutput3 * kP_drive*150;
-  driveOutput4 = driveOutput4 * kP_drive*150;
+        // Strafing
+        turnError = ( ( current-target[0].direction ) * PI ) / 180;
 
+        driveOutput = cos( turnError );
+        driveOutput2 = cos( turnError );
+        driveOutput3 = sin( turnError );
+        driveOutput4 = sin( turnError );
 
-//slew work
+        driveOutput = driveOutput * kP_drive * 150;
+        driveOutput2 = driveOutput2 * kP_drive * 150;
+        driveOutput3 = driveOutput3 * kP_drive * 150;
+        driveOutput4 = driveOutput4 * kP_drive * 150;
 
-           if(turnOutput > 0) {
-             if(turnOutput > turnSlewOutput + target[0].rate2) turnSlewOutput += target[0].rate2;
-               else turnSlewOutput = turnOutput;
-           } else if(turnOutput < 0) {
-             if(turnOutput < turnSlewOutput - target[0].rate2) turnSlewOutput -= target[0].rate2;
-               else turnSlewOutput = turnOutput;
-           }
+        // Slew
+        if(turnOutput > 0) {
+          if(turnOutput > turnSlewOutput + target[0].rateTurn) turnSlewOutput += target[0].rateTurn;
+            else turnSlewOutput = turnOutput;
+        } else if(turnOutput < 0) {
+          if(turnOutput < turnSlewOutput - target[0].rateTurn) turnSlewOutput -= target[0].rateTurn;
+            else turnSlewOutput = turnOutput;
+        }
 
-           if(turnSlewOutput > target[0].turnspeed) turnSlewOutput = target[0].turnspeed;
-           if(turnSlewOutput < -target[0].turnspeed) turnSlewOutput = -target[0].turnspeed;
+        if(turnSlewOutput > target[0].speedTurn) turnSlewOutput = target[0].speedTurn;
+        if(turnSlewOutput < -target[0].speedTurn) turnSlewOutput = -target[0].speedTurn;
 
+        driveOutput/=abs(turnSlewOutput);
+        driveOutput2/=abs(turnSlewOutput);
+        driveOutput3/=abs(turnSlewOutput);
+        driveOutput4/=abs(turnSlewOutput);
 
-driveOutput/=abs(turnSlewOutput);
-driveOutput2/=abs(turnSlewOutput);
-driveOutput3/=abs(turnSlewOutput);
-driveOutput4/=abs(turnSlewOutput);
+        // Drive Output 1
+        if(driveOutput > 0) {
+          if(driveOutput > driveSlewOutput + target[0].rateDrive) driveSlewOutput += target[0].rateDrive;
+            else driveSlewOutput = driveOutput;
+        } else if(driveOutput < 0) {
+          if(driveOutput < driveSlewOutput - target[0].rateDrive) driveSlewOutput -= target[0].rateDrive;
+            else driveSlewOutput = driveOutput;
+        }
 
+        if(driveSlewOutput > target[0].speedDrive) driveSlewOutput = target[0].speedDrive;
+        if(driveSlewOutput < -target[0].speedDrive) driveSlewOutput = -target[0].speedDrive;
 
- if(driveOutput > 0) {
-   if(driveOutput > driveSlewOutput + target[0].rate) driveSlewOutput += target[0].rate;
-     else driveSlewOutput = driveOutput;
- } else if(driveOutput < 0) {
-   if(driveOutput < driveSlewOutput - target[0].rate) driveSlewOutput -= target[0].rate;
-     else driveSlewOutput = driveOutput;
- }
+        // Drive Output 2
+        if(driveOutput2 > 0) {
+          if(driveOutput2 > driveSlewOutput2 + target[0].rateDrive) driveSlewOutput2 += target[0].rateDrive;
+            else driveSlewOutput2 = driveOutput2;
+        } else if(driveOutput2 < 0) {
+          if(driveOutput2 < driveSlewOutput2 - target[0].rateDrive) driveSlewOutput2 -= target[0].rateDrive;
+            else driveSlewOutput2 = driveOutput2;
+        }
 
- if(driveSlewOutput > target[0].drivespeed) driveSlewOutput = target[0].drivespeed;
- if(driveSlewOutput < -target[0].drivespeed) driveSlewOutput = -target[0].drivespeed;
+        if(driveSlewOutput2 > target[0].speedDrive) driveSlewOutput2 = target[0].speedDrive;
+        if(driveSlewOutput2 < -target[0].speedDrive) driveSlewOutput2 = -target[0].speedDrive;
 
+        // Drive Output 3
+        if(driveOutput3 > 0) {
+          if(driveOutput3 > driveSlewOutput3 + target[0].rateDrive) driveSlewOutput3 += target[0].rateDrive;
+            else driveSlewOutput3 = driveOutput3;
+        } else if(driveOutput3 < 0) {
+          if(driveOutput3 < driveSlewOutput3 - target[0].rateDrive) driveSlewOutput3 -= target[0].rateDrive;
+            else driveSlewOutput3 = driveOutput3;
+        }
 
+        if(driveSlewOutput3 > target[0].speedDrive) driveSlewOutput3 = target[0].speedDrive;
+        if(driveSlewOutput3 < -target[0].speedDrive) driveSlewOutput3 = -target[0].speedDrive;
 
+        // Drive Output 4
+        if(driveOutput4 > 0) {
+          if(driveOutput4 > driveSlewOutput4 + target[0].rateDrive) driveSlewOutput4 += target[0].rateDrive;
+            else driveSlewOutput4 = driveOutput4;
+        } else if(driveOutput4 < 0) {
+          if(driveOutput4 < driveSlewOutput4 - target[0].rateDrive) driveSlewOutput4 -= target[0].rateDrive;
+            else driveSlewOutput4 = driveOutput4;
+        }
 
-  if(driveOutput2 > 0) {
-    if(driveOutput2 > driveSlewOutput2 + target[0].rate) driveSlewOutput2 += target[0].rate;
-      else driveSlewOutput2 = driveOutput2;
-  } else if(driveOutput2 < 0) {
-    if(driveOutput2 < driveSlewOutput2 - target[0].rate) driveSlewOutput2 -= target[0].rate;
-      else driveSlewOutput2 = driveOutput2;
-  }
+        if(driveSlewOutput4 > target[0].speedDrive) driveSlewOutput4 = target[0].speedDrive;
+        if(driveSlewOutput4 < -target[0].speedDrive) driveSlewOutput4 = -target[0].speedDrive;
 
-  if(driveSlewOutput2 > target[0].drivespeed) driveSlewOutput2 = target[0].drivespeed;
-  if(driveSlewOutput2 < -target[0].drivespeed) driveSlewOutput2 = -target[0].drivespeed;
-
-
-
-
-
-  if(driveOutput3 > 0) {
-    if(driveOutput3 > driveSlewOutput3 + target[0].rate) driveSlewOutput3 += target[0].rate;
-      else driveSlewOutput3 = driveOutput3;
-  } else if(driveOutput3 < 0) {
-    if(driveOutput3 < driveSlewOutput3 - target[0].rate) driveSlewOutput3 -= target[0].rate;
-      else driveSlewOutput3 = driveOutput3;
-  }
-
-  if(driveSlewOutput3 > target[0].drivespeed) driveSlewOutput3 = target[0].drivespeed;
-  if(driveSlewOutput3 < -target[0].drivespeed) driveSlewOutput3 = -target[0].drivespeed;
-
-
-
-
-
-  if(driveOutput4 > 0) {
-    if(driveOutput4 > driveSlewOutput4 + target[0].rate) driveSlewOutput4 += target[0].rate;
-      else driveSlewOutput4 = driveOutput4;
-  } else if(driveOutput4 < 0) {
-    if(driveOutput4 < driveSlewOutput4 - target[0].rate) driveSlewOutput4 -= target[0].rate;
-      else driveSlewOutput4 = driveOutput4;
-  }
-
-  if(driveSlewOutput4 > target[0].drivespeed) driveSlewOutput4 = target[0].drivespeed;
-  if(driveSlewOutput4 < -target[0].drivespeed) driveSlewOutput4 = -target[0].drivespeed;
-
-
-
-        // LF.move(turnSlewOutput+driveSlewOutput2);
-        // LB.move(-turnSlewOutput+driveSlewOutput);
-        // RF.move(turnSlewOutput+driveSlewOutput);
-        // RB.move(-turnSlewOutput+driveSlewOutput2);
-         // LF.move(driveSlewOutput2);
-         // LB.move(driveSlewOutput);
-         // RF.move(-driveSlewOutput);
-         // RB.move(-driveSlewOutput2);
-
-         LF.move(driveSlewOutput2-driveSlewOutput3+turnSlewOutput);
-         LB.move(driveSlewOutput+driveSlewOutput4+turnSlewOutput);
-         RF.move(-driveSlewOutput-driveSlewOutput4+turnSlewOutput);
-         RB.move(-driveSlewOutput2+driveSlewOutput3+turnSlewOutput);
-        // LF.move(turnSlewOutput);
-        // LB.move(turnSlewOutput);
-        // RF.move(turnSlewOutput);
-        // RB.move(turnSlewOutput);
-      break;
+        LF.move(driveSlewOutput2-driveSlewOutput3+turnSlewOutput);
+        LB.move(driveSlewOutput+driveSlewOutput4+turnSlewOutput);
+        RF.move(-driveSlewOutput-driveSlewOutput4+turnSlewOutput);
+        RB.move(-driveSlewOutput2+driveSlewOutput3+turnSlewOutput);
+        break;
       }
 
       default: {

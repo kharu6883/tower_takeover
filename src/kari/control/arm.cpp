@@ -1,7 +1,7 @@
 #include "kari/control/arm.h"
 #include "kari/util/misc.h"
 
-pros::Motor ArmMotor(3, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
+pros::Motor ArmMotor(3, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);
 pros::ADIDigitalIn Limit(1);
 
 bool Arm::isRunning = false,

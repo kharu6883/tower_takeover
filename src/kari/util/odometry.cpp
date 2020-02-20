@@ -47,9 +47,19 @@ double * Odom::getY() {
   return &posY;
 }
 
-void Odom::reset(int theta_) {
+Odom& Odom::calibrateGyro() {
+  Imu_T.reset();
+  Imu_L.reset();
+  Imu_R.reset();
+
+  while( Imu_T.is_calibrating() || Imu_L.is_calibrating() || Imu_R.is_calibrating() ) pros::delay(20);
+  io::master.rumble(" . .");
+  return *this;
+}
+
+Odom& Odom::reset() {
   posX = posY = 0;
-  thetaRad = theta_ * ( PI * 180 );
+  return *this;
 }
 
 void Odom::start(void *ignore) {
@@ -64,21 +74,21 @@ void Odom::run() {
   isRunning = true;
 
   while(isRunning) {
+    thetaDeg = abs( Imu_L.get_heading() - 360 );
+    thetaRad = thetaDeg * PI / 180;
+
     currentL = LEncoder.get_value();
     currentR = REncoder.get_value();
     deltaL = currentL - lastDeltaL;
     deltaR = currentR - lastDeltaR;
 
-    thetaDeg = ( Imu_L.get_yaw() + Imu_R.get_yaw() ) / 2;
-    thetaRad = thetaDeg * ( PI / 180 );
-
-    if(thetaDeg < 0) {
-      thetaDeg = (-thetaDeg);
-      thetaDeg = fmod(thetaDeg, 360.0);
-      thetaDeg = (-thetaDeg);
-    } else {
-      thetaDeg = fmod(thetaDeg, 360.0);
-    }
+    // if(thetaDeg < 0) {
+    //   thetaDeg = (-thetaDeg);
+    //   thetaDeg = fmod(thetaDeg, 360.0);
+    //   thetaDeg = (-thetaDeg);
+    // } else {
+    //   thetaDeg = fmod(thetaDeg, 360.0);
+    // }
 
     posX = posX + (( deltaL + deltaR ) / 2) * cos( thetaRad );
     posY = posY + (( deltaL + deltaR ) / 2) * sin( thetaRad );

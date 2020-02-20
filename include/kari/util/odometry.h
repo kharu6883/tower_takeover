@@ -11,12 +11,13 @@ class Odom {
     double * getDL();
     double * getDR();
 
-    double * getThetaRad();
     double * getThetaDeg();
+    double * getThetaRad();
     double * getX();
     double * getY();
 
-    void reset(int theta_);
+    Odom& calibrateGyro();
+    Odom& reset();
 
     static void start(void* ignore);
     void run();
