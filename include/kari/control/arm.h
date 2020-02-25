@@ -1,11 +1,11 @@
 #include "main.h"
 
 #define ARM_BOTTOM 0
-#define ARM_LOW_TOWER 1.2
-#define ARM_LOW_TOWER_MANUAL 1.2
-#define ARM_LOW_TOWER_DESCORE 1.2
-#define ARM_MID_TOWER 1.55
-#define ARM_MID_TOWER_DESCORE 1.55
+#define ARM_LOW_TOWER 1.4
+#define ARM_LOW_TOWER_MANUAL 1.4
+#define ARM_LOW_TOWER_DESCORE 1.4
+#define ARM_MID_TOWER 1.6
+#define ARM_MID_TOWER_DESCORE 1.6
 
 extern pros::Motor ArmMotor;
 extern pros::ADIDigitalIn Limit;
