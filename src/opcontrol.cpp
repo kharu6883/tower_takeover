@@ -15,6 +15,8 @@ void opcontrol() {
 
 	double kP = 0.1, kP_rev = 0.2;
 
+	bool rel = false;
+
 	Rack rack;
 	Arm arm;
 
@@ -68,8 +70,8 @@ void opcontrol() {
 		/*--------------------------------
 				ARM CONTROL
 		--------------------------------*/
-		if(master.get_digital(DIGITAL_A)) arm.move(0, 10, 9);
-			// else if(!master.get_digital_new_press(DIGITAL_A)) ArmMotor.move(0);
+		if(master.get_digital(DIGITAL_A)) { towerMode = 5; rel = true; }
+		if(!master.get_digital(DIGITAL_A) && rel) towerMode = 6;
 
 		if(*rack.getPot() <= 1400) {
 			if(master.get_digital_new_press(DIGITAL_Y)) towerMode = 1;
@@ -87,13 +89,13 @@ void opcontrol() {
 
 			case 1: {
 				arm.tower(1);
-				towerMode = 5;
+				towerMode = 10;
 				break;
 			}
 
 			case 2: {
 				arm.tower(2);
-				towerMode = 5;
+				towerMode = 10;
 				break;
 			}
 
@@ -110,6 +112,18 @@ void opcontrol() {
 			}
 
 			case 5: {
+				ArmMotor.move(-10);
+				break;
+			}
+
+			case 6: {
+				ArmMotor.move(0);
+				rel = false;
+				towerMode = 0;
+				break;
+			}
+
+			case 10: {
 				if(arm.getState()) towerMode = 0;
 				break;
 			}
