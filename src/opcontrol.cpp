@@ -13,11 +13,13 @@ void opcontrol() {
 	int towerMode = 0, lastPos = 0;
 	bool isTrack = false;
 
+	double kP = 0.1, kP_rev = 0.2;
+
 	Rack rack;
 	Arm arm;
 
 	macro::Slew rackSlew(9, 9, true); // Accel, Decel
-	macro::PID rackPID(0.09); // kP
+	macro::PID rackPID( kP ); // kP, kD
 	macro::Slew roller(5, 10); // Accel, Decel
 
 	rack.setBrakeType(MOTOR_BRAKE_HOLD);
@@ -37,24 +39,24 @@ void opcontrol() {
 		/*--------------------------------
 		    RACK
 		--------------------------------*/
-		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
+		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) { // Goin' Up
 
 			lastPos = 1;
-			rackPID.calculate(RACK_UP, *rack.getPot());
+			rackPID.withGain( kP ).calculate(RACK_UP, *rack.getPot());
 			rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) { // Goin' Down
 
 			lastPos = 0;
-			rackPID.calculate(RACK_DOWN, *rack.getPot());
+			rackPID.withGain( kP_rev ).calculate(RACK_DOWN, *rack.getPot());
 			rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		} else { // Stop
 
 			if(lastPos == 1) {
-				rackPID.calculate(RACK_UP, *rack.getPot());
+				rackPID.withGain( kP ).calculate(RACK_UP, *rack.getPot());
 			} else {
-				rackPID.calculate(RACK_DOWN, *rack.getPot());
+				rackPID.withGain( kP_rev ).calculate(RACK_DOWN, *rack.getPot());
 			}
 
 			rackSlew.withLimit(rackPID.getOutput()).calculate(0);
@@ -84,7 +86,7 @@ void opcontrol() {
 			}
 
 			case 1: {
-				arm.tower(1);
+				arm.tower(1); 
 				towerMode = 5;
 				break;
 			}
@@ -117,7 +119,6 @@ void opcontrol() {
 			}
 		}
 
-
 		/*--------------------------------
 				ROLLERS
 		--------------------------------*/
@@ -140,7 +141,7 @@ void opcontrol() {
 		// std::cout << "Rack: " << RackMotor.get_current_draw() << "mA, Arm: " << ArmMotor.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
 		// std::cout << "Rack Output: " << rackSlew.getOutput() << ", Rack PID Output: " << rackPID.getOutput() << std::endl;
 
-		// std::cout << "Rack: " << *rack.getPot() << " TowerMode: " << towerMode << std::endl;
+		std::cout << "Rack: " << *rack.getPot() << ", Rack Output: " << rackSlew.getOutput() << std::endl;
 
 		// Yeet
 		pros::delay(10);

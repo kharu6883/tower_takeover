@@ -8,7 +8,7 @@ namespace io {
 
   // Rotates the rollers in a given speed. Use negative values for going down. Uses RPM for speed.
   void roller(int speed);
-  
+
   void driveRoller(int speed);
 
   // Rotates the rollers in a given speed to a given point. Use negative values for going down. Uses RPM for speed.
@@ -42,8 +42,8 @@ namespace macro {
       PID(double kP_);
       PID(double kP_, double kD_);
 
-      PID& withConst(double kP_);
-      PID& withConst(double kP_, double kD_);
+      PID& withGain(double kP_);
+      PID& withGain(double kP_, double kD_);
 
       double calculate(double target, double input);
 

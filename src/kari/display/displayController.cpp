@@ -193,7 +193,7 @@ Display::Display() {
     tabSensor(tab4);
     tabSetting(tab5);
 
-    // cleanUp();
+    lv_tabview_set_tab_act(tv, 3, false);
 
     isInitialized = true;
   }

@@ -135,12 +135,12 @@ namespace macro {
 
   PID::PID(double kP_, double kD_) : kP(kP_), kD(kD_) { }
 
-  PID& PID::withConst(double kP_) {
+  PID& PID::withGain(double kP_) {
     kP = kP_;
     return *this;
   }
 
-  PID& PID::withConst(double kP_, double kD_) {
+  PID& PID::withGain(double kP_, double kD_) {
     kP = kP_;
     kD = kD_;
     return *this;

@@ -75,7 +75,7 @@ void disabled() {
   Rack rack;
   Arm arm;
 
-  chassis.withGain().withTol().withSlop().reset();
+  chassis.withGain().withTurnGain().withTol().withSlop().reset();
   chassis.setMode(IDLE);
   chassis.clearArr();
   rack.withTol().reset();

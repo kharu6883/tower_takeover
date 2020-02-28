@@ -12,7 +12,7 @@ bool Chassis::isRunning = false,
 Chassis::isSettled = true;
 int Chassis::mode = IDLE;
 
-double Chassis::kP_drive = 0.9, Chassis::kI_drive = 0.3, Chassis::kD_drive = 0.3, Chassis::kP_turn = 2, Chassis::kI_turn = 0.3, Chassis::kD_turn = 3.3;
+double Chassis::kP_drive = 0.25, Chassis::kI_drive = 0.5, Chassis::kD_drive = 0.1, Chassis::kP_turn = 2, Chassis::kI_turn = 0.3, Chassis::kD_turn = 3.3, Chassis::kI_Windup = 120;
 
 double Chassis::tolerance = 1, Chassis::amp = 0.2, Chassis::offset = 0;
 std::vector<ChassisTarget> Chassis::target;
@@ -41,18 +41,20 @@ Chassis::~Chassis() {
   reset();
 }
 
-Chassis& Chassis::withGain(double kP, double kI, double kD) {
+Chassis& Chassis::withGain(double kP, double kI, double kD, double windUp) {
   kP_drive = kP;
   kI_drive = kI;
   kD_drive = kD;
+  kI_Windup = windUp;
 
   return *this;
 }
 
-Chassis& Chassis::withTurnGain(double kP, double kI, double kD) {
+Chassis& Chassis::withTurnGain(double kP, double kI, double kD, double windUp) {
   kP_turn = kP;
   kI_turn = kI;
   kD_turn = kD;
+  kI_Windup = windUp;
 
   return *this;
 }
@@ -107,6 +109,8 @@ Chassis& Chassis::withTarget(double target_, double theta_, int speed, double ra
 
 Chassis& Chassis::drive() {
   currTarget = 0;
+  initL = *odomL;
+  initR = *odomR;
   isSettled = false;
   reset();
   if(isUsingPoint) mode = DRIVING_POINT;
@@ -298,8 +302,8 @@ void Chassis::run() {
         driveError = sqrt( pow( target[currTarget].x - *posX, 2) + pow( target[currTarget].y - *posY, 2) );
 
         driveIntegral += driveError;
-        if( driveIntegral > WINDUP_LIMIT ) driveIntegral = WINDUP_LIMIT;
-         else if( driveIntegral < -WINDUP_LIMIT ) driveIntegral = -WINDUP_LIMIT;
+        if( driveIntegral > kI_Windup ) driveIntegral = kI_Windup;
+         else if( driveIntegral < -kI_Windup ) driveIntegral = -kI_Windup;
 
         driveOutput = ( driveError * kP_drive ) + ( driveIntegral * kI_drive ) + ( driveError - driveLast ) * kD_drive;
 
@@ -311,8 +315,8 @@ void Chassis::run() {
         turnError = turnError * 180 / PI;
 
         turnIntegral += turnError;
-        if( turnIntegral > WINDUP_LIMIT ) turnIntegral = WINDUP_LIMIT;
-         else if( turnIntegral < -WINDUP_LIMIT ) turnIntegral = -WINDUP_LIMIT;
+        if( turnIntegral > kI_Windup ) turnIntegral = kI_Windup;
+         else if( turnIntegral < -kI_Windup ) turnIntegral = -kI_Windup;
 
         turnOutput = ( turnError * kP_turn ) + ( turnIntegral * kI_turn ) + ( turnError - turnLast ) * kD_turn;
 
@@ -358,8 +362,8 @@ void Chassis::run() {
           totOutputL = -turnSlewOutput - driveSlewOutput;
           totOutputR = turnSlewOutput - driveSlewOutput;
         } else {
-          totOutputL = -turnSlewOutput + driveSlewOutput;
-          totOutputR = turnSlewOutput + driveSlewOutput;
+          totOutputL = turnSlewOutput + -driveSlewOutput;
+          totOutputR = -turnSlewOutput + -driveSlewOutput;
         }
 
         if(driveError < tolerance && driveError > -tolerance && turnError < tolerance && turnError > -tolerance) {
@@ -385,17 +389,22 @@ void Chassis::run() {
         deltaR = *odomR - initR;
 
         driveError = target[currTarget].x - ( deltaL + deltaR ) / 2;
-        driveOutput = ( driveError * kP_drive ) + ( driveError - driveLast ) * kD_drive;
+
+        driveIntegral += driveError;
+        if( driveIntegral > ( kI_Windup / ( driveError * kP_drive ) ) ) driveIntegral = ( kI_Windup / ( driveError * kP_drive ) );
+         else if( driveIntegral < ( -kI_Windup / ( driveError * kP_drive ) ) ) driveIntegral = ( -kI_Windup / ( driveError * kP_drive ) );
+
+        driveOutput = ( driveError * kP_drive ) + ( driveIntegral * kI_drive ) + ( driveError - driveLast ) * kD_drive;
 
         turnError = ( target[currTarget].theta - *theta ) * PI / 180;
         turnError = atan2( sin( turnError ), cos( turnError ) );
         turnError = turnError * 180 / PI;
 
         turnIntegral += turnError;
-        if( turnIntegral > WINDUP_LIMIT ) turnIntegral = WINDUP_LIMIT;
-         else if( turnIntegral < -WINDUP_LIMIT ) turnIntegral = -WINDUP_LIMIT;
+        if( turnIntegral > ( kI_Windup / ( turnError * kP_turn ) ) ) turnIntegral = ( kI_Windup / ( turnError * kP_turn ) );
+         else if( turnIntegral < ( -kI_Windup / ( turnError * kP_turn ) ) ) turnIntegral = ( -kI_Windup / ( turnError * kP_turn ) );
 
-        turnOutput = ( turnError * kP_turn ) + ( turnError - turnLast ) * kD_turn;
+        turnOutput = ( turnError * kP_turn ) + ( turnIntegral * kI_turn ) + ( turnError - turnLast ) * kD_turn;
 
         driveLast = driveError;
         turnLast = turnError;
@@ -409,7 +418,7 @@ void Chassis::run() {
               else turnSlewOutput = turnOutput;
           }
 
-          if( isUsingAngle ) driveOutput /= abs(turnSlewOutput / 10);
+          if( isUsingAngle ) driveOutput /= ceil( abs( turnSlewOutput / 5 ) );
 
           if(driveOutput > 0) {
             if(driveOutput > driveSlewOutput + target[currTarget].rateDrive) driveSlewOutput += target[currTarget].rateDrive;
@@ -444,6 +453,8 @@ void Chassis::run() {
             withGain().withTurnGain().withTol().withSlop().reset();
             break;
           } else {
+            initL = *odomL;
+            initR = *odomR;
             currTarget++;
             break;
           }
@@ -511,8 +522,8 @@ void Chassis::run() {
         turnError = turnError * 180 / PI;
 
         turnIntegral += turnError;
-        if( turnIntegral > WINDUP_LIMIT ) turnIntegral = WINDUP_LIMIT;
-         else if( turnIntegral < -WINDUP_LIMIT ) turnIntegral = -WINDUP_LIMIT;
+        if( turnIntegral > kI_Windup ) turnIntegral = kI_Windup;
+         else if( turnIntegral < -kI_Windup ) turnIntegral = -kI_Windup;
 
         turnOutput = ( turnError * kP_turn ) + ( turnIntegral * kI_turn ) + ( turnError - turnLast ) * kD_turn;
 
@@ -662,10 +673,10 @@ void Chassis::run() {
         if(driveSlewOutput4 > target[0].speedDrive) driveSlewOutput4 = target[0].speedDrive;
         if(driveSlewOutput4 < -target[0].speedDrive) driveSlewOutput4 = -target[0].speedDrive;
 
-        LF.move(driveSlewOutput2-driveSlewOutput3+turnSlewOutput);
-        LB.move(driveSlewOutput+driveSlewOutput4+turnSlewOutput);
-        RF.move(-driveSlewOutput-driveSlewOutput4+turnSlewOutput);
-        RB.move(-driveSlewOutput2+driveSlewOutput3+turnSlewOutput);
+        LF.move(driveSlewOutput2 - driveSlewOutput3 + turnSlewOutput);
+        LB.move(driveSlewOutput + driveSlewOutput4 + turnSlewOutput);
+        RF.move(-driveSlewOutput - driveSlewOutput4 + turnSlewOutput);
+        RB.move(-driveSlewOutput2 + driveSlewOutput3 + turnSlewOutput);
         break;
       }
 

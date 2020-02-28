@@ -11,8 +11,6 @@ extern pros::ADIUltrasonic Ultrasonic;
 #define STRAFING 5
 #define STRAFING_SMART 6
 
-#define WINDUP_LIMIT 50
-
 struct Vector2 {
   double x;
   double y;
@@ -37,8 +35,8 @@ class Chassis {
     ~Chassis();
 
     // Constant Settings
-    Chassis& withGain(double kP = 0.9, double kI = 0.3, double kD = 3.3);
-    Chassis& withTurnGain(double kP = 2, double kI = 0.3, double kD = 3.3);
+    Chassis& withGain(double kP = 0.25, double kI = 0.5, double kD = 0.1, double windUp = 120);
+    Chassis& withTurnGain(double kP = 2, double kI = 0.3, double kD = 3.3, double windUp = 120);
     Chassis& withTol(double tolerance_ = 1);
     Chassis& withSlop(double offset_ = 0, double amp_ = 0.2);
 
@@ -85,7 +83,7 @@ class Chassis {
     static bool isSettled;
     static int mode;
 
-    static double kP_drive, kI_drive, kD_drive, kP_turn, kI_turn, kD_turn;
+    static double kP_drive, kI_drive, kD_drive, kP_turn, kI_turn, kD_turn, kI_Windup;
     static double tolerance, amp, offset;
     static std::vector<ChassisTarget> target;
     static int currTarget;
