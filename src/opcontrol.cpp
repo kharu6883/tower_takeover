@@ -68,8 +68,8 @@ void opcontrol() {
 		/*--------------------------------
 				ARM CONTROL
 		--------------------------------*/
-		if(master.get_digital(DIGITAL_A)) arm.setBrakeType(MOTOR_BRAKE_COAST);
-			else arm.setBrakeType(MOTOR_BRAKE_HOLD);
+		if(master.get_digital(DIGITAL_A)) arm.move(0, 10, 9);
+			// else if(!master.get_digital_new_press(DIGITAL_A)) ArmMotor.move(0);
 
 		if(*rack.getPot() <= 1400) {
 			if(master.get_digital_new_press(DIGITAL_Y)) towerMode = 1;
@@ -86,7 +86,7 @@ void opcontrol() {
 			}
 
 			case 1: {
-				arm.tower(1); 
+				arm.tower(1);
 				towerMode = 5;
 				break;
 			}

@@ -27,7 +27,7 @@ using namespace io;
 // STRAFING = 4
 
 void tester() {
-  chassis.withTurnGain(2, 0, 3.3);
+  chassis.withGain(0.25, 0.5, 0.5).withTurnGain(2, 0.3, 3.3).withTol(25);
   chassis.withTarget(1000, 0, 100, 4)
           .withTarget(2000, 45, 100, 4).drive().waitUntilSettled();
   // chassis.turn(90,60,5).withTol(5).waitUntilSettled();
