@@ -27,9 +27,13 @@ using namespace io;
 // STRAFING = 4
 
 void tester() {
-  chassis.withGain(0.25, 0.5, 0.5).withTurnGain(2, 0.3, 3.3).withTol(25);
-  chassis.withTarget(1000, 0, 100, 4)
-          .withTarget(2000, 45, 100, 4).drive().waitUntilSettled();
+  roller(127);
+  chassis.drive(2100,65,4).withAngle(0, 80).withTol(30).waitUntilSettled();
+  chassis.drive(-300,70,4).withAngle(0, 80).withTol(30).waitUntilSettled();
+  chassis.turn(45,70).withTol(10).waitUntilSettled();
+  chassis.drive(500,40,2).withAngle(45, 80).withTol(30).waitUntilSettled();
+
+
   // chassis.turn(90,60,5).withTol(5).waitUntilSettled();
   io::master.rumble(" . .");
 }
