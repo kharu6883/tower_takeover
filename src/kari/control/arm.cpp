@@ -116,7 +116,7 @@ void Arm::start(void *ignore) {
 
 void Arm::run() {
   isRunning = true;
-  double rollerPrePrime = 50, rollerWait = 100, rollerRot = -0.5, rollerSpeed = 80, rollerWaitPrime = 0;
+  double rollerPrePrime = 50, rollerWait = 100, rollerRot = -0.4, rollerSpeed = 60, rollerWaitPrime = 0;
 
   while(isRunning) {
     armPos = ArmMotor.get_position();

@@ -13,7 +13,7 @@ void opcontrol() {
 	int towerMode = 0, lastPos = 0;
 	bool isTrack = false;
 
-	double kP = 0.12, kP_rev = 0.2;
+	double kP = 0.1, kP_rev = 0.2;
 
 	bool rel = false;
 
@@ -73,7 +73,7 @@ void opcontrol() {
 		if(master.get_digital(DIGITAL_A)) { towerMode = 5; rel = true; }
 		if(!master.get_digital(DIGITAL_A) && rel) towerMode = 6;
 
-		if(*rack.getPot() <= 1800) {
+		if(*rack.getPot() <= 1400) {
 			if(master.get_digital_new_press(DIGITAL_Y)) towerMode = 1;
 			if(master.get_digital_new_press(DIGITAL_RIGHT)) towerMode = 2;
 			if(master.get_digital_new_press(DIGITAL_B)) towerMode = 3;
@@ -112,7 +112,7 @@ void opcontrol() {
 			}
 
 			case 5: {
-				ArmMotor.move(-20);
+				ArmMotor.move(-10);
 				break;
 			}
 
@@ -137,13 +137,8 @@ void opcontrol() {
 				ROLLERS
 		--------------------------------*/
 		if(master.get_digital(DIGITAL_R1)) {
-    if(*rack.getPot()>2500){
-			roller.calculate(90);
-		}
-		else
-		{
+
 			roller.calculate(127);
-		}
 
 		} else if(master.get_digital(DIGITAL_R2)) {
 
