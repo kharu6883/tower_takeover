@@ -1,7 +1,7 @@
 #include "main.h"
 
 #define RACK_DOWN 1270
-#define RACK_UP 3850
+#define RACK_UP 3950
 
 extern pros::Motor RackMotor;
 extern pros::ADIPotentiometer Pot;
