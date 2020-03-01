@@ -5,8 +5,6 @@ class Path {
   public:
     Path();
 
-    Path& withLookAheadDistance();
-
   private:
     static bool isRunning;
 
