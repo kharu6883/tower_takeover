@@ -3,7 +3,6 @@
 
 pros::Motor ArmMotor(3, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);
 pros::ADIDigitalIn Limit(1);
-
 bool Arm::isRunning = false,
 Arm::isSettled = true,
 Arm::macroFin = true,

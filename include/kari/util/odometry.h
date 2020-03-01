@@ -17,6 +17,7 @@ class Odom {
     double * getY();
 
     Odom& calibrateGyro();
+    Odom& zero();
     Odom& reset();
 
     static void start(void* ignore);
@@ -29,7 +30,8 @@ class Odom {
     static int currentL, currentR;
     static int deltaL, deltaR, lastDeltaL, lastDeltaR;
 
-    static double thetaRad, thetaDeg, posX, posY;
+    static double inertL, inertR, inertT;
+    static double thetaRad, thetaDeg, offset, posX, posY;
 
     static double output, DesiredX, DesiredY, Desiredtheta;
 };

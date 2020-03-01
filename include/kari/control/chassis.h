@@ -35,7 +35,7 @@ class Chassis {
     ~Chassis();
 
     // Constant Settings
-    Chassis& withGain(double kP = 0.3, double kI = 0.8, double kD = 0.1, double windUp = 140);
+    Chassis& withGain(double kP = 0.5, double kI = 1.3, double kD = 0.1, double windUp = 170);
     Chassis& withTurnGain(double kP = 2, double kI = 0.3, double kD = 3.3, double windUp = 120);
     Chassis& withTol(double tolerance_ = 1);
     Chassis& withSlop(double offset_ = 0, double amp_ = 0.2);

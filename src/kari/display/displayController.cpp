@@ -44,7 +44,7 @@ static lv_res_t btn_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
   switch(id) {
-    case 1: odom.calibrateGyro(); break;
+    case 1: odom.zero(); break;
     case 2: odom.reset(); break;
     case 3: arm.tarePos(); break;
 

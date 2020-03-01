@@ -4,8 +4,8 @@
 #define ARM_LOW_TOWER 1.25
 #define ARM_LOW_TOWER_MANUAL 1.25
 #define ARM_LOW_TOWER_DESCORE 1.25
-#define ARM_MID_TOWER 1.8
-#define ARM_MID_TOWER_DESCORE 1.8
+#define ARM_MID_TOWER 1.7
+#define ARM_MID_TOWER_DESCORE 1.7
 
 extern pros::Motor ArmMotor;
 extern pros::ADIDigitalIn Limit;
