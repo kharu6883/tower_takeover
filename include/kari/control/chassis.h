@@ -73,45 +73,150 @@ class Chassis {
     Sets the target angle.
 
     @param theta The target angle in degrees.
-    @param speed The speed in which the robot will turn.
+    @param speed The speed limit of the turn.
     @param rate The rate in which the slew will accelerate.
     */
     Chassis& withAngle(double theta_, int speed_, double rate_ = 4);
 
     /*
-    Sets the desired waypoints to drive through.
+    Sets the desired waypoints for pure pursuit.
 
     @param point The X and Y coordinates of the desired point.
 
     For example, {500, 600}, {1000, 2000}
     */
     Chassis& withPoints(Vector2 point, ...);
+
+    /*
+    Sets the desired parameters for pure pursuit.
+
+    @param driveSpeed The speed limit of the drive.
+    @param turnSpeed The speed limit of the turn.
+    @param driveRate The rate in which the drive slew will accelerate.
+    @param turnRate The rate in which the turn slew will accelerate.
+    @param reverse Enables the robot to drive in reverse.
+    */
     Chassis& withSettings(int driveSpeed_, int turnSpeed, double driveRate = 4, double turnRate_ = 4, bool reverse_ = false);
+
+    /*
+    Sets the distance and angle that the robot should drive in.
+
+    @param target The target distance in ticks.
+    @param theta The target angle in degrees.
+    @param speed The speed limit of the drive and turn.
+    @param rate The rate in which the slew will accelerate.
+    @param reverse Enables the robot to drive in reverse.
+    */
     Chassis& withTarget(double target_, double theta_, int speed_, double rate_ = 4, bool reverse_ = false);
 
-    // Actuators
+    /*
+    Starts the task for multipoint drive.
+    */
     Chassis& drive();
+
+    /*
+    Drives the robot to a point.
+
+    @param point The X and Y coordinates of the desired point.
+    @param speed The speed limit of the drive and turn.
+    @param rate The rate in which the slew will accelerate.
+    @param reverse Enables the robot to drive in reverse.
+    */
     Chassis& drive(Vector2 point, int speed_, int rate_ = 4, bool reverse_ = false);
+
+    /*
+    Drives the robot a set distasnce.
+
+    To turn while driving, use withAngle alongside this function.
+
+    @param target The target distance in ticks.
+    @param speed The speed limit of the drive.
+    @param rate The rate in which the slew will accelerate.
+    */
     Chassis& drive(double target_, int speed_, double rate_ = 4);
+
+    /*
+    Drives the robot a set distance using the ultrasonic.
+
+    @param target The target distance in mm.
+    @param speed The speed limit of the drive.
+    @param rate The rate in which the slew will accelerate.
+    */
     Chassis& driveUltrasonic(double target_, int speed_, int rate_ = 4);
+
+    /*
+    Turns the robot towards the desired point.
+
+    @param point The X and Y coordinates of the desired point.
+    @param speed The speed limit of the drive.
+    @param rate The rate in which the slew will accelerate.
+    */
     Chassis& turn(Vector2 point, int speed_, int rate_ = 4);
+
+    /*
+    Turns the robot a set angle.
+
+    @param theta The target angle in degrees.
+    @param speed The speed limit of the turn.
+    @param rate The rate in which the slew will accelerate.
+    */
     Chassis& turn(double theta_, int speed_, int rate_ = 4);
+
+    /*
+    Strafes the robot a set distance.
+
+    To turn while strafing, use withSlop alongside this function.
+
+    @param target The target distance in ticks.
+    @param speed The speed limit of the strafe.
+    @param rate The rate in which the slew will accelerate.
+    */
     Chassis& strafe(double target_, int speed_, int rate_ = 4);
+
+    /*
+    Strafes the robot towards a certain angle, while turning to a certain angle.
+
+    @param direction The target angle in which the robot will strafe to, in degrees.
+    @param theta The target angle in whicht the robot will turn to, in degrees.
+    @param driveSpeed The speed limit of the strafe.
+    @param turnSpeed The speed limit of the turn.
+    @param rate The rate in which the strafe slew will accelerate.
+    @param rate2 The rate in which the turn slew will accelerate.
+    */
     Chassis& smartstrafe(double direction_, double theta_, double drivespeed_ = 80, double turnspeed_ = 50, double rate_ = 4, double rate2_ = 4);
 
+    /*
+    Delays the calling thread until the robot has settled.
+    */
     void waitUntilSettled();
 
-    // Chassis Motor Settings
+    /*
+    Tares the position of the motor encoders.
+    */
     void tarePos();
+
+    /*
+    Resets the control variables and puts the task to neutral.
+    */
     void reset();
 
+    /*
+    Locks the chassis.
+    */
     void lock();
+
+    /*
+    Unlocks the chaassis.
+    */
     void unlock();
 
     // Process Related
     int getMode();
     void setMode(int mode);
 
+    /*
+    Clears the array containing the user set parameters.
+    */
     void clearArr();
 
     // Task

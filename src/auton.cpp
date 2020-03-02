@@ -85,9 +85,6 @@ void redsmallzone7() {
   roller(-70);
   chassis.lock();
   chassis.drive(-550,60,2).withAngle(270,50).withTol(40).waitUntilSettled();
-
-
-
 }
 
 void redsmallzone5() {
