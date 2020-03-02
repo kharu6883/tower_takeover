@@ -15,6 +15,8 @@ int Chassis::mode = IDLE;
 double Chassis::kP_drive = 0.25, Chassis::kI_drive = 0.5, Chassis::kD_drive = 0.1, Chassis::kP_turn = 2, Chassis::kI_turn = 0.3, Chassis::kD_turn = 3.3, Chassis::kI_Windup = 120;
 
 double Chassis::tolerance = 1, Chassis::amp = 0.2, Chassis::offset = 0;
+
+std::vector<Vector2> Chassis::waypoints;
 std::vector<ChassisTarget> Chassis::target;
 int Chassis::currTarget = 0;
 bool Chassis::isUsingPoint = false, Chassis::isUsingAngle = false;
@@ -80,15 +82,19 @@ Chassis& Chassis::withAngle(double theta_, int speed_, double rate_) {
   return *this;
 }
 
-Chassis& Chassis::withPoint(Vector2 point, int speed, double rate, bool reverse_) {
+Chassis& Chassis::withPoints(Vector2 point, ...) {
   isUsingPoint = true;
-  target.push_back(ChassisTarget());
-  target[target.size() - 1].x = point.x;
+  waypoints.push_back( Vector2() );
+  waypoints[target.size() - 1].x = point.x;
   target[target.size() - 1].y = point.y;
-  target[target.size() - 1].speedDrive = speed;
-  target[target.size() - 1].speedTurn = speed;
-  target[target.size() - 1].rateDrive = rate;
-  target[target.size() - 1].rateTurn = rate;
+  return *this;
+}
+
+Chassis& Chassis::withSettings(int driveSpeed_, int turnSpeed_, double driveRate_, double turnRate_, bool reverse_) {
+  target[target.size() - 1].speedDrive = driveSpeed_;
+  target[target.size() - 1].speedTurn = turnSpeed_;
+  target[target.size() - 1].rateDrive = driveRate_;
+  target[target.size() - 1].rateTurn = turnRate_;
   target[target.size() - 1].reverse = reverse_;
   return *this;
 }

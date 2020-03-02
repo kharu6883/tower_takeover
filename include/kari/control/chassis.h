@@ -34,15 +34,59 @@ class Chassis {
     Chassis(int * odomL_, int * odomR_, double * theta_, double * posX_, double * posY_);
     ~Chassis();
 
-    // Constant Settings
+    /*
+    Sets the gain of the drive.
+
+    @param kP The P Gain.
+    @param kI The I Gain.
+    @param kD The D Gain.
+    @param windUp The integral windup limit.
+    */
     Chassis& withGain(double kP = 0.5, double kI = 1.3, double kD = 0.1, double windUp = 170);
+
+    /*
+    Sets the gain of the turn.
+
+    @param kP The P Gain.
+    @param kI The I Gain.
+    @param kD The D Gain.
+    @param windUp The integral windup limit.
+    */
     Chassis& withTurnGain(double kP = 2, double kI = 0.3, double kD = 3.3, double windUp = 120);
+
+    /*
+    Sets the tolerance.
+
+    @param tolerance The tolerance.
+    */
     Chassis& withTol(double tolerance_ = 1);
+
+    /*
+    Sets the parameters of the slop correction.
+
+    @param offset The offset of the slop - for strafing.
+    @param amp The intensity of slop correction.
+    */
     Chassis& withSlop(double offset_ = 0, double amp_ = 0.2);
 
-    // Movement Settings
+    /*
+    Sets the target angle.
+
+    @param theta The target angle in degrees.
+    @param speed The speed in which the robot will turn.
+    @param rate The rate in which the slew will accelerate.
+    */
     Chassis& withAngle(double theta_, int speed_, double rate_ = 4);
-    Chassis& withPoint(Vector2 point, int speed_, double rate_ = 4, bool reverse_ = false);
+
+    /*
+    Sets the desired waypoints to drive through.
+
+    @param point The X and Y coordinates of the desired point.
+
+    For example, {500, 600}, {1000, 2000}
+    */
+    Chassis& withPoints(Vector2 point, ...);
+    Chassis& withSettings(int driveSpeed_, int turnSpeed, double driveRate = 4, double turnRate_ = 4, bool reverse_ = false);
     Chassis& withTarget(double target_, double theta_, int speed_, double rate_ = 4, bool reverse_ = false);
 
     // Actuators
@@ -85,6 +129,7 @@ class Chassis {
 
     static double kP_drive, kI_drive, kD_drive, kP_turn, kI_turn, kD_turn, kI_Windup;
     static double tolerance, amp, offset;
+    static std::vector<Vector2> waypoints;
     static std::vector<ChassisTarget> target;
     static int currTarget;
     static bool isUsingPoint, isUsingAngle;
