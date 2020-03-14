@@ -1,7 +1,7 @@
 # 7K Robotics - Tower Takeover
 This is a program for Tower Takeover for 7K Robotics.
 
-Our programs are so finger lickin' good that you will literally CLONE this bro into your computer instantaneously.
+Our programs are so finger lickin' good that you will literally CLONE this bro into your computer instantly.
 
 ## Contents
 - Very neatly organized code - a dog can read this and understand what this code does
@@ -19,3 +19,5 @@ CD into the desired folder where you want it to be installed via command prompt,
 ```
 git clone git@github.com:HoneySpiceLatte/tower_takeover.git
 ```
+
+Bro nobody cares about this part it's a private repository anyways haha lmao
