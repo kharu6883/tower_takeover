@@ -21,7 +21,7 @@ Rack::~Rack() { }
     GETTERS & SETTERS
 --------------------------------*/
 
-Rack& Rack::withConst(double kP_) {
+Rack& Rack::withGain(double kP_) {
   kP = kP_;
   return *this;
 }
@@ -105,7 +105,7 @@ void Rack::run() {
 
       if(output > -tolerance && output < tolerance) {
         isSettled = true;
-        withConst().withTol().reset();
+        withGain().withTol().reset();
         goto end;
       }
 

@@ -1,9 +1,8 @@
 #include "kari/control/arm.h"
 #include "kari/util/misc.h"
 
-pros::Motor ArmMotor(3, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_ROTATIONS);
+pros::Motor ArmMotor(3, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS);
 pros::ADIDigitalIn Limit(1);
-
 bool Arm::isRunning = false,
 Arm::isSettled = true,
 Arm::macroFin = true,
@@ -116,7 +115,7 @@ void Arm::start(void *ignore) {
 
 void Arm::run() {
   isRunning = true;
-  double rollerPrePrime = 50, rollerWait = 100, rollerRot = -0.4, rollerSpeed = 60, rollerWaitPrime = 0;
+  double rollerPrePrime = 50, rollerWait = 100, rollerRot = -0.5, rollerSpeed = 80, rollerWaitPrime = 0;
 
   while(isRunning) {
     armPos = ArmMotor.get_position();

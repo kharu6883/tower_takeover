@@ -13,11 +13,15 @@ void opcontrol() {
 	int towerMode = 0, lastPos = 0;
 	bool isTrack = false;
 
+	double kP = 0.12, kP_rev = 0.2;
+
+	bool rel = false;
+
 	Rack rack;
 	Arm arm;
 
 	macro::Slew rackSlew(9, 9, true); // Accel, Decel
-	macro::PID rackPID(0.09); // kP
+	macro::PID rackPID( kP ); // kP, kD
 	macro::Slew roller(5, 10); // Accel, Decel
 
 	rack.setBrakeType(MOTOR_BRAKE_HOLD);
@@ -37,24 +41,24 @@ void opcontrol() {
 		/*--------------------------------
 		    RACK
 		--------------------------------*/
-		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
+		if(master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) { // Goin' Up
 
 			lastPos = 1;
-			rackPID.calculate(RACK_UP, *rack.getPot());
+			rackPID.withGain( kP ).calculate(RACK_UP, *rack.getPot());
 			rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		} else if(master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) { // Goin' Down
 
 			lastPos = 0;
-			rackPID.calculate(RACK_DOWN, *rack.getPot());
+			rackPID.withGain( kP_rev ).calculate(RACK_DOWN, *rack.getPot());
 			rackSlew.withLimit(rackPID.getOutput()).calculate(rackPID.getOutput());
 
 		} else { // Stop
 
 			if(lastPos == 1) {
-				rackPID.calculate(RACK_UP, *rack.getPot());
+				rackPID.withGain( kP ).calculate(RACK_UP, *rack.getPot());
 			} else {
-				rackPID.calculate(RACK_DOWN, *rack.getPot());
+				rackPID.withGain( kP_rev ).calculate(RACK_DOWN, *rack.getPot());
 			}
 
 			rackSlew.withLimit(rackPID.getOutput()).calculate(0);
@@ -66,10 +70,10 @@ void opcontrol() {
 		/*--------------------------------
 				ARM CONTROL
 		--------------------------------*/
-		if(master.get_digital(DIGITAL_A)) arm.setBrakeType(MOTOR_BRAKE_COAST);
-			else arm.setBrakeType(MOTOR_BRAKE_HOLD);
+		if(master.get_digital(DIGITAL_A)) { towerMode = 5; rel = true; }
+		if(!master.get_digital(DIGITAL_A) && rel) towerMode = 6;
 
-		if(*rack.getPot() <= 1400) {
+		if(*rack.getPot() <= 1800) {
 			if(master.get_digital_new_press(DIGITAL_Y)) towerMode = 1;
 			if(master.get_digital_new_press(DIGITAL_RIGHT)) towerMode = 2;
 			if(master.get_digital_new_press(DIGITAL_B)) towerMode = 3;
@@ -85,13 +89,13 @@ void opcontrol() {
 
 			case 1: {
 				arm.tower(1);
-				towerMode = 5;
+				towerMode = 10;
 				break;
 			}
 
 			case 2: {
 				arm.tower(2);
-				towerMode = 5;
+				towerMode = 10;
 				break;
 			}
 
@@ -108,6 +112,18 @@ void opcontrol() {
 			}
 
 			case 5: {
+				ArmMotor.move(-20);
+				break;
+			}
+
+			case 6: {
+				ArmMotor.move(0);
+				rel = false;
+				towerMode = 0;
+				break;
+			}
+
+			case 10: {
 				if(arm.getState()) towerMode = 0;
 				break;
 			}
@@ -117,13 +133,17 @@ void opcontrol() {
 			}
 		}
 
-
 		/*--------------------------------
 				ROLLERS
 		--------------------------------*/
 		if(master.get_digital(DIGITAL_R1)) {
-
+    if(*rack.getPot()>2500){
+			roller.calculate(90);
+		}
+		else
+		{
 			roller.calculate(127);
+		}
 
 		} else if(master.get_digital(DIGITAL_R2)) {
 
@@ -140,7 +160,7 @@ void opcontrol() {
 		// std::cout << "Rack: " << RackMotor.get_current_draw() << "mA, Arm: " << ArmMotor.get_current_draw() << "mA, RollerL: " << RollerL.get_current_draw() << "mA, RollerR: " << RollerR.get_current_draw() << "mA" << std::endl;
 		// std::cout << "Rack Output: " << rackSlew.getOutput() << ", Rack PID Output: " << rackPID.getOutput() << std::endl;
 
-		// std::cout << "Rack: " << *rack.getPot() << " TowerMode: " << towerMode << std::endl;
+		std::cout << "Rack: " << *rack.getPot() << ", Rack Output: " << rackSlew.getOutput() << std::endl;
 
 		// Yeet
 		pros::delay(10);

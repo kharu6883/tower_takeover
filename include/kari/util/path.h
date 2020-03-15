@@ -1,16 +1,9 @@
-#include "okapi/api.hpp"
+#include "main.h"
+#include "kari/util/misc.h"
 
 class Path {
   public:
-    static void start(void* args);
-    void update();
-    void stopThread();
-
-    Path& withPoint(okapi::Point point_);
-
-    void gen(std::string name);
-    void run(std::string name, bool reverse);
-    void del(std::string name);
+    Path();
 
   private:
     static bool isRunning;

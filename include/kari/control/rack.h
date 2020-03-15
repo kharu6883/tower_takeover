@@ -1,8 +1,7 @@
 #include "main.h"
 
-#define RACK_DOWN 180
-#define RACK_TOWER 1650
-#define RACK_UP 3200
+#define RACK_DOWN 1270
+#define RACK_UP 3950
 
 extern pros::Motor RackMotor;
 extern pros::ADIPotentiometer Pot;
@@ -12,7 +11,7 @@ class Rack {
     Rack();
     ~Rack();
 
-    Rack& withConst(double kP_ = 0.08);
+    Rack& withGain(double kP_ = 0.08);
     Rack& withTol(double tolerance_ = 5);
 
     Rack& move(double target_, int speed_, int rate_ = 9);

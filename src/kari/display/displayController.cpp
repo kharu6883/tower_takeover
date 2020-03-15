@@ -12,7 +12,6 @@
 static Autonomous Auton;
 
 static Odom odom;
-static Chassis chassis;
 static Arm arm;
 
 bool Display::isRunning = false,
@@ -45,8 +44,8 @@ static lv_res_t btn_click_action(lv_obj_t * btn) {
   int id = lv_obj_get_free_num(btn);
 
   switch(id) {
-    case 1: chassis.calibrateGyro(); break;
-    case 2: odom.reset(0); break;
+    case 1: odom.zero(); break;
+    case 2: odom.reset(); break;
     case 3: arm.tarePos(); break;
 
     default: break;
@@ -194,7 +193,7 @@ Display::Display() {
     tabSensor(tab4);
     tabSetting(tab5);
 
-    // cleanUp();
+    lv_tabview_set_tab_act(tv, 3, false);
 
     isInitialized = true;
   }

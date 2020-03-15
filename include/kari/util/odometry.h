@@ -6,17 +6,19 @@ class Odom {
   public:
 
     // Getters & Setters
-    double * getL();
-    double * getR();
-    double * getDL();
-    double * getDR();
+    int * getL();
+    int * getR();
+    int * getDL();
+    int * getDR();
 
-    double * getThetaRad();
     double * getThetaDeg();
+    double * getThetaRad();
     double * getX();
     double * getY();
 
-    void reset(int theta_);
+    Odom& calibrateGyro();
+    Odom& zero();
+    Odom& reset();
 
     static void start(void* ignore);
     void run();
@@ -25,10 +27,11 @@ class Odom {
   private:
     static bool isRunning;
 
-    static double currentL, currentR;
-    static double deltaL, deltaR, lastDeltaL, lastDeltaR;
+    static int currentL, currentR;
+    static int deltaL, deltaR, lastDeltaL, lastDeltaR;
 
-    static double thetaRad, thetaDeg, posX, posY;
+    static double inertL, inertR, inertT;
+    static double thetaRad, thetaDeg, offset, posX, posY;
 
     static double output, DesiredX, DesiredY, Desiredtheta;
 };

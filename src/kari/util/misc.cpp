@@ -4,8 +4,8 @@
 namespace io {
   pros::Controller master(CONTROLLER_MASTER);
 
-  pros::Motor RollerL(1, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS); // Left Roller
-  pros::Motor RollerR(9, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS); // Right Roller
+  pros::Motor RollerL(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_ROTATIONS); // Left Roller
+  pros::Motor RollerR(10, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_ROTATIONS); // Right Roller
 
   void roller(int speed) {
     RollerL.move(speed);
@@ -135,12 +135,12 @@ namespace macro {
 
   PID::PID(double kP_, double kD_) : kP(kP_), kD(kD_) { }
 
-  PID& PID::withConst(double kP_) {
+  PID& PID::withGain(double kP_) {
     kP = kP_;
     return *this;
   }
 
-  PID& PID::withConst(double kP_, double kD_) {
+  PID& PID::withGain(double kP_, double kD_) {
     kP = kP_;
     kD = kD_;
     return *this;
