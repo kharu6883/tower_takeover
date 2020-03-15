@@ -1,4 +1,9 @@
 # 7K Robotics - Tower Takeover
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=o9n9McM3MPk
+" target="_blank"><img src="http://img.youtube.com/vi/o9n9McM3MPk/0.jpg" 
+alt="WORLDS IS GONE" width="240" height="180" border="10" /></a>
+
 This is a program for Tower Takeover for 7K Robotics.
 
 Our programs are so finger lickin' good that you will literally CLONE this bro into your computer instantly.
