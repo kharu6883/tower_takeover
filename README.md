@@ -22,7 +22,7 @@ Since this is a PROS project, you should download PROS.
 
 CD into the desired folder where you want it to be installed via command prompt, and type this.
 ```
-git clone git@github.com:HoneySpiceLatte/tower_takeover.git
+git clone git@github.com:kharu6883/tower_takeover.git
 ```
 
 Bro nobody cares about this part it's a private repository anyways haha lmao
