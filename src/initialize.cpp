@@ -27,7 +27,7 @@ void initialize() {
 
   // Roller Init
   io::RollerL.set_brake_mode(MOTOR_BRAKE_HOLD);
-	io::RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
+  io::RollerR.set_brake_mode(MOTOR_BRAKE_HOLD);
 
   // Sensor Init
   odom.calibrateGyro();

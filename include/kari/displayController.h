@@ -25,7 +25,7 @@ class Display {
     void run();
     void stop();
 
-    Display& addInfo(std::string name, char type, void *info);
+    Display &addInfo(std::string name, char type, void *info);
 
     void setRemoteText(std::string text_);
 
@@ -39,21 +39,21 @@ class Display {
     static std::vector<info> updateInfo;
     static std::vector<lv_obj_t*> autonm;
 
-    lv_obj_t * tab1;
-    lv_obj_t * tab2;
-    lv_obj_t * tab3;
-    lv_obj_t * tab4;
-    lv_obj_t * tab5;
+    lv_obj_t *tab1;
+    lv_obj_t *tab2;
+    lv_obj_t *tab3;
+    lv_obj_t *tab4;
+    lv_obj_t *tab5;
 
-    void tabRed(lv_obj_t * parent);
-    void tabBlue(lv_obj_t * parent);
-    void tabSkills(lv_obj_t * parent);
-    void tabSensor(lv_obj_t * parent);
-    void tabSetting(lv_obj_t * parent);
+    void tabRed(lv_obj_t *parent);
+    void tabBlue(lv_obj_t *parent);
+    void tabSkills(lv_obj_t *parent);
+    void tabSensor(lv_obj_t *parent);
+    void tabSetting(lv_obj_t *parent);
 
     void remoteUpdate();
 
     // Macros
-    lv_obj_t * createLabel(int x, int y, std::string text, lv_obj_t * parent);
-    lv_obj_t * createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t * parent, lv_action_t action, lv_style_t * btn_pr = nullptr, lv_style_t * btn_rel = nullptr);
+    lv_obj_t * createLabel(int x, int y, std::string text, lv_obj_t *parent);
+    lv_obj_t * createButton(int id, int x, int y, int width, int height, std::string text, lv_obj_t *parent, lv_action_t action, lv_style_t *btn_pr = nullptr, lv_style_t *btn_rel = nullptr);
 };
